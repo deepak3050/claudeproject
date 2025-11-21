@@ -31,8 +31,7 @@ jobs:
           fetch-depth: 1
       
       - name: Project Setup
-        # Fixed: Added pipe (|) for multi-line commands
-        # Note: Ensure dev:daemon runs in background (&) or valid detached mode
+        working-directory: uigen
         run: |
           npm run setup
           npm run dev:daemon &
@@ -42,6 +41,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          working_directory: uigen
           
           # Fixed: Closed the block here
           additional_permissions: |

@@ -23,3 +23,4 @@ When developing in this repository, you'll need to:
 This file should be updated as the project structure is established.
 - what is in the @auth.ts file?
 - verify the prompt --> check the page http://localhost:3000/ --> find scope for improvement -->update the prompt again at @uigen/src/lib/prompts/generation.tsx and recreate the app to make it look more modern if needed.
+- package.json is already present at this path uigen/package.json why did it gave an error
