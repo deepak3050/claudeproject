@@ -1,0 +1,8 @@
+services:
+  sliding-window:
+    build: .
+    ports:
+      - "8888:8888"  # Jupyter Notebook
+      - "8000:8000"  # HTML Game
+    volumes:
+      - .:/app      # Mount for live changes (optional)

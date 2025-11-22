@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window Explorer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        .game-select {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .game-btn {
+            padding: 8px 14px;
+            font-size: 0.85em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .game-btn.active { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .btn-easy { background: #4ECDC4; color: white; }
+        .btn-medium { background: #FFE66D; color: #333; }
+        .btn-hard { background: #FF6B6B; color: white; }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .game-area, .code-area {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            margin-left: 8px;
+        }
+        .diff-easy { background: #4ECDC4; color: white; }
+        .diff-medium { background: #FFE66D; color: #333; }
+        .diff-hard { background: #FF6B6B; color: white; }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .input-row label {
+            min-width: 60px;
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .input-row input {
+            flex: 1;
+            padding: 6px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .apply-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .array-item {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 6px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .array-item.outside { background: #E8E8E8; color: #999; }
+        .array-item.inside {
+            background: #FFE66D;
+            color: #333;
+            transform: scale(1.08);
+        }
+        .array-item.best {
+            background: #4ECDC4;
+            color: white;
+            transform: scale(1.12);
+        }
+        .array-item.current-max { background: #FF6B6B; color: white; }
+        .array-item .index {
+            position: absolute;
+            bottom: -16px;
+            font-size: 0.5em;
+            color: #999;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            font-size: 0.9em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-prev { background: #95E1D3; color: #333; }
+        .btn-next { background: #FF6B6B; color: white; }
+        .btn-reset { background: #DDD; color: #333; }
+        .btn-auto { background: #667eea; color: white; }
+        .info-panel {
+            background: #F8F9FA;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+            font-size: 0.85em;
+        }
+        .info-label { color: #666; }
+        .info-value { font-weight: bold; color: #333; }
+        .info-value.highlight { color: #FF6B6B; }
+        .info-value.error { color: #FF6B6B; text-decoration: line-through; }
+
+        .pseudocode {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75em;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+
+        .code-line {
+            display: block;
+            padding: 1px 4px;
+            border-left: 3px solid transparent;
+        }
+
+        .code-line.disabled {
+            opacity: 0.3;
+            text-decoration: line-through;
+            background: #ff000020;
+        }
+
+        .keyword { color: #ff79c6; }
+        .number { color: #bd93f9; }
+        .comment { color: #6272a4; }
+        .function { color: #50fa7b; }
+
+        .toggle-section {
+            margin-top: 12px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+        }
+
+        .toggle-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+            font-size: 0.8em;
+        }
+
+        .toggle-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .toggle-row label {
+            flex: 1;
+        }
+
+        .toggle-row.warning label {
+            color: #FF6B6B;
+        }
+
+        .pointer {
+            position: absolute;
+            font-size: 0.55em;
+            font-weight: bold;
+            top: -18px;
+        }
+        .pointer-left { color: #FF6B6B; }
+        .pointer-right { color: #4ECDC4; }
+
+        .deque-display {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 8px 0;
+        }
+        .deque-item {
+            padding: 6px 10px;
+            background: #DDA0DD;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        .deque-item:first-child { background: #4ECDC4; color: white; }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            margin: 8px 0;
+            font-size: 0.8em;
+        }
+        .speed-control input { width: 80px; }
+
+        .bug-warning {
+            background: #ffebee;
+            border: 2px solid #FF6B6B;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 0.85em;
+            color: #c62828;
+        }
+
+        .problem-desc {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 0.85em;
+        }
+
+        .problem-desc p {
+            margin: 0 0 8px 0;
+            color: #1565c0;
+        }
+
+        .example-box {
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            margin: 0;
+            white-space: pre-wrap;
+            color: #333;
+        }
+
+        .full-code-section {
+            margin-top: 12px;
+            border-top: 2px solid #eee;
+            padding-top: 12px;
+        }
+
+        .full-code-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .full-code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+            line-height: 1.4;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sliding Window Explorer</h1>
+        <div class="game-select">
+            <button class="game-btn btn-easy active" id="btn-fixed" onclick="loadGame('fixed')">Max Sum K</button>
+            <button class="game-btn btn-easy" id="btn-negatives" onclick="loadGame('negatives')">First Negative</button>
+            <button class="game-btn btn-medium" id="btn-variable" onclick="loadGame('variable')">Min Length Sum</button>
+            <button class="game-btn btn-medium" id="btn-unique" onclick="loadGame('unique')">Unique Chars</button>
+            <button class="game-btn btn-medium" id="btn-fruits" onclick="loadGame('fruits')">Fruits Basket</button>
+            <button class="game-btn btn-hard" id="btn-max" onclick="loadGame('max')">Window Max</button>
+            <button class="game-btn btn-hard" id="btn-anagram" onclick="loadGame('anagram')">Find Anagrams</button>
+        </div>
+
+        <div class="main-content">
+            <div class="game-area" id="gameArea"></div>
+            <div class="code-area" id="codeArea"></div>
+        </div>
+    </div>
+
+    <script>
+        var currentGame = 'fixed';
+        var step = 0;
+        var autoPlayInterval = null;
+        var speed = 700;
+
+        var toggles = {
+            fixed: { updateMax: true, slideOptimized: true },
+            negatives: { removeExpired: true, addNew: true },
+            variable: { expand: true, contract: true, updateMin: true },
+            unique: { checkDuplicate: true, updateMap: true, updateMax: true },
+            fruits: { addFruit: true, removeFruit: true, deleteEmpty: true },
+            max: { removeExpired: true, removeSmaller: true, addCurrent: true },
+            anagram: { addRight: true, removeLeft: true, checkMatch: true }
+        };
+
+        var customInputs = {
+            fixed: { array: [2, 1, 5, 1, 3, 2, 8, 1], k: 3 },
+            negatives: { array: [12, -1, -7, 8, -15, 30, 16, 28], k: 3 },
+            variable: { array: [2, 3, 1, 2, 4, 3], target: 7 },
+            unique: { array: ['a', 'b', 'c', 'a', 'b', 'c', 'b', 'b'] },
+            fruits: { array: [1, 2, 1, 2, 3, 3, 1], k: 2 },
+            max: { array: [1, 3, -1, -3, 5, 3, 6, 7], k: 3 },
+            anagram: { array: ['c','b','a','e','b','a','b','a','c','d'], pattern: ['a','b','c'] }
+        };
+
+        var games = {
+            fixed: {
+                title: 'Maximum Sum of K Elements',
+                type: 'fixed',
+                difficulty: 'Easy',
+                description: 'Find the maximum sum of any contiguous subarray of size k.',
+                example: 'Input: arr = [2, 1, 5, 1, 3, 2], k = 3\nOutput: 9\nExplanation: Subarray [5, 1, 3] has the maximum sum of 9.'
+            },
+            negatives: {
+                title: 'First Negative in Window',
+                type: 'negatives',
+                difficulty: 'Easy',
+                description: 'Find the first negative number in every window of size k. Return 0 if no negative exists.',
+                example: 'Input: arr = [12, -1, -7, 8, -15, 30], k = 3\nOutput: [-1, -1, -7, -15]\nExplanation: Windows: [12,-1,-7]→-1, [-1,-7,8]→-1, [-7,8,-15]→-7, [8,-15,30]→-15'
+            },
+            variable: {
+                title: 'Minimum Size Subarray Sum',
+                type: 'variable',
+                difficulty: 'Medium',
+                description: 'Find the minimum length of a contiguous subarray whose sum is greater than or equal to target.',
+                example: 'Input: arr = [2, 3, 1, 2, 4, 3], target = 7\nOutput: 2\nExplanation: Subarray [4, 3] has sum 7 with minimum length 2.'
+            },
+            unique: {
+                title: 'Longest Substring Without Repeating',
+                type: 'unique',
+                difficulty: 'Medium',
+                description: 'Find the length of the longest substring without repeating characters.',
+                example: 'Input: s = "abcabcbb"\nOutput: 3\nExplanation: "abc" is the longest substring without repeating characters.'
+            },
+            fruits: {
+                title: 'Fruits Into Baskets (K Types)',
+                type: 'fruits',
+                difficulty: 'Medium',
+                description: 'Find the longest contiguous subarray containing at most k distinct values (fruit types).',
+                example: 'Input: arr = [1, 2, 1, 2, 3, 3, 1], k = 2\nOutput: 4\nExplanation: [1, 2, 1, 2] has only 2 types with length 4.'
+            },
+            max: {
+                title: 'Sliding Window Maximum',
+                type: 'max',
+                difficulty: 'Hard',
+                description: 'Find the maximum element in each sliding window of size k.',
+                example: 'Input: arr = [1, 3, -1, -3, 5, 3, 6, 7], k = 3\nOutput: [3, 3, 5, 5, 6, 7]\nExplanation: Windows: [1,3,-1]→3, [3,-1,-3]→3, [-1,-3,5]→5, etc.'
+            },
+            anagram: {
+                title: 'Find All Anagrams',
+                type: 'anagram',
+                difficulty: 'Hard',
+                description: 'Find all start indices where an anagram of the pattern exists in the string.',
+                example: 'Input: s = "cbaebabacd", p = "abc"\nOutput: [0, 6]\nExplanation: "cba" at index 0 and "bac" at index 6 are anagrams of "abc".'
+            }
+        };
+
+        var fullCode = {
+            fixed: 'def max_sum_k(arr, k):\n    window = sum(arr[:k])\n    max_sum = window\n    \n    for i in range(k, len(arr)):\n        window = window - arr[i-k] + arr[i]\n        max_sum = max(max_sum, window)\n    \n    return max_sum',
+            negatives: 'def first_negative(arr, k):\n    negatives = []  # queue of indices\n    result = []\n    \n    for i in range(len(arr)):\n        if arr[i] < 0:\n            negatives.append(i)\n        \n        if negatives and negatives[0] <= i - k:\n            negatives.pop(0)\n        \n        if i >= k - 1:\n            result.append(arr[negatives[0]] if negatives else 0)\n    \n    return result',
+            variable: 'def min_subarray_sum(arr, target):\n    left = 0\n    window_sum = 0\n    min_len = float("inf")\n    \n    for right in range(len(arr)):\n        window_sum += arr[right]\n        \n        while window_sum >= target:\n            min_len = min(min_len, right - left + 1)\n            window_sum -= arr[left]\n            left += 1\n    \n    return min_len if min_len != float("inf") else 0',
+            unique: 'def longest_unique(s):\n    char_index = {}\n    left = 0\n    max_len = 0\n    \n    for right in range(len(s)):\n        if s[right] in char_index and char_index[s[right]] >= left:\n            left = char_index[s[right]] + 1\n        \n        char_index[s[right]] = right\n        max_len = max(max_len, right - left + 1)\n    \n    return max_len',
+            fruits: 'def fruits_basket(arr, k):\n    fruit_count = {}\n    left = 0\n    max_len = 0\n    \n    for right in range(len(arr)):\n        fruit_count[arr[right]] = fruit_count.get(arr[right], 0) + 1\n        \n        while len(fruit_count) > k:\n            fruit_count[arr[left]] -= 1\n            if fruit_count[arr[left]] == 0:\n                del fruit_count[arr[left]]\n            left += 1\n        \n        max_len = max(max_len, right - left + 1)\n    \n    return max_len',
+            max: 'from collections import deque\n\ndef sliding_max(arr, k):\n    dq = deque()  # stores indices\n    result = []\n    \n    for i in range(len(arr)):\n        while dq and dq[0] <= i - k:\n            dq.popleft()\n        \n        while dq and arr[dq[-1]] < arr[i]:\n            dq.pop()\n        \n        dq.append(i)\n        \n        if i >= k - 1:\n            result.append(arr[dq[0]])\n    \n    return result',
+            anagram: 'def find_anagrams(s, p):\n    from collections import Counter\n    pattern_count = Counter(p)\n    window_count = Counter()\n    result = []\n    k = len(p)\n    \n    for i in range(len(s)):\n        window_count[s[i]] += 1\n        \n        if i >= k:\n            if window_count[s[i-k]] == 1:\n                del window_count[s[i-k]]\n            else:\n                window_count[s[i-k]] -= 1\n        \n        if i >= k - 1 and window_count == pattern_count:\n            result.append(i - k + 1)\n    \n    return result'
+        };
+
+        function loadGame(gameType) {
+            currentGame = gameType;
+            step = 0;
+            stopAutoPlay();
+
+            var btns = document.querySelectorAll('.game-btn');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.remove('active');
+            }
+            document.getElementById('btn-' + gameType).classList.add('active');
+
+            renderGame();
+            renderCode();
+        }
+
+        function applyInputs() {
+            var arrayInput = document.getElementById('arrayInput');
+            var paramInput = document.getElementById('paramInput');
+            var param2Input = document.getElementById('param2Input');
+
+            if (arrayInput) {
+                var val = arrayInput.value.trim();
+                if (currentGame === 'unique' || currentGame === 'anagram') {
+                    customInputs[currentGame].array = val.split(',').map(function(s) { return s.trim(); });
+                } else {
+                    customInputs[currentGame].array = val.split(',').map(function(s) { return parseInt(s.trim()); });
+                }
+            }
+
+            if (paramInput) {
+                var paramVal = parseInt(paramInput.value);
+                if (currentGame === 'variable') {
+                    customInputs[currentGame].target = paramVal;
+                } else {
+                    customInputs[currentGame].k = paramVal;
+                }
+            }
+
+            if (param2Input) {
+                customInputs[currentGame].pattern = param2Input.value.split(',').map(function(s) { return s.trim(); });
+            }
+
+            step = 0;
+            renderGame();
+            renderCode();
+        }
+
+        function toggleOption(game, option) {
+            toggles[game][option] = !toggles[game][option];
+            step = 0;
+            renderGame();
+            renderCode();
+        }
+
+        function renderGame() {
+            var game = games[currentGame];
+            var input = customInputs[currentGame];
+
+            var diffClass = game.difficulty === 'Easy' ? 'diff-easy' : (game.difficulty === 'Medium' ? 'diff-medium' : 'diff-hard');
+            var html = '<div class="section-title">' + game.title + '<span class="difficulty-badge ' + diffClass + '">' + game.difficulty + '</span></div>';
+
+            // Problem description
+            html += '<div class="problem-desc">';
+            html += '<p>' + game.description + '</p>';
+            html += '<pre class="example-box">' + game.example + '</pre>';
+            html += '</div>';
+
+            // Input section
+            html += '<div class="input-section">';
+            html += '<div class="input-row">';
+            html += '<label>Array:</label>';
+            html += '<input type="text" id="arrayInput" value="' + input.array.join(', ') + '" onfocus="stopAutoPlay()">';
+            html += '</div>';
+
+            if (currentGame === 'fixed' || currentGame === 'negatives' || currentGame === 'max') {
+                html += '<div class="input-row">';
+                html += '<label>k:</label>';
+                html += '<input type="number" id="paramInput" value="' + input.k + '" style="width:60px" onfocus="stopAutoPlay()">';
+                html += '<button class="apply-btn" onclick="applyInputs()">Apply</button>';
+                html += '</div>';
+            } else if (currentGame === 'variable') {
+                html += '<div class="input-row">';
+                html += '<label>Target:</label>';
+                html += '<input type="number" id="paramInput" value="' + input.target + '" style="width:60px" onfocus="stopAutoPlay()">';
+                html += '<button class="apply-btn" onclick="applyInputs()">Apply</button>';
+                html += '</div>';
+            } else if (currentGame === 'fruits') {
+                html += '<div class="input-row">';
+                html += '<label>Types:</label>';
+                html += '<input type="number" id="paramInput" value="' + input.k + '" style="width:60px" onfocus="stopAutoPlay()">';
+                html += '<button class="apply-btn" onclick="applyInputs()">Apply</button>';
+                html += '</div>';
+            } else if (currentGame === 'anagram') {
+                html += '<div class="input-row">';
+                html += '<label>Pattern:</label>';
+                html += '<input type="text" id="param2Input" value="' + input.pattern.join(', ') + '" style="width:100px" onfocus="stopAutoPlay()">';
+                html += '<button class="apply-btn" onclick="applyInputs()">Apply</button>';
+                html += '</div>';
+            } else {
+                html += '<div class="input-row">';
+                html += '<button class="apply-btn" onclick="applyInputs()">Apply</button>';
+                html += '</div>';
+            }
+            html += '</div>';
+
+            // Check for disabled toggles warning
+            var hasDisabled = false;
+            var t = toggles[currentGame];
+            for (var key in t) {
+                if (!t[key]) hasDisabled = true;
+            }
+            if (hasDisabled) {
+                html += '<div class="bug-warning">Warning: Some code is disabled! Results may be incorrect.</div>';
+            }
+
+            if (game.type === 'fixed') {
+                html += renderFixedGame(input);
+            } else if (game.type === 'negatives') {
+                html += renderNegativesGame(input);
+            } else if (game.type === 'variable') {
+                html += renderVariableGame(input);
+            } else if (game.type === 'unique') {
+                html += renderUniqueGame(input);
+            } else if (game.type === 'fruits') {
+                html += renderFruitsGame(input);
+            } else if (game.type === 'max') {
+                html += renderMaxGame(input);
+            } else if (game.type === 'anagram') {
+                html += renderAnagramGame(input);
+            }
+
+            html += renderControls();
+            document.getElementById('gameArea').innerHTML = html;
+        }
+
+        function renderFixedGame(input) {
+            var array = input.array;
+            var k = input.k;
+            var n = array.length;
+            var maxSteps = n - k;
+            var t = toggles.fixed;
+
+            var maxSum = 0;
+            for (var i = 0; i < k; i++) maxSum += array[i];
+            var maxStart = 0;
+            var currentSum = maxSum;
+
+            for (var i = 1; i <= Math.min(step, maxSteps); i++) {
+                if (t.slideOptimized) {
+                    currentSum = currentSum - array[i - 1] + array[i + k - 1];
+                } else {
+                    currentSum = 0;
+                    for (var j = i; j < i + k; j++) currentSum += array[j];
+                }
+                if (t.updateMax && currentSum > maxSum) {
+                    maxSum = currentSum;
+                    maxStart = i;
+                }
+            }
+
+            var currentStart = Math.min(step, maxSteps);
+            var currentEnd = currentStart + k - 1;
+
+            var displaySum = 0;
+            for (var i = currentStart; i <= currentEnd; i++) {
+                displaySum += array[i];
+            }
+
+            var html = '<div class="array-container">';
+            for (var i = 0; i < n; i++) {
+                var cls = 'array-item';
+                if (i >= maxStart && i < maxStart + k) cls += ' best';
+                else if (i >= currentStart && i <= currentEnd) cls += ' inside';
+                else cls += ' outside';
+                html += '<div class="' + cls + '">' + array[i] + '<span class="index">' + i + '</span></div>';
+            }
+            html += '</div>';
+
+            html += '<div class="info-panel">' +
+                '<div class="info-row"><span class="info-label">Window [' + currentStart + ':' + currentEnd + ']</span><span class="info-value">Sum: ' + displaySum + '</span></div>' +
+                '<div class="info-row"><span class="info-label">Best [' + maxStart + ':' + (maxStart+k-1) + ']</span><span class="info-value highlight">Max: ' + maxSum + '</span></div>' +
+                '</div>';
+
+            return html;
+        }
+
+        function renderNegativesGame(input) {
+            var array = input.array;
+            var k = input.k;
+            var n = array.length;
+            var t = toggles.negatives;
+
+            var negatives = [];
+            var result = [];
+            var steps = [];
+
+            for (var i = 0; i < n; i++) {
+                if (t.addNew && array[i] < 0) {
+                    negatives.push(i);
+                }
+
+                if (t.removeExpired && negatives.length > 0 && negatives[0] <= i - k) {
+                    negatives.shift();
+                }
+
+                if (i >= k - 1) {
+                    result.push(negatives.length > 0 ? array[negatives[0]] : 0);
+                }
+
+                steps.push({
+                    negatives: negatives.slice(),
+                    result: result.slice(),
+                    ws: Math.max(0, i - k + 1),
+                    we: i
+                });
+            }
+
+            var state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            var html = '<div class="array-container">';
+            for (var i = 0; i < n; i++) {
+                var cls = 'array-item';
+                if (state.negatives.length > 0 && state.negatives[0] === i) cls += ' current-max';
+                else if (i >= state.ws && i <= state.we) cls += ' inside';
+                else cls += ' outside';
+                html += '<div class="' + cls + '">' + array[i] + '<span class="index">' + i + '</span></div>';
+            }
+            html += '</div>';
+
+            html += '<div class="info-panel">' +
+                '<div class="info-row"><span class="info-label">First Negative:</span><span class="info-value highlight">' + (state.negatives.length > 0 ? array[state.negatives[0]] : 0) + '</span></div>' +
+                '<div class="info-row"><span class="info-label">Results:</span><span class="info-value">[' + state.result.join(', ') + ']</span></div>' +
+                '</div>';
+
+            return html;
+        }
+
+        function renderVariableGame(input) {
+            var array = input.array;
+            var target = input.target;
+            var t = toggles.variable;
+            var left = 0, windowSum = 0, minLen = 999999;
+            var bestWindow = null;
+            var steps = [];
+
+            for (var right = 0; right < array.length; right++) {
+                if (t.expand) windowSum += array[right];
+                steps.push({ type: 'expand', left: left, right: right, sum: windowSum, minLen: minLen, best: bestWindow ? [bestWindow[0], bestWindow[1]] : null });
+
+                while (windowSum >= target && t.contract) {
+                    if (t.updateMin && right - left + 1 < minLen) {
+                        minLen = right - left + 1;
+                        bestWindow = [left, right];
+                    }
+                    steps.push({ type: 'contract', left: left, right: right, sum: windowSum, minLen: minLen, best: bestWindow ? [bestWindow[0], bestWindow[1]] : null });
+                    windowSum -= array[left];
+                    left++;
+                }
+            }
+
+            var state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            var html = '<div class="array-container">';
+            for (var i = 0; i < array.length; i++) {
+                var cls = 'array-item';
+                if (state.best && i >= state.best[0] && i <= state.best[1]) cls += ' best';
+                else if (i >= state.left && i <= state.right) cls += ' inside';
+                else cls += ' outside';
+
+                var pointerHtml = '';
+                if (i === state.left) pointerHtml += '<span class="pointer pointer-left">L</span>';
+                if (i === state.right) pointerHtml += '<span class="pointer pointer-right">R</span>';
+
+                html += '<div class="' + cls + '">' + array[i] + '<span class="index">' + i + '</span>' + pointerHtml + '</div>';
+            }
+            html += '</div>';
+
+            html += '<div class="info-panel">' +
+                '<div class="info-row"><span class="info-label">Target >= ' + target + '</span><span class="info-value">Sum: ' + state.sum + '</span></div>' +
+                '<div class="info-row"><span class="info-label">Action: ' + state.type + '</span><span class="info-value highlight">Min: ' + (state.minLen === 999999 ? '?' : state.minLen) + '</span></div>' +
+                '</div>';
+
+            return html;
+        }
+
+        function renderUniqueGame(input) {
+            var array = input.array;
+            var t = toggles.unique;
+            var charIndex = {};
+            var left = 0, maxLen = 0;
+            var bestWindow = [0, 0];
+            var steps = [];
+
+            for (var right = 0; right < array.length; right++) {
+                var char = array[right];
+                if (t.checkDuplicate && charIndex[char] !== undefined && charIndex[char] >= left) {
+                    left = charIndex[char] + 1;
+                }
+                if (t.updateMap) charIndex[char] = right;
+                if (t.updateMax && right - left + 1 > maxLen) {
+                    maxLen = right - left + 1;
+                    bestWindow = [left, right];
+                }
+                steps.push({ left: left, right: right, maxLen: maxLen, best: [bestWindow[0], bestWindow[1]] });
+            }
+
+            var state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            var html = '<div class="array-container">';
+            for (var i = 0; i < array.length; i++) {
+                var cls = 'array-item';
+                if (i >= state.best[0] && i <= state.best[1]) cls += ' best';
+                else if (i >= state.left && i <= state.right) cls += ' inside';
+                else cls += ' outside';
+                html += '<div class="' + cls + '">' + array[i] + '<span class="index">' + i + '</span></div>';
+            }
+            html += '</div>';
+
+            var currentStr = array.slice(state.left, state.right + 1).join('');
+            var bestStr = array.slice(state.best[0], state.best[1] + 1).join('');
+
+            html += '<div class="info-panel">' +
+                '<div class="info-row"><span class="info-label">Current: ' + currentStr + '</span><span class="info-value">Len: ' + (state.right - state.left + 1) + '</span></div>' +
+                '<div class="info-row"><span class="info-label">Best: ' + bestStr + '</span><span class="info-value highlight">Max: ' + state.maxLen + '</span></div>' +
+                '</div>';
+
+            return html;
+        }
+
+        function renderFruitsGame(input) {
+            var array = input.array;
+            var k = input.k;
+            var t = toggles.fruits;
+            var fruitCount = {};
+            var left = 0, maxLen = 0;
+            var bestWindow = [0, 0];
+            var steps = [];
+
+            for (var right = 0; right < array.length; right++) {
+                var fruit = array[right];
+                if (t.addFruit) {
+                    fruitCount[fruit] = (fruitCount[fruit] || 0) + 1;
+                }
+
+                while (Object.keys(fruitCount).length > k) {
+                    if (t.removeFruit) {
+                        fruitCount[array[left]]--;
+                        if (t.deleteEmpty && fruitCount[array[left]] === 0) {
+                            delete fruitCount[array[left]];
+                        }
+                    }
+                    left++;
+                }
+
+                if (right - left + 1 > maxLen) {
+                    maxLen = right - left + 1;
+                    bestWindow = [left, right];
+                }
+
+                steps.push({
+                    left: left,
+                    right: right,
+                    types: Object.keys(fruitCount).length,
+                    maxLen: maxLen,
+                    best: [bestWindow[0], bestWindow[1]]
+                });
+            }
+
+            var state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            var html = '<div class="array-container">';
+            for (var i = 0; i < array.length; i++) {
+                var cls = 'array-item';
+                if (i >= state.best[0] && i <= state.best[1]) cls += ' best';
+                else if (i >= state.left && i <= state.right) cls += ' inside';
+                else cls += ' outside';
+
+                var pointerHtml = '';
+                if (i === state.left) pointerHtml += '<span class="pointer pointer-left">L</span>';
+                if (i === state.right) pointerHtml += '<span class="pointer pointer-right">R</span>';
+
+                html += '<div class="' + cls + '">' + array[i] + '<span class="index">' + i + '</span>' + pointerHtml + '</div>';
+            }
+            html += '</div>';
+
+            html += '<div class="info-panel">' +
+                '<div class="info-row"><span class="info-label">Max Types: ' + k + '</span><span class="info-value">Current: ' + state.types + '</span></div>' +
+                '<div class="info-row"><span class="info-label">Best Length:</span><span class="info-value highlight">' + state.maxLen + '</span></div>' +
+                '</div>';
+
+            return html;
+        }
+
+        function renderMaxGame(input) {
+            var array = input.array;
+            var k = input.k;
+            var t = toggles.max;
+            var deque = [];
+            var result = [];
+            var steps = [];
+
+            for (var i = 0; i < array.length; i++) {
+                if (t.removeExpired) {
+                    while (deque.length && deque[0] <= i - k) deque.shift();
+                }
+                if (t.removeSmaller) {
+                    while (deque.length && array[deque[deque.length - 1]] < array[i]) deque.pop();
+                }
+                if (t.addCurrent) {
+                    deque.push(i);
+                }
+                if (i >= k - 1 && deque.length > 0) {
+                    result.push(array[deque[0]]);
+                }
+                steps.push({
+                    deque: deque.slice(),
+                    result: result.slice(),
+                    ws: Math.max(0, i - k + 1),
+                    we: i
+                });
+            }
+
+            var state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            var html = '<div class="array-container">';
+            for (var i = 0; i < array.length; i++) {
+                var cls = 'array-item';
+                if (state.deque.length > 0 && state.deque[0] === i) cls += ' current-max';
+                else if (i >= state.ws && i <= state.we) cls += ' inside';
+                else cls += ' outside';
+                html += '<div class="' + cls + '">' + array[i] + '<span class="index">' + i + '</span></div>';
+            }
+            html += '</div>';
+
+            html += '<div style="text-align:center;font-size:0.8em;margin:5px 0;">Deque:</div><div class="deque-display">';
+            for (var j = 0; j < state.deque.length; j++) {
+                html += '<div class="deque-item">' + array[state.deque[j]] + '</div>';
+            }
+            if (state.deque.length === 0) html += '<span style="color:#999;font-size:0.8em;">empty</span>';
+            html += '</div>';
+
+            html += '<div class="info-panel">' +
+                '<div class="info-row"><span class="info-label">Window Max:</span><span class="info-value highlight">' + (state.deque.length > 0 ? array[state.deque[0]] : '?') + '</span></div>' +
+                '<div class="info-row"><span class="info-label">Results:</span><span class="info-value">[' + state.result.join(', ') + ']</span></div>' +
+                '</div>';
+
+            return html;
+        }
+
+        function renderAnagramGame(input) {
+            var array = input.array;
+            var pattern = input.pattern;
+            var t = toggles.anagram;
+            var k = pattern.length;
+
+            var patternCount = {};
+            for (var i = 0; i < pattern.length; i++) {
+                patternCount[pattern[i]] = (patternCount[pattern[i]] || 0) + 1;
+            }
+
+            var windowCount = {};
+            var result = [];
+            var steps = [];
+
+            for (var i = 0; i < array.length; i++) {
+                if (t.addRight) {
+                    windowCount[array[i]] = (windowCount[array[i]] || 0) + 1;
+                }
+
+                if (i >= k && t.removeLeft) {
+                    var leftChar = array[i - k];
+                    windowCount[leftChar]--;
+                    if (windowCount[leftChar] === 0) delete windowCount[leftChar];
+                }
+
+                if (i >= k - 1 && t.checkMatch) {
+                    var isMatch = true;
+                    for (var key in patternCount) {
+                        if (windowCount[key] !== patternCount[key]) isMatch = false;
+                    }
+                    for (var key in windowCount) {
+                        if (patternCount[key] !== windowCount[key]) isMatch = false;
+                    }
+                    if (isMatch) result.push(i - k + 1);
+                }
+
+                steps.push({
+                    ws: Math.max(0, i - k + 1),
+                    we: i,
+                    result: result.slice(),
+                    isMatch: result.indexOf(i - k + 1) !== -1
+                });
+            }
+
+            var state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            var html = '<div class="array-container">';
+            for (var i = 0; i < array.length; i++) {
+                var cls = 'array-item';
+                var inResult = false;
+                for (var r = 0; r < state.result.length; r++) {
+                    if (i >= state.result[r] && i < state.result[r] + k) inResult = true;
+                }
+                if (inResult) cls += ' best';
+                else if (i >= state.ws && i <= state.we) cls += ' inside';
+                else cls += ' outside';
+                html += '<div class="' + cls + '">' + array[i] + '<span class="index">' + i + '</span></div>';
+            }
+            html += '</div>';
+
+            html += '<div class="info-panel">' +
+                '<div class="info-row"><span class="info-label">Pattern: ' + pattern.join('') + '</span><span class="info-value">Len: ' + k + '</span></div>' +
+                '<div class="info-row"><span class="info-label">Anagram indices:</span><span class="info-value highlight">[' + state.result.join(', ') + ']</span></div>' +
+                '</div>';
+
+            return html;
+        }
+
+        function renderControls() {
+            return '<div class="controls">' +
+                '<button class="control-btn btn-prev" onclick="prevStep()">Back</button>' +
+                '<button class="control-btn btn-reset" onclick="resetGame()">Reset</button>' +
+                '<button class="control-btn btn-next" onclick="nextStep()">Next</button>' +
+                '<button class="control-btn btn-auto" onclick="toggleAutoPlay()" id="autoBtn">Auto</button>' +
+                '</div>' +
+                '<div class="speed-control">' +
+                '<span>Speed:</span>' +
+                '<input type="range" min="200" max="1200" value="' + speed + '" onchange="updateSpeed(this.value)">' +
+                '<span id="speedLabel">' + speed + 'ms</span>' +
+                '</div>';
+        }
+
+        function renderCode() {
+            var html = '<div class="section-title">Pseudocode & Toggles</div>';
+
+            if (currentGame === 'fixed') {
+                html += renderFixedCode();
+            } else if (currentGame === 'negatives') {
+                html += renderNegativesCode();
+            } else if (currentGame === 'variable') {
+                html += renderVariableCode();
+            } else if (currentGame === 'unique') {
+                html += renderUniqueCode();
+            } else if (currentGame === 'fruits') {
+                html += renderFruitsCode();
+            } else if (currentGame === 'max') {
+                html += renderMaxCode();
+            } else if (currentGame === 'anagram') {
+                html += renderAnagramCode();
+            }
+
+            // Add full code section
+            html += '<div class="full-code-section">';
+            html += '<div class="full-code-title">Full Python Code:</div>';
+            html += '<pre class="full-code">' + fullCode[currentGame] + '</pre>';
+            html += '</div>';
+
+            document.getElementById('codeArea').innerHTML = html;
+        }
+
+        function renderFixedCode() {
+            var t = toggles.fixed;
+            return '<div class="pseudocode">' +
+                '<span class="code-line"><span class="comment">// O(n) Fixed Window</span></span>' +
+                '<span class="code-line">window_sum = <span class="function">sum</span>(arr[<span class="number">0</span>:k])</span>' +
+                '<span class="code-line">max_sum = window_sum</span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">for</span> i <span class="keyword">from</span> k <span class="keyword">to</span> n-1:</span>' +
+                '<span class="code-line' + (t.slideOptimized ? '' : ' disabled') + '">  window_sum = window_sum - arr[i-k] + arr[i]</span>' +
+                '<span class="code-line' + (t.updateMax ? '' : ' disabled') + '">  max_sum = <span class="function">max</span>(max_sum, window_sum)</span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">return</span> max_sum</span>' +
+                '</div>' +
+                '<div class="toggle-section">' +
+                '<div class="toggle-title">Toggle Code Lines:</div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.slideOptimized ? 'checked' : '') + ' onchange="toggleOption(\'fixed\', \'slideOptimized\')"><label>Slide optimized (subtract+add)</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.updateMax ? 'checked' : '') + ' onchange="toggleOption(\'fixed\', \'updateMax\')"><label>Update max_sum</label></div>' +
+                '</div>';
+        }
+
+        function renderNegativesCode() {
+            var t = toggles.negatives;
+            return '<div class="pseudocode">' +
+                '<span class="code-line"><span class="comment">// First negative in each window</span></span>' +
+                '<span class="code-line">negatives = []  <span class="comment">// queue of indices</span></span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">for</span> i <span class="keyword">from</span> <span class="number">0</span> <span class="keyword">to</span> n-1:</span>' +
+                '<span class="code-line' + (t.addNew ? '' : ' disabled') + '">  <span class="keyword">if</span> arr[i] < <span class="number">0</span>: negatives.push(i)</span>' +
+                '<span class="code-line' + (t.removeExpired ? '' : ' disabled') + '">  <span class="keyword">if</span> negatives[<span class="number">0</span>] <= i-k: pop_front()</span>' +
+                '<span class="code-line">  <span class="keyword">if</span> i >= k-<span class="number">1</span>:</span>' +
+                '<span class="code-line">    result.push(negatives[<span class="number">0</span>] or <span class="number">0</span>)</span>' +
+                '</div>' +
+                '<div class="toggle-section">' +
+                '<div class="toggle-title">Toggle Code Lines:</div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.addNew ? 'checked' : '') + ' onchange="toggleOption(\'negatives\', \'addNew\')"><label>Add negative to queue</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.removeExpired ? 'checked' : '') + ' onchange="toggleOption(\'negatives\', \'removeExpired\')"><label>Remove expired from front</label></div>' +
+                '</div>';
+        }
+
+        function renderVariableCode() {
+            var t = toggles.variable;
+            return '<div class="pseudocode">' +
+                '<span class="code-line"><span class="comment">// O(n) Variable Window</span></span>' +
+                '<span class="code-line">left = <span class="number">0</span>, min_len = <span class="number">INF</span></span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">for</span> right <span class="keyword">from</span> <span class="number">0</span> <span class="keyword">to</span> n-1:</span>' +
+                '<span class="code-line' + (t.expand ? '' : ' disabled') + '">  window_sum += arr[right]  <span class="comment">// expand</span></span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line' + (t.contract ? '' : ' disabled') + '">  <span class="keyword">while</span> window_sum >= target:</span>' +
+                '<span class="code-line' + (t.updateMin ? '' : ' disabled') + '">    min_len = <span class="function">min</span>(min_len, right-left+1)</span>' +
+                '<span class="code-line' + (t.contract ? '' : ' disabled') + '">    window_sum -= arr[left++]  <span class="comment">// contract</span></span>' +
+                '</div>' +
+                '<div class="toggle-section">' +
+                '<div class="toggle-title">Toggle Code Lines:</div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.expand ? 'checked' : '') + ' onchange="toggleOption(\'variable\', \'expand\')"><label>Expand: add arr[right]</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.contract ? 'checked' : '') + ' onchange="toggleOption(\'variable\', \'contract\')"><label>Contract while loop</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.updateMin ? 'checked' : '') + ' onchange="toggleOption(\'variable\', \'updateMin\')"><label>Update min_len</label></div>' +
+                '</div>';
+        }
+
+        function renderUniqueCode() {
+            var t = toggles.unique;
+            return '<div class="pseudocode">' +
+                '<span class="code-line"><span class="comment">// O(n) HashMap + Window</span></span>' +
+                '<span class="code-line">char_index = {}, left = <span class="number">0</span></span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">for</span> right <span class="keyword">from</span> <span class="number">0</span> <span class="keyword">to</span> n-1:</span>' +
+                '<span class="code-line' + (t.checkDuplicate ? '' : ' disabled') + '">  <span class="keyword">if</span> s[right] <span class="keyword">in</span> map <span class="keyword">and</span> >= left:</span>' +
+                '<span class="code-line' + (t.checkDuplicate ? '' : ' disabled') + '">    left = map[s[right]] + <span class="number">1</span></span>' +
+                '<span class="code-line' + (t.updateMap ? '' : ' disabled') + '">  char_index[s[right]] = right</span>' +
+                '<span class="code-line' + (t.updateMax ? '' : ' disabled') + '">  max_len = <span class="function">max</span>(max_len, right-left+1)</span>' +
+                '</div>' +
+                '<div class="toggle-section">' +
+                '<div class="toggle-title">Toggle Code Lines:</div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.checkDuplicate ? 'checked' : '') + ' onchange="toggleOption(\'unique\', \'checkDuplicate\')"><label>Check duplicate & move left</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.updateMap ? 'checked' : '') + ' onchange="toggleOption(\'unique\', \'updateMap\')"><label>Update char_index map</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.updateMax ? 'checked' : '') + ' onchange="toggleOption(\'unique\', \'updateMax\')"><label>Update max_len</label></div>' +
+                '</div>';
+        }
+
+        function renderFruitsCode() {
+            var t = toggles.fruits;
+            return '<div class="pseudocode">' +
+                '<span class="code-line"><span class="comment">// At most K distinct types</span></span>' +
+                '<span class="code-line">fruit_count = {}, left = <span class="number">0</span></span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">for</span> right <span class="keyword">from</span> <span class="number">0</span> <span class="keyword">to</span> n-1:</span>' +
+                '<span class="code-line' + (t.addFruit ? '' : ' disabled') + '">  fruit_count[arr[right]]++</span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line">  <span class="keyword">while</span> types > k:</span>' +
+                '<span class="code-line' + (t.removeFruit ? '' : ' disabled') + '">    fruit_count[arr[left]]--</span>' +
+                '<span class="code-line' + (t.deleteEmpty ? '' : ' disabled') + '">    <span class="keyword">if</span> count == <span class="number">0</span>: <span class="keyword">delete</span></span>' +
+                '<span class="code-line">    left++</span>' +
+                '<span class="code-line">  max_len = <span class="function">max</span>(max_len, right-left+1)</span>' +
+                '</div>' +
+                '<div class="toggle-section">' +
+                '<div class="toggle-title">Toggle Code Lines:</div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.addFruit ? 'checked' : '') + ' onchange="toggleOption(\'fruits\', \'addFruit\')"><label>Add fruit to count</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.removeFruit ? 'checked' : '') + ' onchange="toggleOption(\'fruits\', \'removeFruit\')"><label>Decrement left fruit count</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.deleteEmpty ? 'checked' : '') + ' onchange="toggleOption(\'fruits\', \'deleteEmpty\')"><label>Delete when count = 0</label></div>' +
+                '</div>';
+        }
+
+        function renderMaxCode() {
+            var t = toggles.max;
+            return '<div class="pseudocode">' +
+                '<span class="code-line"><span class="comment">// O(n) Monotonic Deque</span></span>' +
+                '<span class="code-line">deque = []  <span class="comment">// stores indices</span></span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">for</span> i <span class="keyword">from</span> <span class="number">0</span> <span class="keyword">to</span> n-1:</span>' +
+                '<span class="code-line' + (t.removeExpired ? '' : ' disabled') + '">  <span class="keyword">while</span> deque[<span class="number">0</span>] <= i-k: pop_front()</span>' +
+                '<span class="code-line' + (t.removeSmaller ? '' : ' disabled') + '">  <span class="keyword">while</span> arr[deque[-<span class="number">1</span>]] < arr[i]: pop_back()</span>' +
+                '<span class="code-line' + (t.addCurrent ? '' : ' disabled') + '">  deque.append(i)</span>' +
+                '<span class="code-line">  <span class="keyword">if</span> i >= k-<span class="number">1</span>:</span>' +
+                '<span class="code-line">    result.push(arr[deque[<span class="number">0</span>]])</span>' +
+                '</div>' +
+                '<div class="toggle-section">' +
+                '<div class="toggle-title">Toggle Code Lines:</div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.removeExpired ? 'checked' : '') + ' onchange="toggleOption(\'max\', \'removeExpired\')"><label>Remove expired from front</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.removeSmaller ? 'checked' : '') + ' onchange="toggleOption(\'max\', \'removeSmaller\')"><label>Remove smaller from back</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.addCurrent ? 'checked' : '') + ' onchange="toggleOption(\'max\', \'addCurrent\')"><label>Add current index</label></div>' +
+                '</div>';
+        }
+
+        function renderAnagramCode() {
+            var t = toggles.anagram;
+            return '<div class="pseudocode">' +
+                '<span class="code-line"><span class="comment">// Find all anagram indices</span></span>' +
+                '<span class="code-line">pattern_count = count(pattern)</span>' +
+                '<span class="code-line">window_count = {}</span>' +
+                '<span class="code-line"></span>' +
+                '<span class="code-line"><span class="keyword">for</span> i <span class="keyword">from</span> <span class="number">0</span> <span class="keyword">to</span> n-1:</span>' +
+                '<span class="code-line' + (t.addRight ? '' : ' disabled') + '">  window_count[s[i]]++</span>' +
+                '<span class="code-line' + (t.removeLeft ? '' : ' disabled') + '">  <span class="keyword">if</span> i >= k: window_count[s[i-k]]--</span>' +
+                '<span class="code-line' + (t.checkMatch ? '' : ' disabled') + '">  <span class="keyword">if</span> window_count == pattern_count:</span>' +
+                '<span class="code-line' + (t.checkMatch ? '' : ' disabled') + '">    result.push(i - k + <span class="number">1</span>)</span>' +
+                '</div>' +
+                '<div class="toggle-section">' +
+                '<div class="toggle-title">Toggle Code Lines:</div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.addRight ? 'checked' : '') + ' onchange="toggleOption(\'anagram\', \'addRight\')"><label>Add right char to count</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.removeLeft ? 'checked' : '') + ' onchange="toggleOption(\'anagram\', \'removeLeft\')"><label>Remove left char from count</label></div>' +
+                '<div class="toggle-row"><input type="checkbox" ' + (t.checkMatch ? 'checked' : '') + ' onchange="toggleOption(\'anagram\', \'checkMatch\')"><label>Check if anagram match</label></div>' +
+                '</div>';
+        }
+
+        function nextStep() { step++; renderGame(); }
+        function prevStep() { if (step > 0) { step--; renderGame(); } }
+        function resetGame() { step = 0; stopAutoPlay(); renderGame(); }
+        function toggleAutoPlay() { autoPlayInterval ? stopAutoPlay() : startAutoPlay(); }
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(function() { nextStep(); }, speed);
+            document.getElementById('autoBtn').textContent = 'Pause';
+        }
+        function stopAutoPlay() {
+            if (autoPlayInterval) { clearInterval(autoPlayInterval); autoPlayInterval = null; }
+            var btn = document.getElementById('autoBtn');
+            if (btn) btn.textContent = 'Auto';
+        }
+        function updateSpeed(value) {
+            speed = parseInt(value);
+            document.getElementById('speedLabel').textContent = speed + 'ms';
+            if (autoPlayInterval) { stopAutoPlay(); startAutoPlay(); }
+        }
+
+        loadGame('fixed');
+    </script>
+</body>
+</html>

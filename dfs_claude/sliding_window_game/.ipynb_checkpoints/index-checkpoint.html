@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window Adventure</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 3px 3px 0 #333;
+            margin-bottom: 20px;
+        }
+        .game-select {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .game-btn {
+            padding: 12px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+        }
+        .game-btn:hover { transform: translateY(-2px); }
+        .game-btn.active { transform: scale(1.1); }
+        .btn-fixed { background: #FF6B6B; color: white; }
+        .btn-variable { background: #4ECDC4; color: white; }
+        .btn-unique { background: #FFE66D; color: #333; }
+        .btn-max { background: #95E1D3; color: #333; }
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .game-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .game-description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        .array-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .array-item {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .array-item.outside { background: #E8E8E8; color: #999; }
+        .array-item.inside {
+            background: #FFE66D;
+            color: #333;
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(255, 230, 109, 0.5);
+        }
+        .array-item.best {
+            background: #4ECDC4;
+            color: white;
+            transform: scale(1.15);
+        }
+        .array-item.current-max { background: #FF6B6B; color: white; }
+        .array-item .index {
+            position: absolute;
+            bottom: -20px;
+            font-size: 0.6em;
+            color: #999;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+        }
+        .btn-prev { background: #95E1D3; color: #333; }
+        .btn-next { background: #FF6B6B; color: white; }
+        .btn-reset { background: #DDD; color: #333; }
+        .btn-auto { background: #667eea; color: white; }
+        .info-panel {
+            background: #F8F9FA;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+        .info-label { color: #666; }
+        .info-value { font-weight: bold; color: #333; }
+        .info-value.highlight { color: #FF6B6B; font-size: 1.2em; }
+        .explanation {
+            background: #FFF3CD;
+            border-left: 4px solid #FFE66D;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+            line-height: 1.5;
+        }
+        .result-display {
+            text-align: center;
+            font-size: 1.3em;
+            padding: 15px;
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            color: white;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .pointer {
+            position: absolute;
+            font-size: 0.7em;
+            font-weight: bold;
+            top: -25px;
+        }
+        .pointer-left { color: #FF6B6B; }
+        .pointer-right { color: #4ECDC4; }
+        .deque-display {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+        .deque-item {
+            padding: 10px 15px;
+            background: #DDA0DD;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .deque-item:first-child { background: #4ECDC4; color: white; }
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .speed-control input { width: 150px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🪟 Sliding Window Adventure</h1>
+        <div class="game-select">
+            <button class="game-btn btn-fixed active" onclick="loadGame('fixed')">🎯 Fixed Window</button>
+            <button class="game-btn btn-variable" onclick="loadGame('variable')">🔄 Variable Window</button>
+            <button class="game-btn btn-unique" onclick="loadGame('unique')">✨ Unique Chars</button>
+            <button class="game-btn btn-max" onclick="loadGame('max')">👑 Window Max</button>
+        </div>
+        <div class="game-area" id="gameArea"></div>
+    </div>
+
+    <script>
+        let currentGame = 'fixed';
+        let step = 0;
+        let autoPlayInterval = null;
+        let speed = 1000;
+
+        const games = {
+            fixed: {
+                title: '🎯 Collect Maximum Coins!',
+                description: 'Find the window of 3 boxes with the most coins!',
+                array: [2, 1, 5, 1, 3, 2, 8, 1],
+                k: 3,
+                type: 'fixed'
+            },
+            variable: {
+                title: '🔄 Smallest Bag for Treasures!',
+                description: 'Find the smallest group worth at least 7 points!',
+                array: [2, 3, 1, 2, 4, 3],
+                target: 7,
+                type: 'variable'
+            },
+            unique: {
+                title: '✨ Collect Unique Gems!',
+                description: 'Find the longest chain of different gems!',
+                array: ['🔴', '🔵', '🟢', '🔴', '🔵', '🟢', '🔵', '🔵'],
+                type: 'unique'
+            },
+            max: {
+                title: '👑 Find the King!',
+                description: 'Find the biggest number in each window of 3!',
+                array: [1, 3, -1, -3, 5, 3, 6, 7],
+                k: 3,
+                type: 'max'
+            }
+        };
+
+        function loadGame(gameType) {
+            currentGame = gameType;
+            step = 0;
+            stopAutoPlay();
+            document.querySelectorAll('.game-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderGame();
+        }
+
+        function renderGame() {
+            const game = games[currentGame];
+            let html = `<div class="game-title">${game.title}</div>
+                <div class="game-description">${game.description}</div>`;
+
+            switch(game.type) {
+                case 'fixed': html += renderFixedGame(game); break;
+                case 'variable': html += renderVariableGame(game); break;
+                case 'unique': html += renderUniqueGame(game); break;
+                case 'max': html += renderMaxGame(game); break;
+            }
+            html += renderControls();
+            document.getElementById('gameArea').innerHTML = html;
+        }
+
+        function renderFixedGame(game) {
+            const { array, k } = game;
+            const n = array.length;
+            const maxSteps = n - k;
+
+            let maxSum = array.slice(0, k).reduce((a, b) => a + b, 0);
+            let maxStart = 0;
+            let currentSum = maxSum;
+
+            for (let i = 1; i <= Math.min(step, maxSteps); i++) {
+                currentSum = currentSum - array[i - 1] + array[i + k - 1];
+                if (currentSum > maxSum) { maxSum = currentSum; maxStart = i; }
+            }
+
+            const currentStart = Math.min(step, maxSteps);
+            const currentEnd = currentStart + k - 1;
+            const displaySum = step === 0 ? array.slice(0, k).reduce((a, b) => a + b, 0) : currentSum;
+
+            let html = '<div class="array-container">';
+            for (let i = 0; i < n; i++) {
+                let cls = 'array-item';
+                if (i >= maxStart && i < maxStart + k) cls += ' best';
+                else if (i >= currentStart && i <= currentEnd) cls += ' inside';
+                else cls += ' outside';
+                html += `<div class="${cls}">${array[i]}<span class="index">${i}</span></div>`;
+            }
+            html += '</div>';
+
+            html += `<div class="info-panel">
+                <div class="info-row"><span class="info-label">Window Size:</span><span class="info-value">${k} boxes</span></div>
+                <div class="info-row"><span class="info-label">Current Window:</span><span class="info-value">[${currentStart} to ${currentEnd}]</span></div>
+                <div class="info-row"><span class="info-label">Current Sum:</span><span class="info-value">${displaySum} coins</span></div>
+                <div class="info-row"><span class="info-label">Best Sum:</span><span class="info-value highlight">${maxSum} coins ⭐</span></div>
+            </div>`;
+
+            if (step === 0) {
+                html += `<div class="explanation">🎮 <strong>How it works:</strong> Start with first ${k} boxes. Click "Next" to slide!</div>`;
+            } else {
+                html += `<div class="explanation">📊 Removed ${array[currentStart-1]}, added ${array[currentEnd]}. Sum = ${displaySum}</div>`;
+            }
+
+            if (step >= maxSteps) {
+                html += `<div class="result-display">🎉 Best: [${maxStart} to ${maxStart+k-1}] = ${maxSum} coins!</div>`;
+            }
+            return html;
+        }
+
+        function renderVariableGame(game) {
+            const { array, target } = game;
+            let left = 0, windowSum = 0, minLen = Infinity, bestWindow = null, steps = [];
+
+            for (let right = 0; right < array.length; right++) {
+                windowSum += array[right];
+                steps.push({ type: 'expand', left, right, sum: windowSum, minLen, best: bestWindow ? [...bestWindow] : null });
+                while (windowSum >= target) {
+                    if (right - left + 1 < minLen) { minLen = right - left + 1; bestWindow = [left, right]; }
+                    steps.push({ type: 'contract', left, right, sum: windowSum, minLen, best: [...bestWindow] });
+                    windowSum -= array[left++];
+                }
+            }
+
+            const state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            let html = '<div class="array-container">';
+            for (let i = 0; i < array.length; i++) {
+                let cls = 'array-item';
+                if (state.best && i >= state.best[0] && i <= state.best[1]) cls += ' best';
+                else if (i >= state.left && i <= state.right) cls += ' inside';
+                else cls += ' outside';
+                html += `<div class="${cls}">${array[i]}<span class="index">${i}</span>
+                    ${i === state.left ? '<span class="pointer pointer-left">L</span>' : ''}
+                    ${i === state.right ? '<span class="pointer pointer-right">R</span>' : ''}</div>`;
+            }
+            html += '</div>';
+
+            html += `<div class="info-panel">
+                <div class="info-row"><span class="info-label">Target:</span><span class="info-value">≥ ${target}</span></div>
+                <div class="info-row"><span class="info-label">Current Sum:</span><span class="info-value">${state.sum}</span></div>
+                <div class="info-row"><span class="info-label">Best Length:</span><span class="info-value highlight">${state.minLen === Infinity ? '?' : state.minLen}</span></div>
+            </div>`;
+
+            html += `<div class="explanation">${state.type === 'expand' ? '➡️ Expanding window' : '⬅️ Shrinking (sum ≥ target)'}</div>`;
+
+            if (step >= steps.length - 1) {
+                html += `<div class="result-display">🎉 Minimum length: ${minLen}!</div>`;
+            }
+            return html;
+        }
+
+        function renderUniqueGame(game) {
+            const { array } = game;
+            let charIndex = {}, left = 0, maxLen = 0, bestWindow = [0, 0], steps = [];
+
+            for (let right = 0; right < array.length; right++) {
+                const char = array[right];
+                if (char in charIndex && charIndex[char] >= left) left = charIndex[char] + 1;
+                charIndex[char] = right;
+                if (right - left + 1 > maxLen) { maxLen = right - left + 1; bestWindow = [left, right]; }
+                steps.push({ left, right, maxLen, best: [...bestWindow] });
+            }
+
+            const state = steps[Math.min(step, steps.length - 1)] || steps[0];
+
+            let html = '<div class="array-container">';
+            for (let i = 0; i < array.length; i++) {
+                let cls = 'array-item';
+                if (i >= state.best[0] && i <= state.best[1]) cls += ' best';
+                else if (i >= state.left && i <= state.right) cls += ' inside';
+                else cls += ' outside';
+                html += `<div class="${cls}">${array[i]}<span class="index">${i}</span></div>`;
+            }
+            html += '</div>';
+
+            html += `<div class="info-panel">
+                <div class="info-row"><span class="info-label">Current:</span><span class="info-value">${array.slice(state.left, state.right+1).join('')} (${state.right-state.left+1})</span></div>
+                <div class="info-row"><span class="info-label">Best:</span><span class="info-value highlight">${array.slice(state.best[0], state.best[1]+1).join('')} (${state.maxLen})</span></div>
+            </div>`;
+
+            if (step >= steps.length - 1) {
+                html += `<div class="result-display">🎉 Longest unique: ${maxLen}!</div>`;
+            }
+            return html;
+        }
+
+        function renderMaxGame(game) {
+            const { array, k } = game;
+            let deque = [], result = [], steps = [];
+
+            for (let i = 0; i < array.length; i++) {
+                while (deque.length && deque[0] <= i - k) deque.shift();
+                while (deque.length && array[deque[deque.length-1]] < array[i]) deque.pop();
+                deque.push(i);
+                if (i >= k - 1) result.push(array[deque[0]]);
+                steps.push({ deque: [...deque], result: [...result], ws: Math.max(0, i-k+1), we: i });
+            }
+
+            const state = steps[Math.min(step, steps.length-1)] || steps[0];
+
+            let html = '<div class="array-container">';
+            for (let i = 0; i < array.length; i++) {
+                let cls = 'array-item';
+                if (state.deque[0] === i) cls += ' current-max';
+                else if (i >= state.ws && i <= state.we) cls += ' inside';
+                else cls += ' outside';
+                html += `<div class="${cls}">${array[i]}<span class="index">${i}</span></div>`;
+            }
+            html += '</div>';
+
+            html += '<div style="text-align:center;margin:10px 0;font-weight:bold;">Deque (potential kings):</div><div class="deque-display">';
+            for (const idx of state.deque) html += `<div class="deque-item">${array[idx]}</div>`;
+            html += '</div>';
+
+            html += `<div class="info-panel">
+                <div class="info-row"><span class="info-label">Current King:</span><span class="info-value highlight">${array[state.deque[0]]} 👑</span></div>
+                <div class="info-row"><span class="info-label">Results:</span><span class="info-value">[${state.result.join(', ')}]</span></div>
+            </div>`;
+
+            if (step >= steps.length - 1) {
+                html += `<div class="result-display">🎉 All kings: [${result.join(', ')}]!</div>`;
+            }
+            return html;
+        }
+
+        function renderControls() {
+            return `<div class="controls">
+                <button class="control-btn btn-prev" onclick="prevStep()">⬅️ Back</button>
+                <button class="control-btn btn-reset" onclick="resetGame()">🔄 Reset</button>
+                <button class="control-btn btn-next" onclick="nextStep()">Next ➡️</button>
+                <button class="control-btn btn-auto" onclick="toggleAutoPlay()" id="autoBtn">▶️ Auto</button>
+            </div>
+            <div class="speed-control">
+                <span>Speed:</span>
+                <input type="range" min="200" max="2000" value="${speed}" onchange="updateSpeed(this.value)">
+                <span id="speedLabel">${speed}ms</span>
+            </div>`;
+        }
+
+        function nextStep() { step++; renderGame(); }
+        function prevStep() { if (step > 0) { step--; renderGame(); } }
+        function resetGame() { step = 0; stopAutoPlay(); renderGame(); }
+        function toggleAutoPlay() { autoPlayInterval ? stopAutoPlay() : startAutoPlay(); }
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(() => nextStep(), speed);
+            document.getElementById('autoBtn').textContent = '⏸️ Pause';
+        }
+        function stopAutoPlay() {
+            if (autoPlayInterval) { clearInterval(autoPlayInterval); autoPlayInterval = null; }
+            const btn = document.getElementById('autoBtn');
+            if (btn) btn.textContent = '▶️ Auto';
+        }
+        function updateSpeed(value) {
+            speed = parseInt(value);
+            document.getElementById('speedLabel').textContent = speed + 'ms';
+            if (autoPlayInterval) { stopAutoPlay(); startAutoPlay(); }
+        }
+
+        loadGame('fixed');
+    </script>
+</body>
+</html>
