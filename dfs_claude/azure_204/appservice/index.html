@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ-204 Study Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .content-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .content-section.open {
+            max-height: none;
+        }
+        .search-highlight {
+            background: #fef08a;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .dark .search-highlight {
+            background: #854d0e;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors">
+
+    <!-- Fixed Header -->
+    <header class="fixed top-0 left-0 right-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 z-40 px-4 py-3">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            <h1 class="text-lg font-bold text-blue-600 dark:text-blue-400">AZ-204 Study Guide</h1>
+            <div class="flex items-center gap-3">
+                <input type="text" id="search" placeholder="Search content..."
+                    class="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 focus:ring-2 focus:ring-blue-500 outline-none w-48">
+                <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600">
+                    <svg class="w-4 h-4 hidden dark:block" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+                    </svg>
+                    <svg class="w-4 h-4 block dark:hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="app" class="max-w-6xl mx-auto px-4 pt-20 pb-8">
+        <div class="text-center py-20">
+            <div class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p class="text-slate-500">Loading study materials...</p>
+            <p class="text-xs text-slate-400 mt-2">First load may take a few minutes while content is extracted</p>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        const toggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        }
+        toggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('search');
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const query = searchInput.value.toLowerCase();
+                document.querySelectorAll('.unit-card').forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    card.style.display = text.includes(query) ? '' : 'none';
+                });
+            }, 300);
+        });
+
+        // Load study data
+        fetch('study-data.json')
+            .then(res => {
+                if (!res.ok) throw new Error('Not found');
+                return res.json();
+            })
+            .then(data => renderStudyContent(data))
+            .catch(err => {
+                document.getElementById('app').innerHTML = `
+                    <div class="text-center py-20">
+                        <p class="text-red-500 mb-4">Error loading content</p>
+                        <p class="text-sm text-slate-500">Run the scraper first: <code class="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded">python scraper.py</code></p>
+                    </div>
+                `;
+            });
+
+        function renderStudyContent(data) {
+            const app = document.getElementById('app');
+
+            let html = `
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold mb-2">${data.title || 'AZ-204 Study Guide'}</h2>
+                    <p class="text-sm text-slate-500">Extracted: ${data.extracted_at || 'Unknown'}</p>
+                    <a href="${data.url}" target="_blank" class="text-xs text-blue-500 hover:underline">View on Microsoft Learn →</a>
+                </div>
+            `;
+
+            // Render each module
+            data.modules?.forEach((module, modIdx) => {
+                html += `
+                    <div class="mb-6 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        <button class="module-toggle w-full px-4 py-3 text-left flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-750" onclick="toggleModule(this)">
+                            <div>
+                                <span class="font-mono text-xs text-slate-500 mr-2">${modIdx + 1}.</span>
+                                <span class="font-medium">${module.title || 'Module'}</span>
+                                <span class="text-xs text-slate-400 ml-2">(${module.topics?.length || 0} topics)</span>
+                            </div>
+                            <svg class="w-5 h-5 transform transition-transform module-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div class="content-section border-t border-slate-200 dark:border-slate-700">
+                            <div class="p-4 space-y-4">
+                `;
+
+                // Render each topic
+                module.topics?.forEach((topic, topicIdx) => {
+                    html += `
+                        <div class="unit-card bg-slate-50 dark:bg-slate-750 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-medium text-sm">${topic.title || `Topic ${topicIdx + 1}`}</h4>
+                                <a href="${topic.url}" target="_blank" class="text-xs text-blue-500 hover:underline">
+                                    Open in Learn →
+                                </a>
+                            </div>
+                    `;
+
+                    // Content paragraphs
+                    if (topic.content?.length) {
+                        html += '<div class="text-sm text-slate-600 dark:text-slate-400 space-y-2 mb-3">';
+                        topic.content.slice(0, 10).forEach(para => {
+                            if (para.startsWith('\n## ')) {
+                                html += `<h5 class="font-semibold text-slate-800 dark:text-slate-200 mt-3">${para.replace('\n## ', '')}</h5>`;
+                            } else {
+                                html += `<p>${para}</p>`;
+                            }
+                        });
+                        if (topic.content.length > 10) {
+                            html += `<p class="text-xs text-slate-400">... and ${topic.content.length - 10} more paragraphs</p>`;
+                        }
+                        html += '</div>';
+                    }
+
+                    // Code examples
+                    if (topic.code_examples?.length) {
+                        html += '<div class="mb-3">';
+                        html += '<p class="text-xs font-semibold text-slate-500 mb-2">Code Examples:</p>';
+                        topic.code_examples.slice(0, 5).forEach(code => {
+                            html += `<div class="code-block mb-2">${escapeHtml(code)}</div>`;
+                        });
+                        html += '</div>';
+                    }
+
+                    // Lists
+                    if (topic.lists?.length) {
+                        topic.lists.slice(0, 3).forEach(list => {
+                            html += '<ul class="list-disc list-inside text-sm text-slate-600 dark:text-slate-400 mb-2">';
+                            list.slice(0, 5).forEach(item => {
+                                html += `<li>${item}</li>`;
+                            });
+                            html += '</ul>';
+                        });
+                    }
+
+                    // Tables
+                    if (topic.tables?.length) {
+                        topic.tables.slice(0, 2).forEach(table => {
+                            html += '<div class="overflow-x-auto mb-2"><table class="w-full text-xs">';
+                            table.forEach((row, i) => {
+                                const tag = i === 0 ? 'th' : 'td';
+                                const cls = i === 0 ? 'font-semibold bg-slate-100 dark:bg-slate-700' : '';
+                                html += `<tr class="border-b border-slate-200 dark:border-slate-600">`;
+                                row.forEach(cell => {
+                                    html += `<${tag} class="p-2 text-left ${cls}">${cell}</${tag}>`;
+                                });
+                                html += '</tr>';
+                            });
+                            html += '</table></div>';
+                        });
+                    }
+
+                    html += '</div>';  // Close unit-card
+                });
+
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Footer
+            html += `
+                <footer class="text-center py-8 text-sm text-slate-500 border-t border-slate-200 dark:border-slate-700">
+                    <p>AZ-204 Study Guide - Content extracted from Microsoft Learn</p>
+                    <p class="mt-2">
+                        <a href="https://learn.microsoft.com/en-us/certifications/exams/az-204" target="_blank" class="text-blue-500 hover:underline">
+                            Official Exam Page
+                        </a>
+                    </p>
+                </footer>
+            `;
+
+            app.innerHTML = html;
+        }
+
+        function toggleModule(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('.module-icon');
+            content.classList.toggle('open');
+            icon.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : '';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

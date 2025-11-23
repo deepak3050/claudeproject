@@ -1,0 +1,66 @@
+{
+  "personal": {
+    "name": "Deepak Das",
+    "title": "SDET / Quality Assurance Engineer",
+    "email": "your.email@example.com",
+    "phone": "+1 (323) 612-9130 ",
+    "location": "Your City, State",
+    "linkedin": "https://linkedin.com/in/deepak-das-5a9b7862",
+    "github": "https://github.com/deepak3050",
+    "summary": "Experienced SDET with expertise in test automation, quality assurance, and continuous integration. Passionate about building robust testing frameworks and ensuring software quality."
+  },
+  "skills": {
+    "Testing & Automation": ["Selenium", "Cypress", "Playwright", "TestNG", "JUnit", "Pytest"],
+    "Programming": ["Python", "Java", "JavaScript", "TypeScript"],
+    "CI/CD & DevOps": ["Jenkins", "GitHub Actions", "Docker", "Kubernetes"],
+    "Tools & Frameworks": ["Postman", "REST APIs", "GraphQL", "SQL", "Git"],
+    "Methodologies": ["Agile", "Scrum", "BDD", "TDD"]
+  },
+  "experience": [
+    {
+      "title": "Senior SDET",
+      "company": "Capgemini",
+      "location": "NEW YORK, NY",
+      "period": "2022 - Present",
+      "highlights": [
+        "Designed and implemented automated testing frameworks reducing manual testing by 70%",
+        "Led quality initiatives across multiple product teams",
+        "Established CI/CD pipelines for continuous testing"
+      ]
+    },
+    {
+      "title": "SDET",
+      "company": "Previous Company",
+      "location": "City, State",
+      "period": "2019 - 2022",
+      "highlights": [
+        "Developed end-to-end test suites for web applications",
+        "Collaborated with developers to improve code quality",
+        "Mentored junior QA engineers"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Technology",
+      "field": "Electronics and Instrumentation Engineering",
+      "year": "2010"
+    }
+  ],
+  "certifications": [
+    "Azure 900 Fundamentals",
+    "Salesforce AI associate"
+  ],
+  "projects": [
+    {
+      "name": "Test Automation Framework",
+      "description": "Built a scalable automation framework using Selenium and Python",
+      "technologies": ["Python", "Selenium", "Docker", "Jenkins"]
+    },
+    {
+      "name": "API Testing Suite",
+      "description": "Comprehensive API testing solution with automated regression",
+      "technologies": ["Postman", "Newman", "JavaScript"]
+    }
+  ]
+}

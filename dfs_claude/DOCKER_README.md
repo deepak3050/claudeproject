@@ -23,7 +23,7 @@ cd /Users/deepakdas/Github3050/claude/dfs_claude
 docker build -t sliding-window .
 
 # Run the container
-docker run -p 8888:8888 -p 8000:8000 sliding-window
+docker run -p 8888:8888 -p 8000:8000 -p 8001:8001 sliding-window
 ```
 
 ## Access the Applications
@@ -34,6 +34,9 @@ Once running, open your browser:
 |-------------|-----|-------------|
 | **HTML Game** | http://localhost:8000 | Interactive Sliding Window Explorer |
 | **Jupyter Notebook** | http://localhost:8888 | Notebooks with animations and pseudocode |
+| **Cheatsheet** | http://localhost:8001 | Markdown cheatsheet rendered in GitHub style |
+| **Portfolio** | http://localhost:8002 | Professional portfolio website |
+| **AZ-204 Study Guide** | http://localhost:8003 | Azure exam preparation materials |
 
 ## Available Notebooks
 
@@ -64,17 +67,40 @@ docker exec -it dfs_claude-sliding-window-1 bash
 
 ## Port Configuration
 
-If ports 8888 or 8000 are already in use, modify `docker-compose.yml`:
+If ports are already in use, modify `docker-compose.yml`:
 
 ```yaml
 ports:
-  - "9999:8888"  # Change 9999 to your preferred Jupyter port
-  - "9000:8000"  # Change 9000 to your preferred game port
+  - "9999:8888"  # Jupyter Notebook
+  - "9000:8000"  # HTML Game
+  - "9001:8001"  # Cheatsheet
+  - "9002:8002"  # Portfolio
+  - "9003:8003"  # AZ-204 Study Guide
 ```
 
 Then access:
 - Jupyter: http://localhost:9999
 - Game: http://localhost:9000
+- Cheatsheet: http://localhost:9001
+- Portfolio: http://localhost:9002
+- AZ-204 Study Guide: http://localhost:9003
+
+## AZ-204 Study Guide
+
+The AZ-204 Study Guide automatically extracts content from Microsoft Learn on first launch. This may take a few minutes.
+
+To manually run the scraper:
+```bash
+docker exec -it dfs_claude-sliding-window-1 bash
+cd /app/azure_204/appservice
+python scraper.py
+```
+
+Features:
+- Extracts all content from Azure App Service and Container modules
+- Includes code examples, tables, and lists
+- Dark/light mode toggle
+- Search functionality
 
 ## Troubleshooting
 
@@ -92,10 +118,15 @@ lsof -i :8000
 # Check logs
 docker-compose logs
 
+
 # Rebuild from scratch
 docker-compose down
 docker-compose build --no-cache
-docker-compose up
+docker-compose up -d
+
+
+# Rebuild docker
+docker-compose up --build -d
 ```
 
 ### Changes not reflecting

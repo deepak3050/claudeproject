@@ -4,5 +4,8 @@ services:
     ports:
       - "8888:8888"  # Jupyter Notebook
       - "8000:8000"  # HTML Game
+      - "8001:8001"  # Markdown Cheatsheet Viewer
+      - "8002:8002"  # Portfolio Website
+      - "8003:8003"  # AZ-204 Study Guide
     volumes:
       - .:/app      # Mount for live changes (optional)
