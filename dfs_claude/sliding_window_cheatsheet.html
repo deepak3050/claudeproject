@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window Cheatsheet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        code, pre { font-family: 'JetBrains Mono', monospace; }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pattern-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .code-block .keyword { color: #ff7b72; }
+        .code-block .function { color: #d2a8ff; }
+        .code-block .string { color: #a5d6ff; }
+        .code-block .comment { color: #8b949e; }
+        .code-block .number { color: #79c0ff; }
+
+        .glow-text {
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+        }
+
+        .table-modern th {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3));
+        }
+
+        .table-modern tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-easy { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-medium { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge-hard { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-slate-100">
+    <!-- Floating background orbs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
+    </div>
+
+    <div class="relative max-w-5xl mx-auto px-6 py-12">
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-4">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 glow-text">
+                    Sliding Window
+                </span>
+            </h1>
+            <p class="text-xl text-slate-400 font-light tracking-wide">Master the Pattern. Ace the Interview.</p>
+            <div class="mt-6 flex justify-center gap-4 flex-wrap">
+                <span class="badge badge-easy">O(n) Time</span>
+                <span class="badge badge-medium">Subarray Problems</span>
+                <span class="badge badge-hard">Two Pointers</span>
+            </div>
+        </header>
+
+        <!-- When to Use -->
+        <section class="glass-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-lg">🎯</span>
+                When to Use Sliding Window?
+            </h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+                    <p class="font-semibold text-emerald-400 mb-2">Contiguous</p>
+                    <p class="text-sm text-slate-400">Subarray/substring problems</p>
+                </div>
+                <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
+                    <p class="font-semibold text-cyan-400 mb-2">Keywords</p>
+                    <p class="text-sm text-slate-400">"consecutive", "subarray", "window"</p>
+                </div>
+                <div class="bg-violet-500/10 border border-violet-500/30 rounded-xl p-4">
+                    <p class="font-semibold text-violet-400 mb-2">Optimize</p>
+                    <p class="text-sm text-slate-400">O(n²) → O(n)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pattern 1: Fixed-Size Window -->
+        <section class="pattern-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-2 text-violet-300">Pattern 1: Fixed-Size Window</h2>
+            <p class="text-slate-400 mb-6">Maximum/Minimum of K consecutive elements</p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <p class="text-sm font-semibold text-red-400 mb-2">❌ Brute Force O(n×k)</p>
+                    <div class="code-block">
+                        <span class="keyword">FOR</span> each position i:<br>
+                        &nbsp;&nbsp;sum = <span class="number">0</span><br>
+                        &nbsp;&nbsp;<span class="keyword">FOR</span> j from i to i+k-<span class="number">1</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sum += arr[j]<br>
+                        &nbsp;&nbsp;update result
+                    </div>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-emerald-400 mb-2">✅ Optimized O(n)</p>
+                    <div class="code-block">
+                        <span class="comment"># Initialize first window</span><br>
+                        window = <span class="function">sum</span>(arr[<span class="number">0</span>:k])<br>
+                        result = window<br><br>
+                        <span class="comment"># Slide: remove left, add right</span><br>
+                        <span class="keyword">FOR</span> i from k to n-<span class="number">1</span>:<br>
+                        &nbsp;&nbsp;window = window - arr[i-k] + arr[i]<br>
+                        &nbsp;&nbsp;result = <span class="function">best</span>(result, window)
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/50 rounded-xl p-4">
+                <p class="text-sm font-semibold text-amber-400 mb-2">Example: arr = [2, 1, 5, 1, 3], k = 3</p>
+                <div class="font-mono text-sm space-y-1">
+                    <p><span class="text-slate-500">[2,1,5]</span> → <span class="text-cyan-400">8</span></p>
+                    <p><span class="text-slate-500">[1,5,1]</span> → 8-2+1 = <span class="text-cyan-400">7</span></p>
+                    <p><span class="text-slate-500">[5,1,3]</span> → 7-1+3 = <span class="text-emerald-400 font-bold">9 ✓</span></p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider my-8"></div>
+
+        <!-- Pattern 2: Variable-Size Window -->
+        <section class="pattern-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-2 text-blue-300">Pattern 2: Variable-Size Window</h2>
+            <p class="text-slate-400 mb-6">Min/Max subarray satisfying condition (Two Pointers)</p>
+
+            <div class="code-block mb-6">
+                left = <span class="number">0</span><br><br>
+                <span class="keyword">FOR</span> right from <span class="number">0</span> to n-<span class="number">1</span>:<br>
+                &nbsp;&nbsp;<span class="comment"># EXPAND: include arr[right]</span><br>
+                &nbsp;&nbsp;<span class="function">add</span> arr[right] to window<br><br>
+                &nbsp;&nbsp;<span class="comment"># CONTRACT: shrink while invalid/optimal</span><br>
+                &nbsp;&nbsp;<span class="keyword">WHILE</span> should_shrink:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="function">remove</span> arr[left] from window<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;left++<br><br>
+                &nbsp;&nbsp;update result
+            </div>
+
+            <div class="bg-slate-900/50 rounded-xl p-4">
+                <p class="text-sm font-semibold text-amber-400 mb-2">Example: Min subarray with sum ≥ 7, arr = [2, 3, 1, 2, 4, 3]</p>
+                <div class="font-mono text-sm space-y-1">
+                    <p>right=3: sum=8 ≥ 7 → len=<span class="text-cyan-400">4</span>, shrink</p>
+                    <p>right=4: sum=7 ≥ 7 → len=<span class="text-cyan-400">3</span>, shrink</p>
+                    <p>right=5: sum=7 ≥ 7 → len=<span class="text-emerald-400 font-bold">2 ✓</span></p>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider my-8"></div>
+
+        <!-- Pattern 3: HashMap -->
+        <section class="pattern-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-2 text-fuchsia-300">Pattern 3: HashMap + Sliding Window</h2>
+            <p class="text-slate-400 mb-6">Substring with character constraints</p>
+
+            <div class="code-block mb-6">
+                char_map = {}  <span class="comment"># char → count or last_index</span><br>
+                left = <span class="number">0</span><br><br>
+                <span class="keyword">FOR</span> right from <span class="number">0</span> to n-<span class="number">1</span>:<br>
+                &nbsp;&nbsp;<span class="comment"># Add s[right] to map</span><br>
+                &nbsp;&nbsp;update char_map[s[right]]<br><br>
+                &nbsp;&nbsp;<span class="comment"># Shrink if constraint violated</span><br>
+                &nbsp;&nbsp;<span class="keyword">WHILE</span> constraint_violated:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;update char_map[s[left]]<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;left++<br><br>
+                &nbsp;&nbsp;update result
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/50 rounded-xl p-4">
+                    <p class="text-sm font-semibold text-pink-400 mb-3">Variant A: Longest Unique Substring</p>
+                    <div class="code-block text-xs">
+                        char_index = {}<br>
+                        <span class="keyword">FOR</span> right from <span class="number">0</span> to n-<span class="number">1</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">IF</span> s[right] in char_index <span class="keyword">AND</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;char_index[s[right]] >= left:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;left = char_index[s[right]] + <span class="number">1</span><br>
+                        &nbsp;&nbsp;char_index[s[right]] = right<br>
+                        &nbsp;&nbsp;max_len = <span class="function">max</span>(max_len, right - left + <span class="number">1</span>)
+                    </div>
+                </div>
+                <div class="bg-slate-900/50 rounded-xl p-4">
+                    <p class="text-sm font-semibold text-orange-400 mb-3">Variant B: At Most K Distinct</p>
+                    <div class="code-block text-xs">
+                        char_count = {}<br>
+                        <span class="keyword">FOR</span> right from <span class="number">0</span> to n-<span class="number">1</span>:<br>
+                        &nbsp;&nbsp;char_count[s[right]]++<br>
+                        &nbsp;&nbsp;<span class="keyword">WHILE</span> <span class="function">len</span>(char_count) > k:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;char_count[s[left]]--<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">IF</span> char_count[s[left]] == <span class="number">0</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">delete</span> char_count[s[left]]<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;left++<br>
+                        &nbsp;&nbsp;max_len = <span class="function">max</span>(max_len, right - left + <span class="number">1</span>)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider my-8"></div>
+
+        <!-- Pattern 4: Monotonic Deque -->
+        <section class="pattern-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-2 text-amber-300">Pattern 4: Monotonic Deque</h2>
+            <p class="text-slate-400 mb-6">Maximum/Minimum in each window of size k</p>
+
+            <div class="code-block mb-4">
+                deque = []  <span class="comment"># stores INDICES</span><br><br>
+                <span class="keyword">FOR</span> i from <span class="number">0</span> to n-<span class="number">1</span>:<br>
+                &nbsp;&nbsp;<span class="comment"># Remove expired indices</span><br>
+                &nbsp;&nbsp;<span class="keyword">WHILE</span> deque <span class="keyword">and</span> deque[<span class="number">0</span>] <= i - k:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;deque.<span class="function">popleft</span>()<br><br>
+                &nbsp;&nbsp;<span class="comment"># Remove smaller elements (for max)</span><br>
+                &nbsp;&nbsp;<span class="keyword">WHILE</span> deque <span class="keyword">and</span> arr[deque[-<span class="number">1</span>]] < arr[i]:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;deque.<span class="function">pop</span>()<br><br>
+                &nbsp;&nbsp;deque.<span class="function">append</span>(i)<br><br>
+                &nbsp;&nbsp;<span class="comment"># Record result when window complete</span><br>
+                &nbsp;&nbsp;<span class="keyword">IF</span> i >= k - <span class="number">1</span>:<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;result.<span class="function">append</span>(arr[deque[<span class="number">0</span>]])
+            </div>
+
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                <p class="text-sm"><span class="font-semibold text-amber-400">Key Insight:</span> <span class="text-slate-300">Smaller elements will never be max if larger element is in window</span></p>
+            </div>
+        </section>
+
+        <div class="section-divider my-8"></div>
+
+        <!-- Quick Reference Table -->
+        <section class="glass-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-lg">📊</span>
+                Quick Reference
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="table-modern w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th class="p-3 text-left rounded-tl-lg">Problem</th>
+                            <th class="p-3 text-left">Type</th>
+                            <th class="p-3 text-left">Data Structure</th>
+                            <th class="p-3 text-left rounded-tr-lg">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-300">
+                        <tr><td class="p-3">Max sum of k elements</td><td class="p-3"><span class="text-violet-400">Fixed</span></td><td class="p-3">None</td><td class="p-3 text-emerald-400">O(n)</td></tr>
+                        <tr><td class="p-3">Min subarray ≥ target</td><td class="p-3"><span class="text-blue-400">Variable</span></td><td class="p-3">None</td><td class="p-3 text-emerald-400">O(n)</td></tr>
+                        <tr><td class="p-3">Longest unique substring</td><td class="p-3"><span class="text-blue-400">Variable</span></td><td class="p-3">HashMap</td><td class="p-3 text-emerald-400">O(n)</td></tr>
+                        <tr><td class="p-3">At most k distinct</td><td class="p-3"><span class="text-blue-400">Variable</span></td><td class="p-3">HashMap</td><td class="p-3 text-emerald-400">O(n)</td></tr>
+                        <tr><td class="p-3">Sliding window max</td><td class="p-3"><span class="text-violet-400">Fixed</span></td><td class="p-3">Deque</td><td class="p-3 text-emerald-400">O(n)</td></tr>
+                        <tr><td class="p-3">Min window substring</td><td class="p-3"><span class="text-blue-400">Variable</span></td><td class="p-3">HashMap</td><td class="p-3 text-emerald-400">O(n)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Common Mistakes -->
+        <section class="glass-card rounded-2xl p-8 mb-8 border-red-500/30">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-lg">⚠️</span>
+                Common Mistakes
+            </h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                    <p class="font-semibold text-red-400 mb-2">Off-by-one errors</p>
+                    <ul class="text-sm text-slate-400 space-y-1">
+                        <li>• Window [i, i+k-1] has k elements</li>
+                        <li>• Length = right - left + 1</li>
+                    </ul>
+                </div>
+                <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                    <p class="font-semibold text-red-400 mb-2">HashMap bounds</p>
+                    <p class="text-sm text-slate-400">Check both: <code class="text-xs bg-slate-800 px-1 rounded">char in map AND map[char] >= left</code></p>
+                </div>
+                <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                    <p class="font-semibold text-red-400 mb-2">Forgetting to update</p>
+                    <p class="text-sm text-slate-400">Always update HashMap after shrinking window</p>
+                </div>
+                <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                    <p class="font-semibold text-red-400 mb-2">Wrong shrink condition</p>
+                    <p class="text-sm text-slate-400"><code class="text-xs bg-slate-800 px-1 rounded">while</code> not <code class="text-xs bg-slate-800 px-1 rounded">if</code> - may need multiple shrinks</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interview Tips -->
+        <section class="glass-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-lg">💡</span>
+                Interview Tips
+            </h2>
+            <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                    <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">1</span>
+                    <p class="text-slate-300"><span class="font-semibold text-emerald-400">Start with brute force</span> - show you understand the problem</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                    <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">2</span>
+                    <p class="text-slate-300"><span class="font-semibold text-emerald-400">Identify the pattern</span> - fixed or variable window?</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                    <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">3</span>
+                    <p class="text-slate-300"><span class="font-semibold text-emerald-400">Write the template</span> - then fill in the details</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                    <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">4</span>
+                    <p class="text-slate-300"><span class="font-semibold text-emerald-400">Trace through example</span> - verify logic before coding</p>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+                    <span class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold">5</span>
+                    <p class="text-slate-300"><span class="font-semibold text-emerald-400">Time/Space complexity</span> - always mention O(n) optimization</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problems -->
+        <section class="glass-card rounded-2xl p-8 mb-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-lg">🏋️</span>
+                Practice Problems
+            </h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+                    <p class="font-bold text-emerald-400 mb-3">Easy</p>
+                    <ul class="text-sm text-slate-300 space-y-2">
+                        <li>• Max Sum Subarray of Size K</li>
+                        <li>• First Negative in Every Window</li>
+                    </ul>
+                </div>
+                <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                    <p class="font-bold text-amber-400 mb-3">Medium</p>
+                    <ul class="text-sm text-slate-300 space-y-2">
+                        <li>• Longest Substring Without Repeating <span class="text-slate-500">#3</span></li>
+                        <li>• Minimum Size Subarray Sum <span class="text-slate-500">#209</span></li>
+                        <li>• Fruit Into Baskets <span class="text-slate-500">#904</span></li>
+                        <li>• Longest Repeating Char Replacement <span class="text-slate-500">#424</span></li>
+                    </ul>
+                </div>
+                <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                    <p class="font-bold text-red-400 mb-3">Hard</p>
+                    <ul class="text-sm text-slate-300 space-y-2">
+                        <li>• Sliding Window Maximum <span class="text-slate-500">#239</span></li>
+                        <li>• Minimum Window Substring <span class="text-slate-500">#76</span></li>
+                        <li>• Substring with Concatenation <span class="text-slate-500">#30</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center py-8 text-slate-500 text-sm">
+            <p>Built for interview prep • Master the sliding window pattern</p>
+        </footer>
+    </div>
+</body>
+</html>
