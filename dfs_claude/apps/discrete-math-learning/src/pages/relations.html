@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relations & Functions - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">🔗 Relations & Functions</h1>
+            <p class="subtitle">Connecting Elements: From Binary Relations to Bijections</p>
+        </header>
+
+        <!-- Section 1: Binary Relations -->
+        <section class="content-section" data-section="1">
+            <h2>1. Binary Relations</h2>
+
+            <div class="concept-box">
+                <h3>What is a Binary Relation?</h3>
+                <p>A binary relation R from set A to set B is a subset of the Cartesian product A × B. In other words, it's a set of ordered pairs (a, b) where a ∈ A and b ∈ B.</p>
+
+                <div class="example-box">
+                    <h4>Example: "Is Parent Of" Relation</h4>
+                    <ul>
+                        <li>A = {Alice, Bob, Carol}</li>
+                        <li>B = {David, Eve}</li>
+                        <li>R = {(Alice, David), (Bob, Eve), (Carol, David)}</li>
+                        <li>This means: Alice is parent of David, Bob is parent of Eve, Carol is parent of David</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Representation Methods</h3>
+
+                <div class="example-box">
+                    <h4>1. Ordered Pairs</h4>
+                    <p>R = {(1, 2), (1, 3), (2, 3)} on set {1, 2, 3}</p>
+
+                    <h4>2. Matrix Representation</h4>
+                    <p>For relation "≤" on {1, 2, 3}:</p>
+                    <pre>
+    1  2  3
+1 [ 1  1  1 ]
+2 [ 0  1  1 ]
+3 [ 0  0  1 ]
+                    </pre>
+                    <p>Matrix[i][j] = 1 if (i,j) ∈ R, else 0</p>
+
+                    <h4>3. Directed Graph (Digraph)</h4>
+                    <p>Nodes represent elements, arrows represent relations</p>
+                    <p>For R = {(1,2), (2,3), (3,1)}: 1 → 2 → 3 → 1 (cycle)</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Python Representation</h3>
+                <pre><code class="language-python"># Method 1: Set of tuples
+relation = {(1, 2), (1, 3), (2, 3)}
+
+# Method 2: Dictionary (more efficient for lookups)
+relation_dict = {
+    1: {2, 3},
+    2: {3},
+    3: set()
+}
+
+# Method 3: Matrix (numpy)
+import numpy as np
+relation_matrix = np.array([
+    [0, 1, 1],
+    [0, 0, 1],
+    [0, 0, 0]
+])
+
+# Check if (1, 3) is in relation
+print((1, 3) in relation)  # True
+print(3 in relation_dict[1])  # True
+print(relation_matrix[0][2] == 1)  # True</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: Properties of Relations -->
+        <section class="content-section" data-section="2">
+            <h2>2. Properties of Relations</h2>
+
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <h3>Reflexive</h3>
+                    <p>Every element relates to itself</p>
+                    <div class="operator-symbol">∀a ∈ A: (a,a) ∈ R</div>
+                    <p class="example-text">Example: "≤" (every number ≤ itself)</p>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Symmetric</h3>
+                    <p>If a relates to b, then b relates to a</p>
+                    <div class="operator-symbol">∀a,b: (a,b) ∈ R → (b,a) ∈ R</div>
+                    <p class="example-text">Example: "is sibling of"</p>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Transitive</h3>
+                    <p>If a→b and b→c, then a→c</p>
+                    <div class="operator-symbol">∀a,b,c: (a,b), (b,c) ∈ R → (a,c) ∈ R</div>
+                    <p class="example-text">Example: "<" (less than)</p>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Antisymmetric</h3>
+                    <p>If a→b and b→a, then a=b</p>
+                    <div class="operator-symbol">∀a,b: (a,b), (b,a) ∈ R → a=b</div>
+                    <p class="example-text">Example: "≤"</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Checking Properties in Python</h3>
+                <pre><code class="language-python">def is_reflexive(relation, elements):
+    """Check if relation is reflexive"""
+    return all((a, a) in relation for a in elements)
+
+def is_symmetric(relation):
+    """Check if relation is symmetric"""
+    return all((b, a) in relation for (a, b) in relation)
+
+def is_transitive(relation):
+    """Check if relation is transitive"""
+    for (a, b) in relation:
+        for (c, d) in relation:
+            if b == c:  # b relates to d
+                if (a, d) not in relation:
+                    return False
+    return True
+
+# Test with "divides" relation on {1,2,3,6}
+divides = {(1,1), (1,2), (1,3), (1,6),
+           (2,2), (2,6), (3,3), (3,6), (6,6)}
+elements = {1, 2, 3, 6}
+
+print(f"Reflexive: {is_reflexive(divides, elements)}")  # True
+print(f"Symmetric: {is_symmetric(divides)}")  # False
+print(f"Transitive: {is_transitive(divides)}")  # True</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: Equivalence Relations -->
+        <section class="content-section" data-section="3">
+            <h2>3. Equivalence Relations</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A relation R is an <strong>equivalence relation</strong> if it is:</p>
+                <ul>
+                    <li>✓ Reflexive</li>
+                    <li>✓ Symmetric</li>
+                    <li>✓ Transitive</li>
+                </ul>
+
+                <div class="example-box">
+                    <h4>Examples of Equivalence Relations:</h4>
+                    <ul>
+                        <li><strong>Equality (=):</strong> on any set</li>
+                        <li><strong>Congruence mod n:</strong> a ≡ b (mod n) if n divides (a-b)</li>
+                        <li><strong>Same remainder:</strong> when divided by a fixed number</li>
+                        <li><strong>In programming:</strong> "same type", "same length", "same hash value"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Equivalence Classes & Partitions</h3>
+                <p>An equivalence relation partitions a set into disjoint <strong>equivalence classes</strong>.</p>
+
+                <div class="example-box">
+                    <h4>Example: Integers mod 3</h4>
+                    <p>Relation: a ≡ b (mod 3) on ℤ</p>
+                    <ul>
+                        <li><strong>[0] =</strong> {..., -6, -3, 0, 3, 6, 9, ...} (remainder 0)</li>
+                        <li><strong>[1] =</strong> {..., -5, -2, 1, 4, 7, 10, ...} (remainder 1)</li>
+                        <li><strong>[2] =</strong> {..., -4, -1, 2, 5, 8, 11, ...} (remainder 2)</li>
+                    </ul>
+                    <p>Every integer belongs to exactly one class!</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Finding Equivalence Classes</h3>
+                <pre><code class="language-python">def find_equivalence_classes(elements, relation):
+    """Find all equivalence classes given an equivalence relation"""
+    classes = []
+    remaining = set(elements)
+
+    while remaining:
+        element = remaining.pop()
+        eq_class = {element}
+
+        # Find all elements equivalent to this one
+        for other in list(remaining):
+            if (element, other) in relation:
+                eq_class.add(other)
+                remaining.remove(other)
+
+        classes.append(eq_class)
+
+    return classes
+
+# Example: mod 3 on {0,1,2,3,4,5,6,7,8}
+mod3_relation = {(a, b) for a in range(9) for b in range(9)
+                 if a % 3 == b % 3}
+
+classes = find_equivalence_classes(range(9), mod3_relation)
+print("Equivalence classes mod 3:")
+for i, cls in enumerate(classes):
+    print(f"  [{i}] = {sorted(cls)}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4: Partial Orders -->
+        <section class="content-section" data-section="4">
+            <h2>4. Partial Orders</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A relation R is a <strong>partial order</strong> if it is:</p>
+                <ul>
+                    <li>✓ Reflexive</li>
+                    <li>✓ Antisymmetric</li>
+                    <li>✓ Transitive</li>
+                </ul>
+
+                <div class="example-box">
+                    <h4>Classic Examples:</h4>
+                    <ul>
+                        <li><strong>≤</strong> on numbers (total order - any two elements are comparable)</li>
+                        <li><strong>⊆</strong> (subset) on sets (partial - not all sets are comparable)</li>
+                        <li><strong>|</strong> (divides) on positive integers</li>
+                        <li><strong>Prefix ordering</strong> on strings</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Hasse Diagrams</h3>
+                <p>A Hasse diagram is a visual representation of a partial order where:</p>
+                <ul>
+                    <li>Elements are nodes</li>
+                    <li>a is below b if a ≤ b</li>
+                    <li>Lines connect directly related elements (omit transitive edges)</li>
+                    <li>Reflexive loops are omitted</li>
+                </ul>
+
+                <div class="example-box">
+                    <h4>Example: Divisibility on {1, 2, 3, 6}</h4>
+                    <pre>
+        6
+       / \
+      2   3
+       \ /
+        1
+                    </pre>
+                    <p>1 divides everything, 2 and 3 both divide 6</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Subsets of {a, b}</h4>
+                    <pre>
+      {a,b}
+      /   \
+    {a}   {b}
+      \   /
+        ∅
+                    </pre>
+                    <p>Empty set is subset of all, {a,b} contains all</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Partial Order Implementation</h3>
+                <pre><code class="language-python">class PartialOrder:
+    def __init__(self, elements, relation):
+        self.elements = elements
+        self.relation = relation
+
+    def is_comparable(self, a, b):
+        """Check if two elements are comparable"""
+        return (a, b) in self.relation or (b, a) in self.relation
+
+    def maximal_elements(self):
+        """Find maximal elements (nothing above them)"""
+        return {a for a in self.elements
+                if not any((a, b) in self.relation and a != b
+                          for b in self.elements)}
+
+    def minimal_elements(self):
+        """Find minimal elements (nothing below them)"""
+        return {a for a in self.elements
+                if not any((b, a) in self.relation and a != b
+                          for b in self.elements)}
+
+# Divisibility on {1,2,3,6}
+divides = {(1,1), (1,2), (1,3), (1,6),
+           (2,2), (2,6), (3,3), (3,6), (6,6)}
+po = PartialOrder({1,2,3,6}, divides)
+
+print(f"Maximal: {po.maximal_elements()}")  # {6}
+print(f"Minimal: {po.minimal_elements()}")  # {1}</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 5: Functions -->
+        <section class="content-section" data-section="5">
+            <h2>5. Functions</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A <strong>function</strong> f: A → B is a special relation where each element in A (domain) is related to exactly one element in B (codomain).</p>
+
+                <div class="example-box">
+                    <h4>Key Terms:</h4>
+                    <ul>
+                        <li><strong>Domain:</strong> Set A (input values)</li>
+                        <li><strong>Codomain:</strong> Set B (possible output values)</li>
+                        <li><strong>Range:</strong> Actual output values used: {f(a) | a ∈ A} ⊆ B</li>
+                        <li><strong>Image of a:</strong> The value f(a)</li>
+                    </ul>
+
+                    <h4>Function vs. Not a Function:</h4>
+                    <p>✅ f = {(1,a), (2,b), (3,a)} - Each input maps to exactly one output</p>
+                    <p>❌ R = {(1,a), (1,b), (2,c)} - Input 1 maps to two outputs!</p>
+                    <p>❌ R = {(1,a), (3,b)} - Input 2 is missing!</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Functions in Python</h3>
+                <pre><code class="language-python"># Mathematical function f: ℕ → ℕ where f(x) = x²
+def f(x):
+    return x * x
+
+# Using lambda (anonymous function)
+square = lambda x: x * x
+
+# Dictionary representation for finite domain
+f_dict = {1: 1, 2: 4, 3: 9, 4: 16, 5: 25}
+
+# Verify it's a function (each input → exactly one output)
+def is_function(relation, domain):
+    """Check if relation is a function"""
+    # Convert to dict form
+    func_dict = {}
+    for (a, b) in relation:
+        if a in func_dict:
+            if func_dict[a] != b:
+                return False  # Multiple outputs!
+        func_dict[a] = b
+
+    # Check all domain elements are mapped
+    return set(func_dict.keys()) == set(domain)
+
+# Test
+relation1 = {(1, 'a'), (2, 'b'), (3, 'a')}
+print(is_function(relation1, {1,2,3}))  # True</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Types of Functions -->
+        <section class="content-section" data-section="6">
+            <h2>6. Types of Functions</h2>
+
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <h3>Injective<br>(One-to-One)</h3>
+                    <p>Different inputs → Different outputs</p>
+                    <div class="operator-symbol">f(a) = f(b) → a = b</div>
+                    <p class="example-text">Example: f(x) = 2x</p>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Surjective<br>(Onto)</h3>
+                    <p>Every codomain element is hit</p>
+                    <div class="operator-symbol">∀b ∈ B, ∃a ∈ A: f(a) = b</div>
+                    <p class="example-text">Range = Codomain</p>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Bijective<br>(One-to-One & Onto)</h3>
+                    <p>Both injective and surjective</p>
+                    <div class="operator-symbol">Perfect pairing</div>
+                    <p class="example-text">Example: f(x) = x (identity)</p>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <h4>Visual Examples:</h4>
+                <p><strong>Injective but not Surjective:</strong> f: {1,2,3} → {a,b,c,d}</p>
+                <p>f(1)=a, f(2)=b, f(3)=c (element 'd' never used)</p>
+
+                <p><strong>Surjective but not Injective:</strong> f: {1,2,3,4} → {a,b,c}</p>
+                <p>f(1)=a, f(2)=a, f(3)=b, f(4)=c (two inputs map to 'a')</p>
+
+                <p><strong>Bijective:</strong> f: {1,2,3} → {a,b,c}</p>
+                <p>f(1)=a, f(2)=b, f(3)=c (perfect one-to-one correspondence)</p>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Testing Function Types</h3>
+                <pre><code class="language-python">def is_injective(func_dict):
+    """Check if function is one-to-one"""
+    outputs = list(func_dict.values())
+    return len(outputs) == len(set(outputs))
+
+def is_surjective(func_dict, codomain):
+    """Check if function is onto"""
+    range_set = set(func_dict.values())
+    return range_set == set(codomain)
+
+def is_bijective(func_dict, codomain):
+    """Check if function is bijective"""
+    return is_injective(func_dict) and is_surjective(func_dict, codomain)
+
+# Examples
+f1 = {1: 'a', 2: 'b', 3: 'c'}
+f2 = {1: 'a', 2: 'a', 3: 'b'}
+f3 = {1: 'a', 2: 'b'}
+
+print("f1 injective:", is_injective(f1))  # True
+print("f2 injective:", is_injective(f2))  # False (1,2 → same)
+print("f1 surjective:", is_surjective(f1, ['a','b','c']))  # True
+print("f3 surjective:", is_surjective(f3, ['a','b','c']))  # False
+print("f1 bijective:", is_bijective(f1, ['a','b','c']))  # True</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Function Composition -->
+        <section class="content-section" data-section="7">
+            <h2>7. Function Composition</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>Given f: A → B and g: B → C, the composition <strong>g ∘ f: A → C</strong> is defined as:</p>
+                <p class="operator-symbol">(g ∘ f)(x) = g(f(x))</p>
+                <p>Read as "g composed with f" or "g after f"</p>
+
+                <div class="example-box">
+                    <h4>Example:</h4>
+                    <p>Let f(x) = x + 1 and g(x) = 2x</p>
+                    <ul>
+                        <li>(g ∘ f)(x) = g(f(x)) = g(x+1) = 2(x+1) = 2x + 2</li>
+                        <li>(f ∘ g)(x) = f(g(x)) = f(2x) = 2x + 1</li>
+                        <li>Note: g ∘ f ≠ f ∘ g (composition is not commutative!)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Properties of Composition</h3>
+                <ul>
+                    <li><strong>Associative:</strong> (h ∘ g) ∘ f = h ∘ (g ∘ f)</li>
+                    <li><strong>Identity:</strong> f ∘ id = id ∘ f = f</li>
+                    <li><strong>If f and g are injective, so is g ∘ f</strong></li>
+                    <li><strong>If f and g are surjective, so is g ∘ f</strong></li>
+                    <li><strong>If f and g are bijective, so is g ∘ f</strong></li>
+                </ul>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Function Composition in Python</h3>
+                <pre><code class="language-python"># Method 1: Manual composition
+def compose(g, f):
+    """Return composition g ∘ f"""
+    return lambda x: g(f(x))
+
+# Method 2: Using decorator-style
+def f(x):
+    return x + 1
+
+def g(x):
+    return 2 * x
+
+# Compose
+g_after_f = compose(g, f)
+f_after_g = compose(f, g)
+
+print(f"(g ∘ f)(5) = {g_after_f(5)}")  # 2(5+1) = 12
+print(f"(f ∘ g)(5) = {f_after_g(5)}")  # 2(5)+1 = 11
+
+# Multiple composition
+h = lambda x: x ** 2
+result = compose(h, compose(g, f))
+print(f"(h ∘ g ∘ f)(3) = {result(3)}")  # ((3+1)*2)² = 64
+
+# For dictionaries (finite functions)
+def compose_dict(g_dict, f_dict):
+    """Compose two functions represented as dicts"""
+    return {a: g_dict[f_dict[a]] for a in f_dict}</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 8: Inverse Functions -->
+        <section class="content-section" data-section="8">
+            <h2>8. Inverse Functions</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A function f: A → B has an <strong>inverse f⁻¹: B → A</strong> if:</p>
+                <p class="operator-symbol">f⁻¹(f(x)) = x and f(f⁻¹(y)) = y</p>
+
+                <div class="example-box">
+                    <h4>⚠️ When Does an Inverse Exist?</h4>
+                    <p><strong>A function has an inverse if and only if it is bijective!</strong></p>
+                    <ul>
+                        <li>Injective ensures f⁻¹ is a function (no ambiguity)</li>
+                        <li>Surjective ensures f⁻¹ is defined everywhere</li>
+                    </ul>
+
+                    <h4>Examples:</h4>
+                    <p>✅ f(x) = 2x has inverse f⁻¹(x) = x/2</p>
+                    <p>✅ f(x) = x + 5 has inverse f⁻¹(x) = x - 5</p>
+                    <p>❌ f(x) = x² (on all reals) has no inverse (not injective: f(2) = f(-2))</p>
+                    <p>✅ f(x) = x² on [0,∞) has inverse f⁻¹(x) = √x</p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Finding Inverses</h3>
+                <div class="proof-steps">
+                    <div class="proof-step">
+                        <span class="step-number">1</span>
+                        <p>Write y = f(x)</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">2</span>
+                        <p>Solve for x in terms of y</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">3</span>
+                        <p>Write f⁻¹(y) = [expression in y]</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">4</span>
+                        <p>Verify: f(f⁻¹(y)) = y and f⁻¹(f(x)) = x</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Finding and Verifying Inverses</h3>
+                <pre><code class="language-python">def has_inverse(func_dict):
+    """Check if function (as dict) has an inverse"""
+    # Must be bijective
+    values = func_dict.values()
+    # Injective: all values unique
+    # Surjective: codomain = range (assume dict defines both)
+    return len(values) == len(set(values))
+
+def find_inverse(func_dict):
+    """Find inverse of a bijective function"""
+    if not has_inverse(func_dict):
+        return None
+    return {v: k for k, v in func_dict.items()}
+
+# Example 1: Bijective function
+f = {1: 'a', 2: 'b', 3: 'c'}
+f_inv = find_inverse(f)
+print(f"f = {f}")
+print(f"f⁻¹ = {f_inv}")
+
+# Verify composition gives identity
+for x in f:
+    assert f_inv[f[x]] == x, "f⁻¹(f(x)) ≠ x"
+print("✓ Inverse verified!")
+
+# Example 2: Mathematical functions
+f = lambda x: 3 * x + 1
+f_inv = lambda y: (y - 1) / 3
+
+# Verify
+test_vals = [0, 1, 5, -2, 10]
+for x in test_vals:
+    assert abs(f_inv(f(x)) - x) < 1e-10, "Composition failed"
+print("✓ Mathematical inverse verified!")</code></pre>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Quick Quiz</h2>
+
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> Which property is NOT required for an equivalence relation?</p>
+                <button onclick="checkAnswer(1, 'wrong1', this)">Reflexive</button>
+                <button onclick="checkAnswer(1, 'correct', this)">Antisymmetric</button>
+                <button onclick="checkAnswer(1, 'wrong2', this)">Symmetric</button>
+                <button onclick="checkAnswer(1, 'wrong3', this)">Transitive</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> For function f = {(1,a), (2,b), (3,a)}, what is true?</p>
+                <button onclick="checkAnswer(2, 'wrong', this)">It's injective</button>
+                <button onclick="checkAnswer(2, 'correct', this)">It's not injective</button>
+                <button onclick="checkAnswer(2, 'wrong2', this)">It's not a function</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> If f(x) = x + 2 and g(x) = 3x, what is (g ∘ f)(5)?</p>
+                <button onclick="checkAnswer(3, 'wrong1', this)">17</button>
+                <button onclick="checkAnswer(3, 'correct', this)">21</button>
+                <button onclick="checkAnswer(3, 'wrong2', this)">15</button>
+                <button onclick="checkAnswer(3, 'wrong3', this)">19</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> What condition is necessary for a function to have an inverse?</p>
+                <button onclick="checkAnswer(4, 'wrong1', this)">It must be injective only</button>
+                <button onclick="checkAnswer(4, 'wrong2', this)">It must be surjective only</button>
+                <button onclick="checkAnswer(4, 'correct', this)">It must be bijective</button>
+                <button onclick="checkAnswer(4, 'wrong3', this)">It must be reflexive</button>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='sets.html'">← Previous: Sets</button>
+            <button class="nav-button next" onclick="window.location.href='sequences.html'">Next: Sequences →</button>
+        </div>
+    </div>
+
+    <script src="../js/content.js"></script>
+</body>
+</html>

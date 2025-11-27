@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequences & Summations - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">🔢 Sequences & Summations</h1>
+            <p class="subtitle">Mathematical Patterns and Series</p>
+        </header>
+
+        <!-- Section 1: Sequences Basics -->
+        <section class="content-section" data-section="1">
+            <h2>1. Introduction to Sequences</h2>
+
+            <div class="concept-box">
+                <h3>What is a Sequence?</h3>
+                <p>A sequence is an <strong>ordered list of numbers</strong> following a specific pattern or rule.</p>
+
+                <div class="formula-box">
+                    <h4>Notation</h4>
+                    <p>A sequence is denoted as: <strong>{a<sub>n</sub>}</strong> or <strong>a<sub>1</sub>, a<sub>2</sub>, a<sub>3</sub>, ..., a<sub>n</sub>, ...</strong></p>
+                    <ul>
+                        <li><strong>a<sub>n</sub></strong> = the nth term of the sequence</li>
+                        <li><strong>n</strong> = the index (usually starting from 1 or 0)</li>
+                        <li><strong>a<sub>1</sub></strong> = the first term</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <h4>Examples of Sequences:</h4>
+                    <ul>
+                        <li><strong>Even numbers:</strong> {2, 4, 6, 8, 10, ...} where a<sub>n</sub> = 2n</li>
+                        <li><strong>Powers of 2:</strong> {1, 2, 4, 8, 16, ...} where a<sub>n</sub> = 2<sup>n-1</sup></li>
+                        <li><strong>Fibonacci:</strong> {1, 1, 2, 3, 5, 8, ...} where a<sub>n</sub> = a<sub>n-1</sub> + a<sub>n-2</sub></li>
+                        <li><strong>Squares:</strong> {1, 4, 9, 16, 25, ...} where a<sub>n</sub> = n²</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Sequences in Python</h3>
+                <pre><code class="language-python"># Define a sequence using a function
+def sequence(n):
+    """General sequence: a_n = n²"""
+    return n ** 2
+
+# Generate first 10 terms
+terms = [sequence(n) for n in range(1, 11)]
+print("Squares:", terms)
+# Output: [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+# Using generators for infinite sequences
+def fibonacci():
+    """Generate Fibonacci sequence infinitely"""
+    a, b = 1, 1
+    while True:
+        yield a
+        a, b = b, a + b
+
+# Get first 10 Fibonacci numbers
+fib = fibonacci()
+fib_terms = [next(fib) for _ in range(10)]
+print("Fibonacci:", fib_terms)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: Arithmetic Sequences -->
+        <section class="content-section" data-section="2">
+            <h2>2. Arithmetic Sequences</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>An arithmetic sequence has a <strong>common difference (d)</strong> between consecutive terms.</p>
+
+                <div class="formula-box">
+                    <h4>General Formula</h4>
+                    <p><strong>a<sub>n</sub> = a<sub>1</sub> + (n - 1)d</strong></p>
+                    <ul>
+                        <li><strong>a<sub>1</sub></strong> = first term</li>
+                        <li><strong>d</strong> = common difference</li>
+                        <li><strong>n</strong> = term number</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Sequence 3, 7, 11, 15, 19, ...</h4>
+                    <ul>
+                        <li>First term: a<sub>1</sub> = 3</li>
+                        <li>Common difference: d = 4</li>
+                        <li>10th term: a<sub>10</sub> = 3 + (10-1)×4 = 3 + 36 = <strong>39</strong></li>
+                    </ul>
+                </div>
+
+                <div class="formula-box">
+                    <h4>Sum of Arithmetic Sequence</h4>
+                    <p><strong>S<sub>n</sub> = n/2 × (a<sub>1</sub> + a<sub>n</sub>)</strong></p>
+                    <p>or equivalently:</p>
+                    <p><strong>S<sub>n</sub> = n/2 × (2a<sub>1</sub> + (n-1)d)</strong></p>
+                    <div class="example-box">
+                        <p>Sum of first 10 terms: S<sub>10</sub> = 10/2 × (3 + 39) = 5 × 42 = <strong>210</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Arithmetic Sequences in Python</h3>
+                <pre><code class="language-python">def arithmetic_term(a1, d, n):
+    """Calculate nth term of arithmetic sequence"""
+    return a1 + (n - 1) * d
+
+def arithmetic_sum(a1, d, n):
+    """Sum of first n terms"""
+    an = arithmetic_term(a1, d, n)
+    return n * (a1 + an) // 2
+
+# Example: 3, 7, 11, 15, ...
+a1, d = 3, 4
+print(f"10th term: {arithmetic_term(a1, d, 10)}")
+print(f"Sum of first 10 terms: {arithmetic_sum(a1, d, 10)}")
+
+# Using range to generate arithmetic sequence
+sequence = list(range(3, 40, 4))  # start=3, stop=40, step=4
+print("Sequence:", sequence[:10])</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: Geometric Sequences -->
+        <section class="content-section" data-section="3">
+            <h2>3. Geometric Sequences</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A geometric sequence has a <strong>common ratio (r)</strong> between consecutive terms.</p>
+
+                <div class="formula-box">
+                    <h4>General Formula</h4>
+                    <p><strong>a<sub>n</sub> = a<sub>1</sub> × r<sup>n-1</sup></strong></p>
+                    <ul>
+                        <li><strong>a<sub>1</sub></strong> = first term</li>
+                        <li><strong>r</strong> = common ratio</li>
+                        <li><strong>n</strong> = term number</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Sequence 2, 6, 18, 54, 162, ...</h4>
+                    <ul>
+                        <li>First term: a<sub>1</sub> = 2</li>
+                        <li>Common ratio: r = 3</li>
+                        <li>7th term: a<sub>7</sub> = 2 × 3<sup>6</sup> = 2 × 729 = <strong>1458</strong></li>
+                    </ul>
+                </div>
+
+                <div class="formula-box">
+                    <h4>Sum of Geometric Sequence (Finite)</h4>
+                    <p><strong>S<sub>n</sub> = a<sub>1</sub> × (1 - r<sup>n</sup>)/(1 - r)</strong> when r ≠ 1</p>
+                    <p><strong>S<sub>n</sub> = n × a<sub>1</sub></strong> when r = 1</p>
+                    <div class="example-box">
+                        <p>Sum of first 5 terms: S<sub>5</sub> = 2 × (1 - 3<sup>5</sup>)/(1 - 3) = 2 × (-242)/(-2) = <strong>242</strong></p>
+                    </div>
+                </div>
+
+                <div class="formula-box">
+                    <h4>Infinite Geometric Series</h4>
+                    <p>When <strong>|r| < 1</strong>, the sum converges:</p>
+                    <p><strong>S<sub>∞</sub> = a<sub>1</sub>/(1 - r)</strong></p>
+                    <div class="example-box">
+                        <h4>Example: 1 + 1/2 + 1/4 + 1/8 + ...</h4>
+                        <p>a<sub>1</sub> = 1, r = 1/2</p>
+                        <p>S<sub>∞</sub> = 1/(1 - 1/2) = 1/(1/2) = <strong>2</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Geometric Sequences in Python</h3>
+                <pre><code class="language-python">def geometric_term(a1, r, n):
+    """Calculate nth term of geometric sequence"""
+    return a1 * (r ** (n - 1))
+
+def geometric_sum(a1, r, n):
+    """Sum of first n terms"""
+    if r == 1:
+        return n * a1
+    return a1 * (1 - r**n) / (1 - r)
+
+def infinite_geometric_sum(a1, r):
+    """Sum of infinite series (only if |r| < 1)"""
+    if abs(r) >= 1:
+        return float('inf')
+    return a1 / (1 - r)
+
+# Example: 2, 6, 18, 54, ...
+a1, r = 2, 3
+print(f"7th term: {geometric_term(a1, r, 7)}")
+print(f"Sum of first 5 terms: {geometric_sum(a1, r, 5)}")
+
+# Infinite series: 1, 1/2, 1/4, ...
+print(f"Infinite sum: {infinite_geometric_sum(1, 0.5)}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4: Summation Notation -->
+        <section class="content-section" data-section="4">
+            <h2>4. Summation Notation (Σ)</h2>
+
+            <div class="concept-box">
+                <h3>Sigma Notation</h3>
+                <p>Summation notation uses the Greek letter Σ (sigma) to represent the sum of a sequence.</p>
+
+                <div class="formula-box">
+                    <h4>General Form</h4>
+                    <p><strong>Σ<sub>i=m</sub><sup>n</sup> a<sub>i</sub> = a<sub>m</sub> + a<sub>m+1</sub> + ... + a<sub>n</sub></strong></p>
+                    <ul>
+                        <li><strong>i</strong> = index of summation</li>
+                        <li><strong>m</strong> = lower bound (starting value)</li>
+                        <li><strong>n</strong> = upper bound (ending value)</li>
+                        <li><strong>a<sub>i</sub></strong> = general term</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <h4>Examples:</h4>
+                    <ul>
+                        <li><strong>Σ<sub>i=1</sub><sup>5</sup> i</strong> = 1 + 2 + 3 + 4 + 5 = 15</li>
+                        <li><strong>Σ<sub>i=1</sub><sup>4</sup> i²</strong> = 1² + 2² + 3² + 4² = 1 + 4 + 9 + 16 = 30</li>
+                        <li><strong>Σ<sub>i=0</sub><sup>3</sup> 2<sup>i</sup></strong> = 2⁰ + 2¹ + 2² + 2³ = 1 + 2 + 4 + 8 = 15</li>
+                        <li><strong>Σ<sub>k=3</sub><sup>6</sup> (2k + 1)</strong> = 7 + 9 + 11 + 13 = 40</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Summation in Python</h3>
+                <pre><code class="language-python"># Using built-in sum() function
+result = sum(i for i in range(1, 6))  # Σ i from 1 to 5
+print(f"Σ i (1 to 5): {result}")
+
+# Sum of squares
+result = sum(i**2 for i in range(1, 5))  # Σ i² from 1 to 4
+print(f"Σ i² (1 to 4): {result}")
+
+# Sum of powers of 2
+result = sum(2**i for i in range(4))  # Σ 2^i from 0 to 3
+print(f"Σ 2^i (0 to 3): {result}")
+
+# Custom range with expression
+result = sum(2*k + 1 for k in range(3, 7))  # Σ (2k+1) from 3 to 6
+print(f"Σ (2k+1) (3 to 6): {result}")
+
+# Using reduce for product notation
+from functools import reduce
+import operator
+product = reduce(operator.mul, range(1, 6), 1)  # 5!
+print(f"Product (1 to 5): {product}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 5: Common Summation Formulas -->
+        <section class="content-section" data-section="5">
+            <h2>5. Essential Summation Formulas</h2>
+
+            <div class="concept-box">
+                <h3>Standard Formulas to Memorize</h3>
+
+                <div class="formula-box">
+                    <h4>1. Sum of First n Integers</h4>
+                    <p><strong>Σ<sub>i=1</sub><sup>n</sup> i = n(n+1)/2</strong></p>
+                    <p class="example-box">Example: 1+2+3+...+100 = 100×101/2 = <strong>5050</strong></p>
+                </div>
+
+                <div class="formula-box">
+                    <h4>2. Sum of Squares</h4>
+                    <p><strong>Σ<sub>i=1</sub><sup>n</sup> i² = n(n+1)(2n+1)/6</strong></p>
+                    <p class="example-box">Example: 1²+2²+3²+4²+5² = 5×6×11/6 = <strong>55</strong></p>
+                </div>
+
+                <div class="formula-box">
+                    <h4>3. Sum of Cubes</h4>
+                    <p><strong>Σ<sub>i=1</sub><sup>n</sup> i³ = [n(n+1)/2]²</strong></p>
+                    <p class="example-box">Example: 1³+2³+3³+4³ = [4×5/2]² = 10² = <strong>100</strong></p>
+                </div>
+
+                <div class="formula-box">
+                    <h4>4. Geometric Series</h4>
+                    <p><strong>Σ<sub>i=0</sub><sup>n</sup> r<sup>i</sup> = (1 - r<sup>n+1</sup>)/(1 - r)</strong> when r ≠ 1</p>
+                    <p class="example-box">Example: 1+2+4+8+16 = (1-2⁵)/(1-2) = 31/1 = <strong>31</strong></p>
+                </div>
+
+                <div class="formula-box">
+                    <h4>5. Constant Sum</h4>
+                    <p><strong>Σ<sub>i=1</sub><sup>n</sup> c = nc</strong> (where c is a constant)</p>
+                    <p class="example-box">Example: 5+5+5+5+5 (n=5, c=5) = 5×5 = <strong>25</strong></p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Verify Formulas in Python</h3>
+                <pre><code class="language-python">def verify_formulas(n):
+    """Verify common summation formulas"""
+
+    # Sum of integers
+    direct = sum(range(1, n+1))
+    formula = n * (n + 1) // 2
+    print(f"Σi: {direct} = {formula} ✓" if direct == formula else "✗")
+
+    # Sum of squares
+    direct = sum(i**2 for i in range(1, n+1))
+    formula = n * (n + 1) * (2*n + 1) // 6
+    print(f"Σi²: {direct} = {formula} ✓" if direct == formula else "✗")
+
+    # Sum of cubes
+    direct = sum(i**3 for i in range(1, n+1))
+    formula = (n * (n + 1) // 2) ** 2
+    print(f"Σi³: {direct} = {formula} ✓" if direct == formula else "✗")
+
+    # Geometric series (r=2)
+    direct = sum(2**i for i in range(n+1))
+    formula = (2**(n+1) - 1)
+    print(f"Σ2^i: {direct} = {formula} ✓" if direct == formula else "✗")
+
+verify_formulas(10)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Telescoping Sums -->
+        <section class="content-section" data-section="6">
+            <h2>6. Telescoping Sums</h2>
+
+            <div class="concept-box">
+                <h3>What is a Telescoping Sum?</h3>
+                <p>A telescoping sum is one where <strong>intermediate terms cancel out</strong>, leaving only the first and last terms.</p>
+
+                <div class="example-box">
+                    <h4>Classic Example: Σ<sub>i=1</sub><sup>n</sup> (1/i - 1/(i+1))</h4>
+                    <p>Expand the sum:</p>
+                    <p>= (1/1 - 1/2) + (1/2 - 1/3) + (1/3 - 1/4) + ... + (1/n - 1/(n+1))</p>
+                    <p>Notice: -1/2 and +1/2 cancel, -1/3 and +1/3 cancel, etc.</p>
+                    <p>Result: = 1 - 1/(n+1) = <strong>n/(n+1)</strong></p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Another Example: Σ<sub>k=1</sub><sup>n</sup> k(k+1)</h4>
+                    <p>Rewrite as: k(k+1) = k² + k</p>
+                    <p>Using formulas: Σk² + Σk = n(n+1)(2n+1)/6 + n(n+1)/2</p>
+                    <p>Factor: = n(n+1)[(2n+1)/6 + 1/2] = n(n+1)(2n+4)/6 = <strong>n(n+1)(n+2)/3</strong></p>
+                </div>
+
+                <div class="formula-box">
+                    <h4>Technique: Partial Fractions</h4>
+                    <p>1/(k(k+1)) = 1/k - 1/(k+1)</p>
+                    <p>This creates a telescoping series!</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Telescoping Sums in Python</h3>
+                <pre><code class="language-python">def telescoping_sum(n):
+    """Calculate Σ (1/i - 1/(i+1)) from 1 to n"""
+    # Direct calculation
+    direct = sum(1/i - 1/(i+1) for i in range(1, n+1))
+
+    # Using telescoping property
+    formula = 1 - 1/(n+1)
+
+    print(f"Direct: {direct:.6f}")
+    print(f"Formula: {formula:.6f}")
+    return formula
+
+# Example
+result = telescoping_sum(100)
+print(f"Result: {result} = {100}/{101}")
+
+# Verify k(k+1) sum
+def k_times_k_plus_1(n):
+    direct = sum(k * (k + 1) for k in range(1, n+1))
+    formula = n * (n + 1) * (n + 2) // 3
+    print(f"Σk(k+1): {direct} = {formula}")
+
+k_times_k_plus_1(10)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Double Summations -->
+        <section class="content-section" data-section="7">
+            <h2>7. Double Summations</h2>
+
+            <div class="concept-box">
+                <h3>Nested Sums</h3>
+                <p>Double summations involve <strong>summing over two indices</strong>.</p>
+
+                <div class="formula-box">
+                    <h4>Notation</h4>
+                    <p><strong>Σ<sub>i=1</sub><sup>m</sup> Σ<sub>j=1</sub><sup>n</sup> a<sub>ij</sub></strong></p>
+                    <p>Read as: "For each i from 1 to m, sum over all j from 1 to n"</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Σ<sub>i=1</sub><sup>3</sup> Σ<sub>j=1</sub><sup>2</sup> ij</h4>
+                    <p>Expand inner sum first (j):</p>
+                    <p>= Σ<sub>i=1</sub><sup>3</sup> (i×1 + i×2) = Σ<sub>i=1</sub><sup>3</sup> 3i</p>
+                    <p>= 3(1) + 3(2) + 3(3) = 3 + 6 + 9 = <strong>18</strong></p>
+                </div>
+
+                <div class="concept-box">
+                    <h4>Changing Order of Summation</h4>
+                    <p>For independent indices:</p>
+                    <p><strong>Σ<sub>i=1</sub><sup>m</sup> Σ<sub>j=1</sub><sup>n</sup> a<sub>ij</sub> = Σ<sub>j=1</sub><sup>n</sup> Σ<sub>i=1</sub><sup>m</sup> a<sub>ij</sub></strong></p>
+
+                    <div class="example-box">
+                        <p>If a<sub>ij</sub> = i + j:</p>
+                        <p>Σ<sub>i=1</sub><sup>m</sup> Σ<sub>j=1</sub><sup>n</sup> (i+j) = Σ<sub>i=1</sub><sup>m</sup> (ni + Σ<sub>j=1</sub><sup>n</sup>j)</p>
+                        <p>= Σ<sub>i=1</sub><sup>m</sup> (ni + n(n+1)/2)</p>
+                        <p>= n×m(m+1)/2 + m×n(n+1)/2</p>
+                        <p>= <strong>mn(m+n+2)/2</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Double Summations in Python</h3>
+                <pre><code class="language-python"># Example: Σ Σ ij
+def double_sum_ij(m, n):
+    """Calculate Σ(i=1 to m) Σ(j=1 to n) ij"""
+    result = sum(i * j for i in range(1, m+1) for j in range(1, n+1))
+
+    # Using factorization: (Σi)(Σj)
+    sum_i = m * (m + 1) // 2
+    sum_j = n * (n + 1) // 2
+    formula = sum_i * sum_j
+
+    print(f"Direct: {result}")
+    print(f"Formula: {formula}")
+    return result
+
+double_sum_ij(3, 2)
+
+# Matrix-style double sum
+def matrix_double_sum(m, n):
+    """Visualize double summation as matrix"""
+    matrix = [[i * j for j in range(1, n+1)] for i in range(1, m+1)]
+
+    print("Matrix:")
+    for row in matrix:
+        print(row)
+
+    total = sum(sum(row) for row in matrix)
+    print(f"Total: {total}")
+    return total
+
+matrix_double_sum(4, 3)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 8: Applications -->
+        <section class="content-section" data-section="8">
+            <h2>8. Applications to Computer Science</h2>
+
+            <div class="concept-box">
+                <h3>Loop Analysis</h3>
+                <p>Summations help analyze the <strong>time complexity</strong> of nested loops.</p>
+
+                <div class="code-example">
+                    <h4>Example 1: Simple Loop</h4>
+                    <pre><code class="language-python">for i in range(1, n+1):
+    print(i)  # O(1) operation
+
+# Total operations: Σ(i=1 to n) 1 = n
+# Time complexity: O(n)</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <h4>Example 2: Nested Loop</h4>
+                    <pre><code class="language-python">for i in range(1, n+1):
+    for j in range(1, n+1):
+        print(i, j)  # O(1) operation
+
+# Total operations: Σ(i=1 to n) Σ(j=1 to n) 1 = n²
+# Time complexity: O(n²)</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <h4>Example 3: Triangular Loop</h4>
+                    <pre><code class="language-python">for i in range(1, n+1):
+    for j in range(1, i+1):
+        print(i, j)  # O(1) operation
+
+# Total operations: Σ(i=1 to n) Σ(j=1 to i) 1
+#                 = Σ(i=1 to n) i
+#                 = n(n+1)/2
+# Time complexity: O(n²)</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <h4>Example 4: Geometric Loop</h4>
+                    <pre><code class="language-python">i = 1
+while i <= n:
+    print(i)  # O(1) operation
+    i = i * 2
+
+# Iterations: log₂(n)
+# Total operations: Σ(k=0 to log n) 1 = log₂(n)
+# Time complexity: O(log n)</code></pre>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Algorithm Complexity Examples</h3>
+
+                <div class="example-box">
+                    <h4>Binary Search</h4>
+                    <p>Each step halves the search space</p>
+                    <p>Comparisons: log₂(n)</p>
+                    <p><strong>Time Complexity: O(log n)</strong></p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Merge Sort</h4>
+                    <p>Divides array in half, sorts recursively, merges</p>
+                    <p>Depth: log₂(n), Work per level: n</p>
+                    <p><strong>Time Complexity: O(n log n)</strong></p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Bubble Sort</h4>
+                    <p>Nested loops: outer n, inner ≈ n</p>
+                    <p>Comparisons: Σ(i=1 to n) i ≈ n²/2</p>
+                    <p><strong>Time Complexity: O(n²)</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: Python Advanced Examples -->
+        <section class="content-section" data-section="9">
+            <h2>9. Python Sequence & Sum Tools</h2>
+
+            <div class="code-example">
+                <h3>💻 Built-in Functions</h3>
+                <pre><code class="language-python"># range() - generates arithmetic sequences
+even_numbers = list(range(0, 20, 2))  # 0, 2, 4, ..., 18
+print("Even numbers:", even_numbers)
+
+# sum() - summation
+total = sum(range(1, 101))  # Σ i from 1 to 100
+print(f"Sum 1-100: {total}")
+
+# List comprehensions - flexible sequence generation
+squares = [i**2 for i in range(1, 11)]
+print("Squares:", squares)
+
+# Conditional sums
+even_sum = sum(i for i in range(1, 21) if i % 2 == 0)
+print(f"Sum of even 1-20: {even_sum}")
+
+# itertools for advanced sequences
+from itertools import accumulate, count, islice
+
+# Cumulative sum
+cumsum = list(accumulate(range(1, 6)))  # [1, 3, 6, 10, 15]
+print("Cumulative sum:", cumsum)
+
+# Infinite sequence
+infinite = count(start=1, step=2)  # 1, 3, 5, 7, ...
+first_10_odd = list(islice(infinite, 10))
+print("First 10 odd:", first_10_odd)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 NumPy for Efficient Sequences</h3>
+                <pre><code class="language-python">import numpy as np
+
+# Arithmetic sequence
+arr = np.arange(1, 11)  # [1, 2, 3, ..., 10]
+print("Array:", arr)
+
+# Geometric sequence
+geo = np.array([2**i for i in range(10)])
+print("Powers of 2:", geo)
+
+# Operations
+print(f"Sum: {np.sum(arr)}")
+print(f"Product: {np.prod(arr)}")
+print(f"Cumulative sum: {np.cumsum(arr)}")
+
+# Vectorized operations
+squared = arr ** 2
+print(f"Squares: {squared}")
+print(f"Sum of squares: {np.sum(squared)}")
+
+# Linear space (evenly spaced)
+linear = np.linspace(0, 10, 11)  # 11 points from 0 to 10
+print("Linear space:", linear)</code></pre>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Quick Quiz</h2>
+
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> What is the 10th term of the arithmetic sequence 5, 8, 11, 14, ...?</p>
+                <button onclick="checkAnswer(1, '32', this)">32</button>
+                <button onclick="checkAnswer(1, '35', this)">35</button>
+                <button onclick="checkAnswer(1, '38', this)">38</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> What is Σ(i=1 to 100) i equal to?</p>
+                <button onclick="checkAnswer(2, '5000', this)">5000</button>
+                <button onclick="checkAnswer(2, '5050', this)">5050</button>
+                <button onclick="checkAnswer(2, '10100', this)">10100</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> For a geometric sequence with a₁=3 and r=2, what is a₅?</p>
+                <button onclick="checkAnswer(3, '24', this)">24</button>
+                <button onclick="checkAnswer(3, '48', this)">48</button>
+                <button onclick="checkAnswer(3, '96', this)">96</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> What is the time complexity of two nested loops, each running n times?</p>
+                <button onclick="checkAnswer(4, 'n', this)">O(n)</button>
+                <button onclick="checkAnswer(4, 'n2', this)">O(n²)</button>
+                <button onclick="checkAnswer(4, 'logn', this)">O(log n)</button>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='number-theory.html'">← Previous: Number Theory</button>
+            <button class="nav-button next" onclick="window.location.href='induction.html'">Next: Mathematical Induction →</button>
+        </div>
+    </div>
+
+    <script src="../js/content.js"></script>
+</body>
+</html>

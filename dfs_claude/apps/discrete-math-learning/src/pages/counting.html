@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counting & Combinatorics - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">🔢 Counting & Combinatorics</h1>
+            <p class="subtitle">The Art of Counting Without Counting</p>
+        </header>
+
+        <!-- Section 1: Fundamental Counting Principles -->
+        <section class="content-section" data-section="1">
+            <h2>1. Fundamental Counting Principles</h2>
+
+            <div class="concept-box">
+                <h3>Product Rule (AND)</h3>
+                <p>If there are <strong>n₁</strong> ways to do task 1 AND <strong>n₂</strong> ways to do task 2, then there are <strong>n₁ × n₂</strong> ways to do both tasks.</p>
+
+                <div class="example-box">
+                    <h4>Example: Restaurant Menu</h4>
+                    <ul>
+                        <li>3 appetizers: {Soup, Salad, Bruschetta}</li>
+                        <li>4 main courses: {Pasta, Steak, Fish, Chicken}</li>
+                        <li>2 desserts: {Cake, Ice Cream}</li>
+                    </ul>
+                    <p><strong>Total meal combinations:</strong> 3 × 4 × 2 = <span class="highlight">24 different meals</span></p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Sum Rule (OR)</h3>
+                <p>If there are <strong>n₁</strong> ways to do task 1 OR <strong>n₂</strong> ways to do task 2 (but not both), then there are <strong>n₁ + n₂</strong> total ways.</p>
+
+                <div class="example-box">
+                    <h4>Example: Travel Options</h4>
+                    <ul>
+                        <li>3 bus routes to campus</li>
+                        <li>2 train routes to campus</li>
+                    </ul>
+                    <p><strong>Ways to get to campus:</strong> 3 + 2 = <span class="highlight">5 options</span></p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Programming Connection</h3>
+                <pre><code class="language-python"># Product Rule: nested loops multiply
+appetizers = ['Soup', 'Salad', 'Bruschetta']
+mains = ['Pasta', 'Steak', 'Fish', 'Chicken']
+desserts = ['Cake', 'Ice Cream']
+
+meals = [(a, m, d) for a in appetizers
+                    for m in mains
+                    for d in desserts]
+print(f"Total meals: {len(meals)}")  # 3 * 4 * 2 = 24
+
+# Sum Rule: combining separate options
+travel_options = ['Bus1', 'Bus2', 'Bus3', 'Train1', 'Train2']
+print(f"Travel options: {len(travel_options)}")  # 3 + 2 = 5</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: Permutations -->
+        <section class="content-section" data-section="2">
+            <h2>2. Permutations (Order Matters)</h2>
+
+            <div class="concept-box">
+                <h3>Permutations Formula</h3>
+                <p>Number of ways to arrange <strong>r</strong> objects from <strong>n</strong> distinct objects:</p>
+                <div class="formula-box">
+                    <strong>P(n, r) = n!/(n-r)!</strong>
+                    <p>Read as: "n permute r"</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Race Podium</h4>
+                    <p>10 runners in a race. How many ways can gold, silver, bronze be awarded?</p>
+                    <p><strong>Solution:</strong> P(10, 3) = 10!/(10-3)! = 10!/7! = 10 × 9 × 8 = <span class="highlight">720 ways</span></p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Permutations WITH Repetition</h3>
+                <p>If objects can be repeated, choosing r from n objects: <strong>n^r</strong></p>
+
+                <div class="example-box">
+                    <h4>Example: 4-digit PIN</h4>
+                    <p>Each digit can be 0-9 (10 choices), 4 positions</p>
+                    <p><strong>Total PINs:</strong> 10⁴ = <span class="highlight">10,000 combinations</span></p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Python Implementation</h3>
+                <pre><code class="language-python">import math
+from itertools import permutations
+
+# Manual calculation
+def P(n, r):
+    """Permutations: n permute r"""
+    return math.factorial(n) // math.factorial(n - r)
+
+print(f"P(10, 3) = {P(10, 3)}")  # 720
+
+# Using itertools
+runners = list(range(1, 11))  # 10 runners
+podium_arrangements = list(permutations(runners, 3))
+print(f"Podium arrangements: {len(podium_arrangements)}")  # 720
+
+# With repetition: 4-digit PIN
+pin_count = 10 ** 4
+print(f"Possible 4-digit PINs: {pin_count}")  # 10,000</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: Combinations -->
+        <section class="content-section" data-section="3">
+            <h2>3. Combinations (Order Doesn't Matter)</h2>
+
+            <div class="concept-box">
+                <h3>Combinations Formula</h3>
+                <p>Number of ways to choose <strong>r</strong> objects from <strong>n</strong> distinct objects (order doesn't matter):</p>
+                <div class="formula-box">
+                    <strong>C(n, r) = n! / (r! × (n-r)!)</strong>
+                    <p>Also written as: (n choose r) or ⁿCᵣ</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Pizza Toppings</h4>
+                    <p>Choose 3 toppings from {Pepperoni, Mushrooms, Olives, Peppers, Onions} (5 total)</p>
+                    <p><strong>Solution:</strong> C(5, 3) = 5!/(3! × 2!) = (5 × 4)/(2 × 1) = <span class="highlight">10 combinations</span></p>
+                    <p class="note">Note: {Pepperoni, Olives, Peppers} = {Peppers, Pepperoni, Olives}</p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Binomial Coefficients</h3>
+                <p>C(n, r) represents coefficients in binomial expansion:</p>
+                <div class="formula-box">
+                    (x + y)² = <strong>1</strong>x² + <strong>2</strong>xy + <strong>1</strong>y²
+                    <br>Coefficients: C(2,0)=1, C(2,1)=2, C(2,2)=1
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Python Implementation</h3>
+                <pre><code class="language-python">import math
+from itertools import combinations
+
+# Manual calculation
+def C(n, r):
+    """Combinations: n choose r"""
+    return math.factorial(n) // (math.factorial(r) * math.factorial(n - r))
+
+print(f"C(5, 3) = {C(5, 3)}")  # 10
+
+# Using itertools
+toppings = ['Pepperoni', 'Mushrooms', 'Olives', 'Peppers', 'Onions']
+pizza_combos = list(combinations(toppings, 3))
+print(f"Pizza combinations: {len(pizza_combos)}")  # 10
+print("First 3:", pizza_combos[:3])
+
+# Lottery odds: choose 6 from 49
+lottery_odds = C(49, 6)
+print(f"Lottery combinations: {lottery_odds:,}")  # 13,983,816</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4: Binomial Theorem -->
+        <section class="content-section" data-section="4">
+            <h2>4. Binomial Theorem</h2>
+
+            <div class="concept-box">
+                <h3>Binomial Expansion</h3>
+                <div class="formula-box">
+                    <strong>(x + y)ⁿ = Σ C(n,k) × x^(n-k) × y^k</strong>
+                    <p>where k goes from 0 to n</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Pascal's Triangle</h4>
+                    <pre style="text-align: center; font-family: monospace;">
+    1
+   1 1
+  1 2 1
+ 1 3 3 1
+1 4 6 4 1
+                    </pre>
+                    <p>Each number is C(row, position)</p>
+                    <p>Row 4: (x+y)⁴ = 1x⁴ + 4x³y + 6x²y² + 4xy³ + 1y⁴</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Generate Pascal's Triangle</h3>
+                <pre><code class="language-python">def pascals_triangle(n):
+    """Generate first n rows of Pascal's triangle"""
+    triangle = []
+    for i in range(n):
+        row = [C(i, j) for j in range(i + 1)]
+        triangle.append(row)
+    return triangle
+
+# Display first 6 rows
+for i, row in enumerate(pascals_triangle(6)):
+    print(f"Row {i}: {row}")
+
+# Verify: (x+y)^3 expansion
+n = 3
+expansion = [C(n, k) for k in range(n + 1)]
+print(f"(x+y)^3 coefficients: {expansion}")  # [1, 3, 3, 1]</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 5: Pigeonhole Principle -->
+        <section class="content-section" data-section="5">
+            <h2>5. Pigeonhole Principle</h2>
+
+            <div class="concept-box">
+                <h3>Basic Principle</h3>
+                <p>If <strong>n</strong> items are placed into <strong>m</strong> containers, and n > m, then at least one container must contain more than one item.</p>
+
+                <div class="example-box">
+                    <h4>Example: Birthday Problem</h4>
+                    <p><strong>Question:</strong> In a group of 13 people, prove at least 2 share a birth month.</p>
+                    <p><strong>Proof:</strong></p>
+                    <ul>
+                        <li>13 people (pigeons)</li>
+                        <li>12 months (holes)</li>
+                        <li>Since 13 > 12, at least 2 people must share a month!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Generalized Pigeonhole Principle</h3>
+                <p>If <strong>n</strong> items are placed into <strong>m</strong> containers, then at least one container contains at least <strong>⌈n/m⌉</strong> items.</p>
+
+                <div class="example-box">
+                    <h4>Example: Exam Grades</h4>
+                    <p><strong>Question:</strong> 100 students, grades A-F (5 categories). How many students minimum got the same grade?</p>
+                    <p><strong>Solution:</strong> ⌈100/5⌉ = ⌈20⌉ = <span class="highlight">At least 20 students</span> share some grade</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Simulation</h3>
+                <pre><code class="language-python">import random
+import math
+
+def pigeonhole_demo(items, holes):
+    """Demonstrate pigeonhole principle"""
+    containers = [0] * holes
+    for _ in range(items):
+        hole = random.randint(0, holes - 1)
+        containers[hole] += 1
+
+    max_in_hole = max(containers)
+    theoretical_min = math.ceil(items / holes)
+
+    print(f"{items} items in {holes} holes")
+    print(f"Distribution: {containers}")
+    print(f"Max in one hole: {max_in_hole}")
+    print(f"Theoretical minimum: {theoretical_min}")
+    assert max_in_hole >= theoretical_min
+
+# Test
+pigeonhole_demo(13, 12)  # Birthday problem
+pigeonhole_demo(100, 5)  # Grades example</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Inclusion-Exclusion Principle -->
+        <section class="content-section" data-section="6">
+            <h2>6. Inclusion-Exclusion Principle</h2>
+
+            <div class="concept-box">
+                <h3>Two Sets</h3>
+                <div class="formula-box">
+                    <strong>|A ∪ B| = |A| + |B| - |A ∩ B|</strong>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Student Survey</h4>
+                    <ul>
+                        <li>30 students study Python</li>
+                        <li>25 students study JavaScript</li>
+                        <li>15 students study both</li>
+                    </ul>
+                    <p><strong>Students studying at least one language:</strong></p>
+                    <p>30 + 25 - 15 = <span class="highlight">40 students</span></p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Three Sets</h3>
+                <div class="formula-box">
+                    <strong>|A ∪ B ∪ C| = |A| + |B| + |C| - |A ∩ B| - |A ∩ C| - |B ∩ C| + |A ∩ B ∩ C|</strong>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Programming Languages</h4>
+                    <ul>
+                        <li>|Python| = 40, |Java| = 35, |C++| = 30</li>
+                        <li>|Python ∩ Java| = 20, |Python ∩ C++| = 15, |Java ∩ C++| = 12</li>
+                        <li>|Python ∩ Java ∩ C++| = 8</li>
+                    </ul>
+                    <p><strong>Students knowing at least one:</strong></p>
+                    <p>40 + 35 + 30 - 20 - 15 - 12 + 8 = <span class="highlight">66 students</span></p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Set Operations</h3>
+                <pre><code class="language-python"># Two sets example
+python_students = {1, 2, 3, 4, 5, 10, 11, 15, 20, 25}  # 30 total (simplified)
+js_students = {3, 4, 5, 6, 7, 11, 12, 20, 22}  # 25 total
+
+at_least_one = python_students | js_students  # Union
+both = python_students & js_students  # Intersection
+
+print(f"|Python| = {len(python_students)}")
+print(f"|JavaScript| = {len(js_students)}")
+print(f"|Both| = {len(both)}")
+print(f"|At least one| = {len(at_least_one)}")
+
+# Verify inclusion-exclusion
+expected = len(python_students) + len(js_students) - len(both)
+assert len(at_least_one) == expected
+print(f"Verified: {len(at_least_one)} = {expected}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Distributing Objects -->
+        <section class="content-section" data-section="7">
+            <h2>7. Distributing Objects (Stars and Bars)</h2>
+
+            <div class="concept-box">
+                <h3>Stars and Bars Method</h3>
+                <p>Distribute <strong>n</strong> identical objects into <strong>k</strong> distinct bins:</p>
+                <div class="formula-box">
+                    <strong>C(n + k - 1, k - 1) = C(n + k - 1, n)</strong>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example: Distributing Cookies</h4>
+                    <p><strong>Question:</strong> Distribute 10 identical cookies to 3 children. How many ways?</p>
+                    <p><strong>Visualization:</strong> ★★★★★★★★★★ | |</p>
+                    <p>We need 2 bars (|) to create 3 sections</p>
+                    <p><strong>Solution:</strong> C(10 + 3 - 1, 3 - 1) = C(12, 2) = <span class="highlight">66 ways</span></p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Generate Distributions</h3>
+                <pre><code class="language-python">from itertools import combinations_with_replacement
+
+def stars_and_bars(stars, bins):
+    """Calculate ways to distribute stars into bins"""
+    return C(stars + bins - 1, bins - 1)
+
+# 10 cookies, 3 children
+result = stars_and_bars(10, 3)
+print(f"Ways to distribute 10 cookies to 3 children: {result}")  # 66
+
+# Generate all distributions
+def generate_distributions(n, k):
+    """Generate all ways to distribute n items into k bins"""
+    # Each distribution is a k-tuple summing to n
+    distributions = []
+    for combo in combinations_with_replacement(range(k), n):
+        dist = [combo.count(i) for i in range(k)]
+        distributions.append(dist)
+    return distributions
+
+dists = generate_distributions(5, 3)
+print(f"First 5 distributions of 5 cookies to 3 children:")
+for d in dists[:5]:
+    print(f"  {d} (total: {sum(d)})")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 8: Applications -->
+        <section class="content-section" data-section="8">
+            <h2>8. Real-World Applications</h2>
+
+            <div class="concept-box">
+                <h3>Password Strength</h3>
+                <div class="example-box">
+                    <h4>8-character password</h4>
+                    <ul>
+                        <li>26 lowercase + 26 uppercase + 10 digits + 10 symbols = 72 characters</li>
+                        <li>Total: 72⁸ = <span class="highlight">722,204,136,308,736</span> combinations</li>
+                        <li>At 1 billion guesses/sec: ~8.4 days to crack</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Lottery Odds</h3>
+                <div class="example-box">
+                    <h4>Powerball: Choose 5 from 69, plus 1 from 26</h4>
+                    <p>Odds = C(69, 5) × C(26, 1) = 11,238,513 × 26</p>
+                    <p><strong>1 in 292,201,338</strong> chance of winning</p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Team Selection</h3>
+                <div class="example-box">
+                    <h4>Form a 5-person team from 20 candidates</h4>
+                    <p>C(20, 5) = <span class="highlight">15,504 possible teams</span></p>
+                    <p>If we need 2 specific people and 3 from remaining 18:</p>
+                    <p>C(18, 3) = <span class="highlight">816 teams</span></p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Password Strength Calculator</h3>
+                <pre><code class="language-python">def password_strength(length, charset_size):
+    """Calculate password combinations and crack time"""
+    combinations = charset_size ** length
+    guesses_per_sec = 1_000_000_000  # 1 billion/sec
+    seconds_to_crack = combinations / guesses_per_sec
+    days = seconds_to_crack / (60 * 60 * 24)
+
+    return {
+        'combinations': combinations,
+        'days_to_crack': days
+    }
+
+# Compare password strengths
+charsets = {
+    'lowercase': 26,
+    'lower+upper': 52,
+    'alphanumeric': 62,
+    'all_characters': 72
+}
+
+for name, size in charsets.items():
+    result = password_strength(8, size)
+    print(f"{name:15} - {result['combinations']:>20,} combos")
+    print(f"                 ~{result['days_to_crack']:,.1f} days to crack")</code></pre>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Practice Problems</h2>
+
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> How many ways can you arrange the letters in "CODE"?</p>
+                <button onclick="checkAnswer(1, '24', this)">24</button>
+                <button onclick="checkAnswer(1, '12', this)">12</button>
+                <button onclick="checkAnswer(1, '256', this)">256</button>
+                <div class="explanation" style="display:none;">4! = 4 × 3 × 2 × 1 = 24</div>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> Choose 3 books from 7. How many ways?</p>
+                <button onclick="checkAnswer(2, '35', this)">35</button>
+                <button onclick="checkAnswer(2, '21', this)">21</button>
+                <button onclick="checkAnswer(2, '210', this)">210</button>
+                <div class="explanation" style="display:none;">C(7,3) = 7!/(3!×4!) = 35</div>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> In a class of 30 students, how many must have been born in the same month?</p>
+                <button onclick="checkAnswer(3, '3', this)">At least 3</button>
+                <button onclick="checkAnswer(3, '2', this)">At least 2</button>
+                <button onclick="checkAnswer(3, '1', this)">At least 1</button>
+                <div class="explanation" style="display:none;">⌈30/12⌉ = 3 by pigeonhole principle</div>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> |A| = 50, |B| = 40, |A ∩ B| = 15. What is |A ∪ B|?</p>
+                <button onclick="checkAnswer(4, '75', this)">75</button>
+                <button onclick="checkAnswer(4, '90', this)">90</button>
+                <button onclick="checkAnswer(4, '105', this)">105</button>
+                <div class="explanation" style="display:none;">50 + 40 - 15 = 75 (inclusion-exclusion)</div>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 5:</strong> What is C(10, 3)?</p>
+                <button onclick="checkAnswer(5, '120', this)">120</button>
+                <button onclick="checkAnswer(5, '720', this)">720</button>
+                <button onclick="checkAnswer(5, '1000', this)">1000</button>
+                <div class="explanation" style="display:none;">C(10,3) = 10!/(3!×7!) = (10×9×8)/(3×2×1) = 120</div>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='sets.html'">← Previous: Sets & Relations</button>
+            <button class="nav-button next" onclick="window.location.href='probability.html'">Next: Probability →</button>
+        </div>
+    </div>
+
+    <script src="../js/content.js"></script>
+</body>
+</html>

@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trees & Applications - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">🌳 Trees & Applications</h1>
+            <p class="subtitle">Hierarchical Data Structures and Their Applications</p>
+        </header>
+
+        <!-- Section 1: Trees Basics -->
+        <section class="content-section" data-section="1">
+            <h2>1. Trees Basics</h2>
+
+            <div class="concept-box">
+                <h3>What is a Tree?</h3>
+                <p>A <strong>tree</strong> is a connected, acyclic graph. It's a hierarchical data structure consisting of nodes connected by edges, with one node designated as the root.</p>
+
+                <div class="example-box">
+                    <h4>✅ Key Properties:</h4>
+                    <ul>
+                        <li><strong>Connected:</strong> There's a path between any two nodes</li>
+                        <li><strong>Acyclic:</strong> No cycles (closed paths)</li>
+                        <li><strong>Unique path:</strong> Exactly one path between any two nodes</li>
+                        <li><strong>n vertices → n-1 edges:</strong> A tree with n nodes has exactly n-1 edges</li>
+                    </ul>
+
+                    <h4>📝 Terminology:</h4>
+                    <ul>
+                        <li><strong>Root:</strong> The topmost node (has no parent)</li>
+                        <li><strong>Parent:</strong> A node directly above another node</li>
+                        <li><strong>Child:</strong> A node directly below another node</li>
+                        <li><strong>Leaf (External node):</strong> A node with no children</li>
+                        <li><strong>Internal node:</strong> A node with at least one child</li>
+                        <li><strong>Siblings:</strong> Nodes with the same parent</li>
+                        <li><strong>Depth:</strong> Distance from root to a node</li>
+                        <li><strong>Height:</strong> Maximum depth in the tree</li>
+                        <li><strong>Subtree:</strong> A tree formed by a node and its descendants</li>
+                    </ul>
+
+                    <h4>🎯 Example Tree:</h4>
+                    <pre>
+        A (root, depth=0)
+       / \
+      B   C (depth=1)
+     / \   \
+    D   E   F (depth=2, leaves)
+                    </pre>
+                    <ul>
+                        <li>Height = 2</li>
+                        <li>6 vertices, 5 edges (n-1 property)</li>
+                        <li>Leaves: D, E, F</li>
+                        <li>Internal nodes: A, B, C</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Tree Node Implementation</h3>
+                <pre><code class="language-python"># Basic tree node structure
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.children = []
+
+    def add_child(self, child_node):
+        self.children.append(child_node)
+
+# Create the example tree
+root = TreeNode('A')
+b = TreeNode('B')
+c = TreeNode('C')
+d = TreeNode('D')
+e = TreeNode('E')
+f = TreeNode('F')
+
+root.add_child(b)
+root.add_child(c)
+b.add_child(d)
+b.add_child(e)
+c.add_child(f)
+
+# Calculate height of tree
+def height(node):
+    if not node or not node.children:
+        return 0
+    return 1 + max(height(child) for child in node.children)
+
+print(f"Tree height: {height(root)}")  # 2</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: Binary Trees -->
+        <section class="content-section" data-section="2">
+            <h2>2. Binary Trees</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A <strong>binary tree</strong> is a tree where each node has at most two children, typically called left and right.</p>
+
+                <div class="operators-grid">
+                    <div class="operator-card">
+                        <h3>Full Binary Tree</h3>
+                        <p>Every node has 0 or 2 children</p>
+                        <pre>
+    A
+   / \
+  B   C
+ / \
+D   E
+                        </pre>
+                    </div>
+
+                    <div class="operator-card">
+                        <h3>Complete Binary Tree</h3>
+                        <p>All levels filled except possibly last, filled left to right</p>
+                        <pre>
+    A
+   / \
+  B   C
+ / \
+D   E
+                        </pre>
+                    </div>
+
+                    <div class="operator-card">
+                        <h3>Perfect Binary Tree</h3>
+                        <p>All internal nodes have 2 children, all leaves at same level</p>
+                        <pre>
+    A
+   / \
+  B   C
+ / \ / \
+D  E F  G
+                        </pre>
+                    </div>
+
+                    <div class="operator-card">
+                        <h3>Degenerate Tree</h3>
+                        <p>Each parent has only one child (like linked list)</p>
+                        <pre>
+A
+ \
+  B
+   \
+    C
+     \
+      D
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>🎯 Properties:</h4>
+                    <ul>
+                        <li><strong>Maximum nodes at level i:</strong> 2<sup>i</sup></li>
+                        <li><strong>Maximum nodes in tree of height h:</strong> 2<sup>h+1</sup> - 1</li>
+                        <li><strong>Minimum height with n nodes:</strong> ⌈log₂(n+1)⌉ - 1</li>
+                        <li><strong>Perfect binary tree of height h:</strong> has 2<sup>h+1</sup> - 1 nodes</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Binary Tree Implementation</h3>
+                <pre><code class="language-python">class BinaryTreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+# Create a binary tree
+#       1
+#      / \
+#     2   3
+#    / \
+#   4   5
+
+root = BinaryTreeNode(1)
+root.left = BinaryTreeNode(2)
+root.right = BinaryTreeNode(3)
+root.left.left = BinaryTreeNode(4)
+root.left.right = BinaryTreeNode(5)
+
+# Count nodes
+def count_nodes(node):
+    if not node:
+        return 0
+    return 1 + count_nodes(node.left) + count_nodes(node.right)
+
+# Check if perfect binary tree
+def is_perfect(node, depth, level=0):
+    if not node:
+        return True
+    if not node.left and not node.right:
+        return depth == level
+    if not node.left or not node.right:
+        return False
+    return (is_perfect(node.left, depth, level + 1) and
+            is_perfect(node.right, depth, level + 1))
+
+print(f"Total nodes: {count_nodes(root)}")  # 5</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: Tree Traversals -->
+        <section class="content-section" data-section="3">
+            <h2>3. Tree Traversals</h2>
+
+            <div class="proof-technique">
+                <h3>Depth-First Traversals</h3>
+
+                <div class="theorem-box">
+                    <h4>Preorder Traversal (Root → Left → Right)</h4>
+                    <p>Visit root first, then left subtree, then right subtree</p>
+                    <div class="example-box">
+                        <pre>
+    1
+   / \
+  2   3
+ / \
+4   5
+
+Preorder: 1, 2, 4, 5, 3
+                        </pre>
+                        <p><strong>Use cases:</strong> Creating a copy of tree, prefix expression</p>
+                    </div>
+                </div>
+
+                <div class="theorem-box">
+                    <h4>Inorder Traversal (Left → Root → Right)</h4>
+                    <p>Visit left subtree first, then root, then right subtree</p>
+                    <div class="example-box">
+                        <pre>
+    1
+   / \
+  2   3
+ / \
+4   5
+
+Inorder: 4, 2, 5, 1, 3
+                        </pre>
+                        <p><strong>Use cases:</strong> BST sorted output, infix expression</p>
+                    </div>
+                </div>
+
+                <div class="theorem-box">
+                    <h4>Postorder Traversal (Left → Right → Root)</h4>
+                    <p>Visit left subtree, then right subtree, then root</p>
+                    <div class="example-box">
+                        <pre>
+    1
+   / \
+  2   3
+ / \
+4   5
+
+Postorder: 4, 5, 2, 3, 1
+                        </pre>
+                        <p><strong>Use cases:</strong> Deleting tree, postfix expression</p>
+                    </div>
+                </div>
+
+                <div class="theorem-box">
+                    <h4>Level-Order Traversal (Breadth-First)</h4>
+                    <p>Visit nodes level by level, left to right</p>
+                    <div class="example-box">
+                        <pre>
+    1
+   / \
+  2   3
+ / \
+4   5
+
+Level-order: 1, 2, 3, 4, 5
+                        </pre>
+                        <p><strong>Use cases:</strong> Finding shortest path, level-wise processing</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Tree Traversal Implementation</h3>
+                <pre><code class="language-python">from collections import deque
+
+class BinaryTreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+# Preorder traversal (Root → Left → Right)
+def preorder(node, result=[]):
+    if node:
+        result.append(node.value)
+        preorder(node.left, result)
+        preorder(node.right, result)
+    return result
+
+# Inorder traversal (Left → Root → Right)
+def inorder(node, result=[]):
+    if node:
+        inorder(node.left, result)
+        result.append(node.value)
+        inorder(node.right, result)
+    return result
+
+# Postorder traversal (Left → Right → Root)
+def postorder(node, result=[]):
+    if node:
+        postorder(node.left, result)
+        postorder(node.right, result)
+        result.append(node.value)
+    return result
+
+# Level-order traversal (BFS)
+def level_order(root):
+    if not root:
+        return []
+
+    result = []
+    queue = deque([root])
+
+    while queue:
+        node = queue.popleft()
+        result.append(node.value)
+
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+
+    return result
+
+# Create tree and test
+root = BinaryTreeNode(1)
+root.left = BinaryTreeNode(2)
+root.right = BinaryTreeNode(3)
+root.left.left = BinaryTreeNode(4)
+root.left.right = BinaryTreeNode(5)
+
+print("Preorder:", preorder(root, []))      # [1, 2, 4, 5, 3]
+print("Inorder:", inorder(root, []))        # [4, 2, 5, 1, 3]
+print("Postorder:", postorder(root, []))    # [4, 5, 2, 3, 1]
+print("Level-order:", level_order(root))    # [1, 2, 3, 4, 5]</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4: Binary Search Trees -->
+        <section class="content-section" data-section="4">
+            <h2>4. Binary Search Trees (BST)</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A <strong>Binary Search Tree</strong> is a binary tree with the following property:</p>
+                <p>For every node n: all values in left subtree ≤ n.value < all values in right subtree</p>
+
+                <div class="example-box">
+                    <h4>🎯 BST Example:</h4>
+                    <pre>
+        8
+       / \
+      3   10
+     / \    \
+    1   6    14
+       / \   /
+      4   7 13
+                    </pre>
+                    <ul>
+                        <li>Inorder traversal gives sorted sequence: 1, 3, 4, 6, 7, 8, 10, 13, 14</li>
+                        <li>Search, insert, delete: O(h) where h is height</li>
+                        <li>Best case height: O(log n) (balanced)</li>
+                        <li>Worst case height: O(n) (degenerate/skewed)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 BST Operations</h3>
+                <pre><code class="language-python">class BSTNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BST:
+    def __init__(self):
+        self.root = None
+
+    # Search for a value
+    def search(self, node, value):
+        if not node or node.value == value:
+            return node
+        if value < node.value:
+            return self.search(node.left, value)
+        return self.search(node.right, value)
+
+    # Insert a value
+    def insert(self, node, value):
+        if not node:
+            return BSTNode(value)
+
+        if value < node.value:
+            node.left = self.insert(node.left, value)
+        elif value > node.value:
+            node.right = self.insert(node.right, value)
+
+        return node
+
+    # Find minimum value node
+    def find_min(self, node):
+        current = node
+        while current.left:
+            current = current.left
+        return current
+
+    # Delete a value
+    def delete(self, node, value):
+        if not node:
+            return node
+
+        if value < node.value:
+            node.left = self.delete(node.left, value)
+        elif value > node.value:
+            node.right = self.delete(node.right, value)
+        else:
+            # Node with only one child or no child
+            if not node.left:
+                return node.right
+            elif not node.right:
+                return node.left
+
+            # Node with two children: get inorder successor
+            temp = self.find_min(node.right)
+            node.value = temp.value
+            node.right = self.delete(node.right, temp.value)
+
+        return node
+
+# Example usage
+bst = BST()
+values = [8, 3, 10, 1, 6, 14, 4, 7, 13]
+for val in values:
+    bst.root = bst.insert(bst.root, val)
+
+print("Found 6:", bst.search(bst.root, 6) is not None)  # True
+print("Found 5:", bst.search(bst.root, 5) is not None)  # False</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 5: Balanced Trees -->
+        <section class="content-section" data-section="5">
+            <h2>5. Balanced Trees</h2>
+
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <h3>AVL Trees</h3>
+                    <p>Self-balancing BST where height difference between left and right subtrees ≤ 1</p>
+                    <div class="operator-symbol">Balance Factor = |height(left) - height(right)| ≤ 1</div>
+                    <ul>
+                        <li>Search: O(log n)</li>
+                        <li>Insert: O(log n)</li>
+                        <li>Delete: O(log n)</li>
+                    </ul>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Red-Black Trees</h3>
+                    <p>Self-balancing BST with color property (red/black nodes)</p>
+                    <div class="operator-symbol">Height ≤ 2 × log₂(n + 1)</div>
+                    <ul>
+                        <li>Search: O(log n)</li>
+                        <li>Insert: O(log n)</li>
+                        <li>Delete: O(log n)</li>
+                        <li>Used in Java TreeMap, C++ map</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>AVL Tree Rotations</h3>
+                <div class="example-box">
+                    <h4>Left Rotation:</h4>
+                    <pre>
+    y                x
+   / \              / \
+  x   C    →       A   y
+ / \                  / \
+A   B                B   C
+                    </pre>
+
+                    <h4>Right Rotation:</h4>
+                    <pre>
+  y                  x
+ / \                / \
+A   x      →       y   C
+   / \            / \
+  B   C          A   B
+                    </pre>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 AVL Tree Balance Factor</h3>
+                <pre><code class="language-python">class AVLNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+        self.height = 1
+
+def get_height(node):
+    if not node:
+        return 0
+    return node.height
+
+def get_balance(node):
+    if not node:
+        return 0
+    return get_height(node.left) - get_height(node.right)
+
+def right_rotate(y):
+    x = y.left
+    T2 = x.right
+
+    # Perform rotation
+    x.right = y
+    y.left = T2
+
+    # Update heights
+    y.height = 1 + max(get_height(y.left), get_height(y.right))
+    x.height = 1 + max(get_height(x.left), get_height(x.right))
+
+    return x
+
+def left_rotate(x):
+    y = x.right
+    T2 = y.left
+
+    # Perform rotation
+    y.left = x
+    x.right = T2
+
+    # Update heights
+    x.height = 1 + max(get_height(x.left), get_height(x.right))
+    y.height = 1 + max(get_height(y.left), get_height(y.right))
+
+    return y
+
+def insert_avl(node, value):
+    # Standard BST insertion
+    if not node:
+        return AVLNode(value)
+
+    if value < node.value:
+        node.left = insert_avl(node.left, value)
+    else:
+        node.right = insert_avl(node.right, value)
+
+    # Update height
+    node.height = 1 + max(get_height(node.left), get_height(node.right))
+
+    # Get balance factor
+    balance = get_balance(node)
+
+    # Left-Left case
+    if balance > 1 and value < node.left.value:
+        return right_rotate(node)
+
+    # Right-Right case
+    if balance < -1 and value > node.right.value:
+        return left_rotate(node)
+
+    # Left-Right case
+    if balance > 1 and value > node.left.value:
+        node.left = left_rotate(node.left)
+        return right_rotate(node)
+
+    # Right-Left case
+    if balance < -1 and value < node.right.value:
+        node.right = right_rotate(node.right)
+        return left_rotate(node)
+
+    return node</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Spanning Trees -->
+        <section class="content-section" data-section="6">
+            <h2>6. Spanning Trees</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>A <strong>spanning tree</strong> of a connected graph G is a subgraph that:</p>
+                <ul>
+                    <li>Is a tree (connected and acyclic)</li>
+                    <li>Includes all vertices of G</li>
+                    <li>Has exactly n-1 edges (where n is number of vertices)</li>
+                </ul>
+
+                <div class="example-box">
+                    <h4>🎯 Minimum Spanning Tree (MST):</h4>
+                    <p>A spanning tree with minimum total edge weight</p>
+
+                    <h4>Applications:</h4>
+                    <ul>
+                        <li><strong>Network design:</strong> Connecting cities with minimum cable</li>
+                        <li><strong>Circuit design:</strong> Connecting components with minimum wire</li>
+                        <li><strong>Clustering:</strong> Grouping similar data points</li>
+                        <li><strong>Image segmentation:</strong> Separating regions in images</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: MST Algorithms -->
+        <section class="content-section" data-section="7">
+            <h2>7. MST Algorithms</h2>
+
+            <div class="proof-technique">
+                <h3>Kruskal's Algorithm</h3>
+                <p>Build MST by adding edges in order of increasing weight, avoiding cycles</p>
+
+                <div class="theorem-box">
+                    <h4>Algorithm Steps:</h4>
+                    <ol>
+                        <li>Sort all edges by weight (ascending)</li>
+                        <li>Initialize empty MST</li>
+                        <li>For each edge (u, v):
+                            <ul>
+                                <li>If adding edge doesn't create cycle, add it to MST</li>
+                                <li>Otherwise, skip it</li>
+                            </ul>
+                        </li>
+                        <li>Stop when MST has n-1 edges</li>
+                    </ol>
+                    <p><strong>Time Complexity:</strong> O(E log E) for sorting edges</p>
+                    <p><strong>Uses:</strong> Union-Find data structure for cycle detection</p>
+                </div>
+            </div>
+
+            <div class="proof-technique">
+                <h3>Prim's Algorithm</h3>
+                <p>Build MST by growing a tree from starting vertex, always adding minimum weight edge</p>
+
+                <div class="theorem-box">
+                    <h4>Algorithm Steps:</h4>
+                    <ol>
+                        <li>Start with arbitrary vertex</li>
+                        <li>Add it to MST</li>
+                        <li>Repeat until all vertices included:
+                            <ul>
+                                <li>Find minimum weight edge connecting MST to non-MST vertex</li>
+                                <li>Add that edge and vertex to MST</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p><strong>Time Complexity:</strong> O(E log V) with priority queue</p>
+                    <p><strong>Better for:</strong> Dense graphs</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Kruskal's Algorithm Implementation</h3>
+                <pre><code class="language-python">class UnionFind:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return False
+        if self.rank[px] < self.rank[py]:
+            px, py = py, px
+        self.parent[py] = px
+        if self.rank[px] == self.rank[py]:
+            self.rank[px] += 1
+        return True
+
+def kruskal_mst(n, edges):
+    """
+    n: number of vertices
+    edges: list of (weight, u, v) tuples
+    """
+    # Sort edges by weight
+    edges.sort()
+
+    uf = UnionFind(n)
+    mst = []
+    total_weight = 0
+
+    for weight, u, v in edges:
+        # If adding edge doesn't create cycle
+        if uf.union(u, v):
+            mst.append((u, v, weight))
+            total_weight += weight
+
+            # Stop when we have n-1 edges
+            if len(mst) == n - 1:
+                break
+
+    return mst, total_weight
+
+# Example graph
+n = 4  # vertices 0, 1, 2, 3
+edges = [
+    (1, 0, 1),  # weight 1 between vertex 0 and 1
+    (2, 0, 2),
+    (3, 1, 2),
+    (4, 1, 3),
+    (5, 2, 3)
+]
+
+mst, weight = kruskal_mst(n, edges)
+print(f"MST edges: {mst}")
+print(f"Total weight: {weight}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 8: Huffman Coding -->
+        <section class="content-section" data-section="8">
+            <h2>8. Huffman Coding</h2>
+
+            <div class="concept-box">
+                <h3>Optimal Prefix Codes</h3>
+                <p><strong>Huffman coding</strong> is a greedy algorithm for building optimal prefix-free codes for data compression.</p>
+
+                <div class="example-box">
+                    <h4>Key Concepts:</h4>
+                    <ul>
+                        <li><strong>Prefix-free:</strong> No code is prefix of another</li>
+                        <li><strong>Variable-length:</strong> Frequent characters get shorter codes</li>
+                        <li><strong>Optimal:</strong> Minimizes total encoded length</li>
+                    </ul>
+
+                    <h4>🎯 Example:</h4>
+                    <p>Text: "ABRACADABRA" (11 characters)</p>
+                    <ul>
+                        <li>Frequency: A=5, B=2, R=2, C=1, D=1</li>
+                        <li>Fixed 3-bit encoding: 11 × 3 = 33 bits</li>
+                        <li>Huffman encoding:
+                            <ul>
+                                <li>A: 0 (most frequent)</li>
+                                <li>B: 10</li>
+                                <li>R: 110</li>
+                                <li>C: 1110</li>
+                                <li>D: 1111</li>
+                            </ul>
+                        </li>
+                        <li>Total: 5×1 + 2×2 + 2×3 + 1×4 + 1×4 = 23 bits (30% compression!)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Huffman Coding Implementation</h3>
+                <pre><code class="language-python">import heapq
+from collections import defaultdict, Counter
+
+class HuffmanNode:
+    def __init__(self, char, freq):
+        self.char = char
+        self.freq = freq
+        self.left = None
+        self.right = None
+
+    def __lt__(self, other):
+        return self.freq < other.freq
+
+def build_huffman_tree(text):
+    # Count frequencies
+    freq = Counter(text)
+
+    # Create leaf nodes and add to priority queue
+    heap = [HuffmanNode(char, f) for char, f in freq.items()]
+    heapq.heapify(heap)
+
+    # Build tree
+    while len(heap) > 1:
+        left = heapq.heappop(heap)
+        right = heapq.heappop(heap)
+
+        merged = HuffmanNode(None, left.freq + right.freq)
+        merged.left = left
+        merged.right = right
+
+        heapq.heappush(heap, merged)
+
+    return heap[0]
+
+def generate_codes(node, code="", codes=None):
+    if codes is None:
+        codes = {}
+
+    if node.char is not None:
+        codes[node.char] = code
+        return codes
+
+    generate_codes(node.left, code + "0", codes)
+    generate_codes(node.right, code + "1", codes)
+
+    return codes
+
+def huffman_encode(text):
+    root = build_huffman_tree(text)
+    codes = generate_codes(root)
+
+    encoded = "".join(codes[char] for char in text)
+    return encoded, codes, root
+
+def huffman_decode(encoded, root):
+    decoded = []
+    current = root
+
+    for bit in encoded:
+        if bit == '0':
+            current = current.left
+        else:
+            current = current.right
+
+        if current.char is not None:
+            decoded.append(current.char)
+            current = root
+
+    return "".join(decoded)
+
+# Example
+text = "ABRACADABRA"
+encoded, codes, root = huffman_encode(text)
+
+print("Huffman Codes:")
+for char, code in sorted(codes.items()):
+    print(f"{char}: {code}")
+
+print(f"\nOriginal: {text}")
+print(f"Encoded: {encoded}")
+print(f"Original bits: {len(text) * 8}")
+print(f"Encoded bits: {len(encoded)}")
+print(f"Compression: {(1 - len(encoded)/(len(text)*8)) * 100:.1f}%")
+
+decoded = huffman_decode(encoded, root)
+print(f"Decoded: {decoded}")
+print(f"Match: {text == decoded}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 9: Heaps -->
+        <section class="content-section" data-section="9">
+            <h2>9. Heaps</h2>
+
+            <div class="concept-box">
+                <h3>Heap Definition</h3>
+                <p>A <strong>heap</strong> is a complete binary tree that satisfies the heap property:</p>
+
+                <div class="operators-grid">
+                    <div class="operator-card">
+                        <h3>Max-Heap</h3>
+                        <p>Parent ≥ children</p>
+                        <pre>
+      100
+      / \
+    19   36
+   / \   /
+  17  3 25
+                        </pre>
+                        <p>Root contains maximum element</p>
+                    </div>
+
+                    <div class="operator-card">
+                        <h3>Min-Heap</h3>
+                        <p>Parent ≤ children</p>
+                        <pre>
+       1
+      / \
+     3   6
+    / \ /
+   5  9 8
+                        </pre>
+                        <p>Root contains minimum element</p>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>⚡ Operations (Min-Heap):</h4>
+                    <ul>
+                        <li><strong>Insert:</strong> O(log n) - Add at end, bubble up</li>
+                        <li><strong>Extract-Min:</strong> O(log n) - Remove root, heapify down</li>
+                        <li><strong>Get-Min:</strong> O(1) - Return root</li>
+                        <li><strong>Heapify:</strong> O(n) - Convert array to heap</li>
+                    </ul>
+
+                    <h4>🎯 Applications:</h4>
+                    <ul>
+                        <li>Priority queues</li>
+                        <li>Heap sort (O(n log n))</li>
+                        <li>Finding k largest/smallest elements</li>
+                        <li>Dijkstra's shortest path algorithm</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Heap Implementation & Heap Sort</h3>
+                <pre><code class="language-python">import heapq
+
+# Python's heapq is a min-heap
+heap = []
+
+# Insert elements
+heapq.heappush(heap, 5)
+heapq.heappush(heap, 1)
+heapq.heappush(heap, 3)
+heapq.heappush(heap, 9)
+
+print(heap)  # [1, 5, 3, 9] - heap structure, not sorted
+
+# Extract minimum
+min_val = heapq.heappop(heap)
+print(f"Min: {min_val}")  # 1
+print(heap)  # [3, 5, 9]
+
+# Convert list to heap
+nums = [5, 7, 9, 1, 3]
+heapq.heapify(nums)
+print(nums)  # [1, 3, 9, 7, 5]
+
+# Max-heap (negate values)
+max_heap = []
+for val in [5, 7, 9, 1, 3]:
+    heapq.heappush(max_heap, -val)
+
+max_val = -heapq.heappop(max_heap)
+print(f"Max: {max_val}")  # 9
+
+# Heap Sort
+def heap_sort(arr):
+    """Sort array using heap (ascending order)"""
+    heap = arr.copy()
+    heapq.heapify(heap)
+
+    sorted_arr = []
+    while heap:
+        sorted_arr.append(heapq.heappop(heap))
+
+    return sorted_arr
+
+arr = [5, 7, 9, 1, 3, 2, 8, 6, 4]
+sorted_arr = heap_sort(arr)
+print(f"Sorted: {sorted_arr}")
+
+# Finding k largest elements
+def k_largest(arr, k):
+    """Find k largest elements efficiently"""
+    return heapq.nlargest(k, arr)
+
+def k_smallest(arr, k):
+    """Find k smallest elements efficiently"""
+    return heapq.nsmallest(k, arr)
+
+nums = [7, 10, 4, 3, 20, 15]
+print(f"3 largest: {k_largest(nums, 3)}")    # [20, 15, 10]
+print(f"3 smallest: {k_smallest(nums, 3)}")  # [3, 4, 7]</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 10: Applications -->
+        <section class="content-section" data-section="10">
+            <h2>10. Tree Applications</h2>
+
+            <div class="concept-box">
+                <h3>Real-World Applications</h3>
+
+                <div class="example-box">
+                    <h4>🗂️ File Systems:</h4>
+                    <ul>
+                        <li>Directory structure is a tree</li>
+                        <li>Root directory at top</li>
+                        <li>Files are leaves, folders are internal nodes</li>
+                        <li>Path from root to file: /Users/name/Documents/file.txt</li>
+                    </ul>
+
+                    <h4>🌐 DOM (Document Object Model):</h4>
+                    <ul>
+                        <li>HTML/XML documents as trees</li>
+                        <li>Tags are nodes, nested tags are children</li>
+                        <li>Used for web page rendering and manipulation</li>
+                    </ul>
+
+                    <h4>🎮 Decision Trees:</h4>
+                    <ul>
+                        <li>AI game playing (chess, tic-tac-toe)</li>
+                        <li>Machine learning classification</li>
+                        <li>Each node represents a decision/test</li>
+                        <li>Leaves represent outcomes</li>
+                    </ul>
+
+                    <h4>🗜️ Data Compression:</h4>
+                    <ul>
+                        <li>Huffman coding for file compression (ZIP, JPEG)</li>
+                        <li>LZW compression (GIF)</li>
+                    </ul>
+
+                    <h4>📊 Databases:</h4>
+                    <ul>
+                        <li>B-trees and B+ trees for indexing</li>
+                        <li>Fast search, insert, delete operations</li>
+                        <li>Used in file systems and databases (MySQL, PostgreSQL)</li>
+                    </ul>
+
+                    <h4>🔍 Tries (Prefix Trees):</h4>
+                    <ul>
+                        <li>Autocomplete suggestions</li>
+                        <li>Spell checking</li>
+                        <li>IP routing tables</li>
+                    </ul>
+
+                    <h4>🧬 Expression Trees:</h4>
+                    <ul>
+                        <li>Parsing mathematical expressions</li>
+                        <li>Compiler design (syntax trees)</li>
+                        <li>Evaluating expressions</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 11: Python Implementation -->
+        <section class="content-section" data-section="11">
+            <h2>11. Python Tree Tools</h2>
+
+            <div class="code-example">
+                <h3>💻 Complete Binary Tree Implementation</h3>
+                <pre><code class="language-python">class BinaryTree:
+    """Complete binary tree implementation with various methods"""
+
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+    def insert_level_order(self, values):
+        """Insert values in level-order to create complete tree"""
+        if not values:
+            return
+
+        from collections import deque
+        queue = deque([self])
+        i = 1  # Start from index 1 (0 is root)
+
+        while queue and i < len(values):
+            node = queue.popleft()
+
+            if i < len(values):
+                node.left = BinaryTree(values[i])
+                queue.append(node.left)
+                i += 1
+
+            if i < len(values):
+                node.right = BinaryTree(values[i])
+                queue.append(node.right)
+                i += 1
+
+    def height(self):
+        """Calculate height of tree"""
+        if not self:
+            return -1
+        left_height = self.left.height() if self.left else -1
+        right_height = self.right.height() if self.right else -1
+        return 1 + max(left_height, right_height)
+
+    def count_nodes(self):
+        """Count total nodes"""
+        count = 1
+        if self.left:
+            count += self.left.count_nodes()
+        if self.right:
+            count += self.right.count_nodes()
+        return count
+
+    def count_leaves(self):
+        """Count leaf nodes"""
+        if not self.left and not self.right:
+            return 1
+        count = 0
+        if self.left:
+            count += self.left.count_leaves()
+        if self.right:
+            count += self.right.count_leaves()
+        return count
+
+    def print_tree(self, level=0, prefix="Root: "):
+        """Pretty print tree structure"""
+        print(" " * (level * 4) + prefix + str(self.value))
+        if self.left:
+            self.left.print_tree(level + 1, "L--- ")
+        if self.right:
+            self.right.print_tree(level + 1, "R--- ")
+
+# Create and test tree
+root = BinaryTree(1)
+root.insert_level_order([1, 2, 3, 4, 5, 6, 7])
+
+print("Tree structure:")
+root.print_tree()
+
+print(f"\nHeight: {root.height()}")
+print(f"Total nodes: {root.count_nodes()}")
+print(f"Leaf nodes: {root.count_leaves()}")</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Using heapq Module</h3>
+                <pre><code class="language-python">import heapq
+
+# Priority Queue using heapq
+class PriorityQueue:
+    def __init__(self):
+        self.heap = []
+        self.counter = 0  # For tie-breaking
+
+    def push(self, item, priority):
+        """Add item with priority (lower number = higher priority)"""
+        heapq.heappush(self.heap, (priority, self.counter, item))
+        self.counter += 1
+
+    def pop(self):
+        """Remove and return highest priority item"""
+        if self.heap:
+            return heapq.heappop(self.heap)[2]
+        return None
+
+    def peek(self):
+        """Return highest priority item without removing"""
+        if self.heap:
+            return self.heap[0][2]
+        return None
+
+    def is_empty(self):
+        return len(self.heap) == 0
+
+# Example: Task scheduler
+pq = PriorityQueue()
+pq.push("Low priority task", 3)
+pq.push("High priority task", 1)
+pq.push("Medium priority task", 2)
+
+print("Processing tasks by priority:")
+while not pq.is_empty():
+    task = pq.pop()
+    print(f"  - {task}")
+
+# Merge k sorted lists using heap
+def merge_k_sorted_lists(lists):
+    """Efficiently merge k sorted lists"""
+    heap = []
+    result = []
+
+    # Add first element of each list to heap
+    for i, lst in enumerate(lists):
+        if lst:
+            heapq.heappush(heap, (lst[0], i, 0))
+
+    while heap:
+        val, list_idx, elem_idx = heapq.heappop(heap)
+        result.append(val)
+
+        # Add next element from same list
+        if elem_idx + 1 < len(lists[list_idx]):
+            next_val = lists[list_idx][elem_idx + 1]
+            heapq.heappush(heap, (next_val, list_idx, elem_idx + 1))
+
+    return result
+
+# Test
+lists = [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+merged = merge_k_sorted_lists(lists)
+print(f"\nMerged lists: {merged}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Quick Quiz</h2>
+
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> A tree with 10 vertices has how many edges?</p>
+                <button onclick="checkAnswer(1, 'wrong', this)">10</button>
+                <button onclick="checkAnswer(1, 'a', this)">9</button>
+                <button onclick="checkAnswer(1, 'wrong', this)">11</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> What is the time complexity of searching in a balanced BST?</p>
+                <button onclick="checkAnswer(2, 'wrong', this)">O(n)</button>
+                <button onclick="checkAnswer(2, 'a', this)">O(log n)</button>
+                <button onclick="checkAnswer(2, 'wrong', this)">O(1)</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> Which traversal visits nodes in sorted order for a BST?</p>
+                <button onclick="checkAnswer(3, 'wrong', this)">Preorder</button>
+                <button onclick="checkAnswer(3, 'a', this)">Inorder</button>
+                <button onclick="checkAnswer(3, 'wrong', this)">Postorder</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> In a max-heap, where is the largest element located?</p>
+                <button onclick="checkAnswer(4, 'a', this)">At the root</button>
+                <button onclick="checkAnswer(4, 'wrong', this)">At a leaf</button>
+                <button onclick="checkAnswer(4, 'wrong', this)">At the rightmost node</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 5:</strong> What is the time complexity of Kruskal's MST algorithm?</p>
+                <button onclick="checkAnswer(5, 'wrong', this)">O(V²)</button>
+                <button onclick="checkAnswer(5, 'a', this)">O(E log E)</button>
+                <button onclick="checkAnswer(5, 'wrong', this)">O(V log V)</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 6:</strong> Huffman coding creates what type of codes?</p>
+                <button onclick="checkAnswer(6, 'wrong', this)">Fixed-length codes</button>
+                <button onclick="checkAnswer(6, 'a', this)">Variable-length prefix-free codes</button>
+                <button onclick="checkAnswer(6, 'wrong', this)">Encrypted codes</button>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='graphs.html'">← Previous: Graphs</button>
+            <button class="nav-button next" onclick="window.location.href='boolean.html'">Next: Boolean Algebra →</button>
+        </div>
+    </div>
+
+    <script>
+        // Progress tracking
+        const sections = document.querySelectorAll('.content-section');
+        const progressText = document.getElementById('progress-text');
+        let completedSections = new Set();
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionNum = entry.target.dataset.section;
+                    completedSections.add(sectionNum);
+                    updateProgress();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(section => observer.observe(section));
+
+        function updateProgress() {
+            const progress = (completedSections.size / sections.length * 100).toFixed(0);
+            progressText.textContent = `Progress: ${progress}%`;
+        }
+
+        // Quiz functionality
+        let quizAnswers = {};
+
+        function checkAnswer(questionNum, correctAnswer, button) {
+            const question = button.parentElement;
+            const buttons = question.querySelectorAll('button');
+
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (correctAnswer === 'a' && btn === button) {
+                    btn.style.backgroundColor = '#10b981';
+                    btn.style.color = 'white';
+                } else if (correctAnswer !== 'a' && btn === button) {
+                    btn.style.backgroundColor = '#ef4444';
+                    btn.style.color = 'white';
+                }
+            });
+
+            quizAnswers[questionNum] = (correctAnswer === 'a');
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

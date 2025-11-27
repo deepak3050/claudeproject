@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Window Cheatsheet</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff 0%, #7b68ee 50%, #ff6b9d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-links a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: #00d4ff;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        h3 {
+            color: #7b68ee;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        p, li {
+            color: #d0d0d0;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #ff6b9d;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            color: #4ECDC4;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #f8f8f2;
+            display: block;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .comment { color: #6272a4; }
+        .function { color: #50fa7b; }
+        .string { color: #f1fa8c; }
+        .number { color: #bd93f9; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(123, 104, 238, 0.3);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .example-box {
+            background: rgba(78, 205, 196, 0.1);
+            border-left: 4px solid #4ECDC4;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 4px solid #FF6B6B;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .tip-box {
+            background: rgba(123, 104, 238, 0.1);
+            border-left: 4px solid #7b68ee;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .easy { background: #4ECDC4; color: #1a1a2e; }
+        .medium { background: #FFE66D; color: #1a1a2e; }
+        .hard { background: #FF6B6B; color: white; }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            margin: 20px 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            h1 { font-size: 2em; }
+            .container { padding: 15px; }
+        }
+
+        .toc {
+            background: rgba(123, 104, 238, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+        }
+
+        .toc ul {
+            columns: 2;
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc a {
+            color: #00d4ff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .toc a:hover {
+            color: #7b68ee;
+        }
+
+        @media (max-width: 600px) {
+            .toc ul { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🪟 Sliding Window Cheatsheet</h1>
+        <p class="subtitle">Master the sliding window technique for coding interviews</p>
+
+        <div class="nav-links">
+            <a href="http://localhost:8000">🎮 Interactive Game</a>
+            <a href="http://localhost:8888">📓 Jupyter Notebook</a>
+        </div>
+
+        <div class="toc">
+            <h3>📑 Table of Contents</h3>
+            <ul>
+                <li><a href="#when-to-use">When to Use</a></li>
+                <li><a href="#pattern-1">Pattern 1: Fixed-Size</a></li>
+                <li><a href="#pattern-2">Pattern 2: Variable-Size</a></li>
+                <li><a href="#pattern-3">Pattern 3: HashMap</a></li>
+                <li><a href="#pattern-4">Pattern 4: Monotonic Deque</a></li>
+                <li><a href="#quick-reference">Quick Reference</a></li>
+                <li><a href="#mistakes">Common Mistakes</a></li>
+                <li><a href="#tips">Interview Tips</a></li>
+                <li><a href="#practice">Practice Problems</a></li>
+                <li><a href="#templates">Code Templates</a></li>
+            </ul>
+        </div>
+
+        <section class="section" id="when-to-use">
+            <h2>When to Use Sliding Window?</h2>
+            <ul>
+                <li><strong>Contiguous</strong> subarray/substring problems</li>
+                <li>Keywords: "consecutive", "subarray", "substring", "window"</li>
+                <li>Optimize from O(n²) → O(n)</li>
+            </ul>
+        </section>
+
+        <section class="section" id="pattern-1">
+            <h2>Pattern 1: Fixed-Size Window</h2>
+            <h3>Problem: Maximum/Minimum of K consecutive elements</h3>
+
+            <div class="grid-2">
+                <div>
+                    <h4 style="color: #FF6B6B;">Brute Force O(n*k):</h4>
+                    <pre><code><span class="keyword">FOR</span> each position i:
+    sum = 0
+    <span class="keyword">FOR</span> j from i to i+k-1:
+        sum += arr[j]
+    update result</code></pre>
+                </div>
+                <div>
+                    <h4 style="color: #4ECDC4;">Optimized O(n):</h4>
+                    <pre><code><span class="comment"># Initialize first window</span>
+window = <span class="function">sum</span>(arr[<span class="number">0</span>:k])
+result = window
+
+<span class="comment"># Slide: remove left, add right</span>
+<span class="keyword">FOR</span> i from k to n-1:
+    window = window - arr[i-k] + arr[i]
+    result = <span class="function">best</span>(result, window)</code></pre>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <strong>Example:</strong> arr = [2, 1, 5, 1, 3], k = 3<br>
+                <code>[2,1,5] → 8</code><br>
+                <code>[1,5,1] → 8-2+1 = 7</code><br>
+                <code>[5,1,3] → 7-1+3 = 9 ✓</code>
+            </div>
+        </section>
+
+        <section class="section" id="pattern-2">
+            <h2>Pattern 2: Variable-Size Window (Two Pointers)</h2>
+            <h3>Problem: Minimum/Maximum subarray satisfying condition</h3>
+
+            <div class="grid-2">
+                <div>
+                    <h4 style="color: #FF6B6B;">Brute Force O(n²):</h4>
+                    <pre><code><span class="keyword">FOR</span> each start:
+    <span class="keyword">FOR</span> each end:
+        check if subarray valid
+        update result</code></pre>
+                </div>
+                <div>
+                    <h4 style="color: #4ECDC4;">Optimized O(n):</h4>
+                    <pre><code>left = <span class="number">0</span>
+
+<span class="keyword">FOR</span> right from <span class="number">0</span> to n-1:
+    <span class="comment"># EXPAND: include arr[right]</span>
+    add arr[right] to window
+
+    <span class="comment"># CONTRACT: shrink while invalid</span>
+    <span class="keyword">WHILE</span> should_shrink:
+        remove arr[left] from window
+        left++
+
+    update result</code></pre>
+                </div>
+            </div>
+
+            <div class="example-box">
+                <strong>Example:</strong> Find min subarray with sum ≥ 7<br>
+                arr = [2, 3, 1, 2, 4, 3]<br>
+                <code>right=3: sum=8 ≥ 7 → len=4, shrink</code><br>
+                <code>right=4: sum=7 ≥ 7 → len=3, shrink</code><br>
+                <code>right=5: sum=7 ≥ 7 → len=2 ✓</code>
+            </div>
+        </section>
+
+        <section class="section" id="pattern-3">
+            <h2>Pattern 3: HashMap + Sliding Window</h2>
+            <h3>Problem: Substring with character constraints</h3>
+
+            <pre><code>char_map = {}  <span class="comment"># char → count or last_index</span>
+left = <span class="number">0</span>
+
+<span class="keyword">FOR</span> right from <span class="number">0</span> to n-1:
+    <span class="comment"># Add s[right] to map</span>
+    update char_map[s[right]]
+
+    <span class="comment"># Shrink if constraint violated</span>
+    <span class="keyword">WHILE</span> constraint_violated:
+        update char_map[s[left]]
+        left++
+
+    update result</code></pre>
+
+            <h3>Variant A: Longest unique substring</h3>
+            <pre><code>char_index = {}  <span class="comment"># char → last seen index</span>
+
+<span class="keyword">FOR</span> right from <span class="number">0</span> to n-1:
+    <span class="keyword">IF</span> s[right] <span class="keyword">in</span> char_index <span class="keyword">AND</span> char_index[s[right]] >= left:
+        left = char_index[s[right]] + <span class="number">1</span>
+
+    char_index[s[right]] = right
+    max_len = <span class="function">max</span>(max_len, right - left + <span class="number">1</span>)</code></pre>
+
+            <h3>Variant B: At most K distinct characters</h3>
+            <pre><code>char_count = {}  <span class="comment"># char → count</span>
+
+<span class="keyword">FOR</span> right from <span class="number">0</span> to n-1:
+    char_count[s[right]]++
+
+    <span class="keyword">WHILE</span> <span class="function">len</span>(char_count) > k:
+        char_count[s[left]]--
+        <span class="keyword">IF</span> char_count[s[left]] == <span class="number">0</span>:
+            <span class="keyword">delete</span> char_count[s[left]]
+        left++
+
+    max_len = <span class="function">max</span>(max_len, right - left + <span class="number">1</span>)</code></pre>
+        </section>
+
+        <section class="section" id="pattern-4">
+            <h2>Pattern 4: Monotonic Deque</h2>
+            <h3>Problem: Maximum/Minimum in each window of size k</h3>
+
+            <div class="grid-2">
+                <div>
+                    <h4 style="color: #FF6B6B;">Brute Force O(n*k):</h4>
+                    <pre><code><span class="keyword">FOR</span> each window:
+    result.append(<span class="function">max</span>(window))</code></pre>
+                </div>
+                <div>
+                    <h4 style="color: #4ECDC4;">Optimized O(n):</h4>
+                    <pre><code>deque = []  <span class="comment"># stores INDICES</span>
+
+<span class="keyword">FOR</span> i from <span class="number">0</span> to n-1:
+    <span class="comment"># Remove expired indices</span>
+    <span class="keyword">WHILE</span> deque <span class="keyword">and</span> deque[<span class="number">0</span>] <= i - k:
+        deque.popleft()
+
+    <span class="comment"># Remove smaller elements (for max)</span>
+    <span class="keyword">WHILE</span> deque <span class="keyword">and</span> arr[deque[-<span class="number">1</span>]] < arr[i]:
+        deque.pop()
+
+    deque.append(i)
+
+    <span class="comment"># Record result when window complete</span>
+    <span class="keyword">IF</span> i >= k - <span class="number">1</span>:
+        result.append(arr[deque[<span class="number">0</span>]])</code></pre>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <strong>Key Insight:</strong> Smaller elements will never be max if larger element is in window
+            </div>
+        </section>
+
+        <section class="section" id="quick-reference">
+            <h2>Quick Reference Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Problem</th>
+                        <th>Type</th>
+                        <th>Data Structure</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Max sum of k elements</td>
+                        <td>Fixed</td>
+                        <td>None</td>
+                        <td>O(n)</td>
+                    </tr>
+                    <tr>
+                        <td>Min subarray ≥ target</td>
+                        <td>Variable</td>
+                        <td>None</td>
+                        <td>O(n)</td>
+                    </tr>
+                    <tr>
+                        <td>Longest unique substring</td>
+                        <td>Variable</td>
+                        <td>HashMap</td>
+                        <td>O(n)</td>
+                    </tr>
+                    <tr>
+                        <td>At most k distinct</td>
+                        <td>Variable</td>
+                        <td>HashMap</td>
+                        <td>O(n)</td>
+                    </tr>
+                    <tr>
+                        <td>Sliding window max</td>
+                        <td>Fixed</td>
+                        <td>Deque</td>
+                        <td>O(n)</td>
+                    </tr>
+                    <tr>
+                        <td>Min window substring</td>
+                        <td>Variable</td>
+                        <td>HashMap</td>
+                        <td>O(n)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section" id="mistakes">
+            <h2>Common Mistakes</h2>
+
+            <div class="warning-box">
+                <h4>1. Off-by-one errors</h4>
+                <ul>
+                    <li>Window [i, i+k-1] has k elements</li>
+                    <li>Length = right - left + 1</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h4>2. Not checking HashMap bounds</h4>
+                <pre><code><span class="comment"># Correct - check both conditions</span>
+<span class="keyword">if</span> char <span class="keyword">in</span> map <span class="keyword">and</span> map[char] >= left</code></pre>
+            </div>
+
+            <div class="warning-box">
+                <h4>3. Forgetting to update HashMap</h4>
+                <p>Always update after shrinking window</p>
+            </div>
+
+            <div class="warning-box">
+                <h4>4. Wrong shrink condition</h4>
+                <p><code>while</code> not <code>if</code> - may need multiple shrinks</p>
+            </div>
+        </section>
+
+        <section class="section" id="tips">
+            <h2>Interview Tips</h2>
+            <ol>
+                <li><strong>Start with brute force</strong> - show you understand the problem</li>
+                <li><strong>Identify the pattern</strong> - fixed or variable window?</li>
+                <li><strong>Write the template</strong> - then fill in the details</li>
+                <li><strong>Trace through example</strong> - verify logic before coding</li>
+                <li><strong>Time/Space complexity</strong> - always mention O(n) optimization</li>
+            </ol>
+        </section>
+
+        <section class="section" id="practice">
+            <h2>Practice Problems by Difficulty</h2>
+
+            <div class="grid-2">
+                <div>
+                    <h3><span class="difficulty-badge easy">Easy</span></h3>
+                    <ul>
+                        <li>Maximum Sum Subarray of Size K</li>
+                        <li>First Negative in Every Window of Size K</li>
+                    </ul>
+
+                    <h3><span class="difficulty-badge medium">Medium</span></h3>
+                    <ul>
+                        <li>Longest Substring Without Repeating (LC #3)</li>
+                        <li>Minimum Size Subarray Sum (LC #209)</li>
+                        <li>Fruit Into Baskets (LC #904)</li>
+                        <li>Longest Repeating Character Replacement (LC #424)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3><span class="difficulty-badge hard">Hard</span></h3>
+                    <ul>
+                        <li>Sliding Window Maximum (LC #239)</li>
+                        <li>Minimum Window Substring (LC #76)</li>
+                        <li>Substring with Concatenation of All Words (LC #30)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="templates">
+            <h2>Code Templates (Copy-Paste Ready)</h2>
+
+            <h3>Fixed Window Sum</h3>
+            <pre><code><span class="keyword">def</span> <span class="function">fixed_window</span>(arr, k):
+    window = <span class="function">sum</span>(arr[:k])
+    result = window
+
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(k, <span class="function">len</span>(arr)):
+        window = window - arr[i-k] + arr[i]
+        result = <span class="function">max</span>(result, window)
+
+    <span class="keyword">return</span> result</code></pre>
+
+            <h3>Variable Window (Minimum)</h3>
+            <pre><code><span class="keyword">def</span> <span class="function">variable_window_min</span>(arr, target):
+    left = <span class="number">0</span>
+    window_sum = <span class="number">0</span>
+    min_len = <span class="function">float</span>(<span class="string">'inf'</span>)
+
+    <span class="keyword">for</span> right <span class="keyword">in</span> <span class="function">range</span>(<span class="function">len</span>(arr)):
+        window_sum += arr[right]
+
+        <span class="keyword">while</span> window_sum >= target:
+            min_len = <span class="function">min</span>(min_len, right - left + <span class="number">1</span>)
+            window_sum -= arr[left]
+            left += <span class="number">1</span>
+
+    <span class="keyword">return</span> min_len <span class="keyword">if</span> min_len != <span class="function">float</span>(<span class="string">'inf'</span>) <span class="keyword">else</span> <span class="number">0</span></code></pre>
+
+            <h3>Longest Unique Substring</h3>
+            <pre><code><span class="keyword">def</span> <span class="function">longest_unique</span>(s):
+    char_index = {}
+    left = <span class="number">0</span>
+    max_len = <span class="number">0</span>
+
+    <span class="keyword">for</span> right <span class="keyword">in</span> <span class="function">range</span>(<span class="function">len</span>(s)):
+        <span class="keyword">if</span> s[right] <span class="keyword">in</span> char_index <span class="keyword">and</span> char_index[s[right]] >= left:
+            left = char_index[s[right]] + <span class="number">1</span>
+
+        char_index[s[right]] = right
+        max_len = <span class="function">max</span>(max_len, right - left + <span class="number">1</span>)
+
+    <span class="keyword">return</span> max_len</code></pre>
+
+            <h3>Sliding Window Maximum</h3>
+            <pre><code><span class="keyword">from</span> collections <span class="keyword">import</span> deque
+
+<span class="keyword">def</span> <span class="function">sliding_max</span>(arr, k):
+    dq = <span class="function">deque</span>()
+    result = []
+
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="function">len</span>(arr)):
+        <span class="keyword">while</span> dq <span class="keyword">and</span> dq[<span class="number">0</span>] <= i - k:
+            dq.popleft()
+
+        <span class="keyword">while</span> dq <span class="keyword">and</span> arr[dq[-<span class="number">1</span>]] < arr[i]:
+            dq.pop()
+
+        dq.append(i)
+
+        <span class="keyword">if</span> i >= k - <span class="number">1</span>:
+            result.append(arr[dq[<span class="number">0</span>]])
+
+    <span class="keyword">return</span> result</code></pre>
+        </section>
+
+        <footer style="text-align: center; padding: 30px 0; color: #666; font-size: 0.9em;">
+            <p>Built for mastering coding interviews 🚀</p>
+        </footer>
+    </div>
+</body>
+</html>

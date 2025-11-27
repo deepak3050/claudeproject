@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boolean Algebra & Circuits - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+    <style>
+        .gate-symbol {
+            display: inline-block;
+            padding: 10px;
+            border: 2px solid #4a90e2;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        .gate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .kmap-grid {
+            display: inline-grid;
+            grid-template-columns: repeat(4, 60px);
+            grid-template-rows: repeat(4, 60px);
+            gap: 2px;
+            margin: 20px;
+            border: 2px solid #333;
+        }
+        .kmap-cell {
+            border: 1px solid #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: #f0f0f0;
+        }
+        .kmap-header {
+            background: #4a90e2;
+            color: white;
+        }
+        .kmap-one {
+            background: #90ee90;
+        }
+        .kmap-zero {
+            background: #ffcccb;
+        }
+        .circuit-diagram {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .identity-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .bitwise-demo {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">⚡ Boolean Algebra & Circuits</h1>
+            <p class="subtitle">The Mathematics of Digital Logic</p>
+        </header>
+
+        <!-- Section 1: Boolean Algebra Basics -->
+        <section class="content-section" data-section="1">
+            <h2>1. Boolean Algebra Basics</h2>
+
+            <div class="concept-box">
+                <h3>Two-Element Boolean Algebra</h3>
+                <p>Boolean algebra operates on a set with exactly two elements: <strong>{0, 1}</strong> or <strong>{FALSE, TRUE}</strong></p>
+
+                <div class="example-box">
+                    <h4>Three Fundamental Operations:</h4>
+                    <ul>
+                        <li><strong>AND (·)</strong>: Multiplication, both inputs must be 1</li>
+                        <li><strong>OR (+)</strong>: Addition, at least one input must be 1</li>
+                        <li><strong>NOT (¬ or ')</strong>: Complement, flips the value</li>
+                    </ul>
+                </div>
+
+                <div class="truth-table-container">
+                    <h4>Basic Truth Tables</h4>
+                    <table class="truth-table">
+                        <tr>
+                            <th>A</th><th>B</th><th>A·B (AND)</th><th>A+B (OR)</th><th>¬A (NOT)</th>
+                        </tr>
+                        <tr>
+                            <td>0</td><td>0</td><td>0</td><td>0</td><td>1</td>
+                        </tr>
+                        <tr>
+                            <td>0</td><td>1</td><td>0</td><td>1</td><td>1</td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>0</td><td>0</td><td>1</td><td>0</td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>1</td><td>1</td><td>1</td><td>0</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Python Implementation</h3>
+                <pre><code class="language-python"># Boolean operations in Python
+A, B = True, False
+
+# AND operation
+result_and = A and B  # False
+result_and_bitwise = A & B  # False
+
+# OR operation
+result_or = A or B  # True
+result_or_bitwise = A | B  # True
+
+# NOT operation
+result_not = not A  # False
+result_not_bitwise = ~1  # -2 (bitwise complement)
+
+print(f"AND: {A} · {B} = {result_and}")
+print(f"OR:  {A} + {B} = {result_or}")
+print(f"NOT: ¬{A} = {result_not}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: Boolean Functions -->
+        <section class="content-section" data-section="2">
+            <h2>2. Boolean Functions & Canonical Forms</h2>
+
+            <div class="concept-box">
+                <h3>Boolean Functions</h3>
+                <p>A Boolean function f: {0,1}ⁿ → {0,1} maps n binary inputs to one binary output.</p>
+
+                <div class="example-box">
+                    <h4>Example: f(x,y,z) = xy + z'</h4>
+                    <table class="truth-table">
+                        <tr><th>x</th><th>y</th><th>z</th><th>z'</th><th>xy</th><th>f(x,y,z)</th></tr>
+                        <tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+                        <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+                        <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+                        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+                        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+                        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+                        <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+                        <tr><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+                    </table>
+                </div>
+
+                <h4>Canonical Forms</h4>
+                <div class="identity-box">
+                    <p><strong>Sum of Products (SOP):</strong> OR of AND terms</p>
+                    <p>f(x,y,z) = x'y'z' + x'yz' + xy'z' + xyz' + xyz</p>
+                </div>
+
+                <div class="identity-box">
+                    <p><strong>Product of Sums (POS):</strong> AND of OR terms</p>
+                    <p>f(x,y,z) = (x+y+z)(x+y'+z)(x'+y+z)</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Truth Table Generator</h3>
+                <pre><code class="language-python">def generate_truth_table(num_vars, func):
+    """Generate truth table for a boolean function"""
+    print("Truth Table:")
+    header = " ".join([f"x{i}" for i in range(num_vars)] + ["f"])
+    print(header)
+    print("-" * len(header))
+
+    for i in range(2 ** num_vars):
+        # Convert number to binary inputs
+        inputs = [(i >> j) & 1 for j in range(num_vars-1, -1, -1)]
+        result = func(*inputs)
+        row = " ".join(str(x) for x in inputs + [result])
+        print(row)
+
+# Example: f(x,y) = x AND (NOT y)
+def my_function(x, y):
+    return x and (not y)
+
+generate_truth_table(2, my_function)</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: Logic Gates -->
+        <section class="content-section" data-section="3">
+            <h2>3. Logic Gates</h2>
+
+            <div class="concept-box">
+                <h3>Standard Logic Gates</h3>
+                <p>Physical implementations of Boolean operations</p>
+
+                <div class="gate-grid">
+                    <div class="gate-symbol">
+                        <h4>AND</h4>
+                        <pre>    ┌─╮
+A ──┤ &├── Y
+B ──┤  │
+    └──┘</pre>
+                        <p>Y = A·B</p>
+                    </div>
+
+                    <div class="gate-symbol">
+                        <h4>OR</h4>
+                        <pre>    ┌──╮
+A ──┤≥1├── Y
+B ──┤  │
+    └──┘</pre>
+                        <p>Y = A+B</p>
+                    </div>
+
+                    <div class="gate-symbol">
+                        <h4>NOT</h4>
+                        <pre>A ──┤>o─── Y</pre>
+                        <p>Y = A'</p>
+                    </div>
+
+                    <div class="gate-symbol">
+                        <h4>NAND</h4>
+                        <pre>    ┌─╮
+A ──┤ &├o── Y
+B ──┤  │
+    └──┘</pre>
+                        <p>Y = (A·B)'</p>
+                    </div>
+
+                    <div class="gate-symbol">
+                        <h4>NOR</h4>
+                        <pre>    ┌──╮
+A ──┤≥1├o── Y
+B ──┤  │
+    └──┘</pre>
+                        <p>Y = (A+B)'</p>
+                    </div>
+
+                    <div class="gate-symbol">
+                        <h4>XOR</h4>
+                        <pre>    ┌──╮
+A ──┤=1├── Y
+B ──┤  │
+    └──┘</pre>
+                        <p>Y = A⊕B</p>
+                    </div>
+
+                    <div class="gate-symbol">
+                        <h4>XNOR</h4>
+                        <pre>    ┌──╮
+A ──┤=1├o── Y
+B ──┤  │
+    └──┘</pre>
+                        <p>Y = (A⊕B)'</p>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>Gate Truth Tables</h4>
+                    <table class="truth-table">
+                        <tr><th>A</th><th>B</th><th>NAND</th><th>NOR</th><th>XOR</th><th>XNOR</th></tr>
+                        <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                        <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Universal Gates</h3>
+                <p><strong>NAND</strong> and <strong>NOR</strong> are universal - any Boolean function can be implemented using only NAND or only NOR gates!</p>
+
+                <div class="example-box">
+                    <h4>Building Gates from NAND:</h4>
+                    <ul>
+                        <li>NOT A = A NAND A</li>
+                        <li>A AND B = (A NAND B) NAND (A NAND B)</li>
+                        <li>A OR B = (A NAND A) NAND (B NAND B)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Gate Diagrams & Circuit Examples -->
+        <section class="content-section" data-section="4">
+            <h2>4. Combining Gates - Circuit Examples</h2>
+
+            <div class="concept-box">
+                <h3>Half Adder Circuit</h3>
+                <p>Adds two single bits, produces sum and carry</p>
+
+                <div class="circuit-diagram">
+                    <pre>
+A ────┬────┤XOR├──── Sum (S)
+      │    └───┘
+      │
+B ────┼────┤XOR├
+      │
+      │    ┌───┐
+      └────┤AND├──── Carry (C)
+           └───┘
+
+Sum = A ⊕ B
+Carry = A · B
+                    </pre>
+                </div>
+
+                <table class="truth-table">
+                    <tr><th>A</th><th>B</th><th>Sum</th><th>Carry</th></tr>
+                    <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                    <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+                    <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                    <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                </table>
+            </div>
+
+            <div class="concept-box">
+                <h3>Full Adder Circuit</h3>
+                <p>Adds three bits (A, B, Carry-in), produces sum and carry-out</p>
+
+                <div class="circuit-diagram">
+                    <pre>
+A ─┬──────┤XOR├─┬──────┤XOR├──── Sum
+   │      └───┘ │      └───┘
+   │            Cin
+   │      ┌───┐ │
+   ├──────┤AND├─┤
+   │      └───┘ │      ┌───┐
+B ─┼──────┤XOR├─┼──────┤OR├───── Carry-out
+   │      └───┘ │      └───┘
+   │      ┌───┐ │
+   └──────┤AND├─┘
+          └───┘
+                    </pre>
+                </div>
+
+                <div class="example-box">
+                    <p><strong>Equations:</strong></p>
+                    <p>Sum = A ⊕ B ⊕ Cin</p>
+                    <p>Cout = (A·B) + (Cin·(A⊕B))</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Boolean Identities -->
+        <section class="content-section" data-section="5">
+            <h2>5. Boolean Identities</h2>
+
+            <div class="concept-box">
+                <h3>Fundamental Laws</h3>
+
+                <div class="identity-box">
+                    <h4>Identity Laws</h4>
+                    <p>A + 0 = A</p>
+                    <p>A · 1 = A</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>Null/Domination Laws</h4>
+                    <p>A + 1 = 1</p>
+                    <p>A · 0 = 0</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>Idempotent Laws</h4>
+                    <p>A + A = A</p>
+                    <p>A · A = A</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>Complement Laws</h4>
+                    <p>A + A' = 1</p>
+                    <p>A · A' = 0</p>
+                    <p>(A')' = A (Double Negation)</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>Commutative Laws</h4>
+                    <p>A + B = B + A</p>
+                    <p>A · B = B · A</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>Associative Laws</h4>
+                    <p>(A + B) + C = A + (B + C)</p>
+                    <p>(A · B) · C = A · (B · C)</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>Distributive Laws</h4>
+                    <p>A · (B + C) = (A · B) + (A · C)</p>
+                    <p>A + (B · C) = (A + B) · (A + C)</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>De Morgan's Laws</h4>
+                    <p>(A + B)' = A' · B'</p>
+                    <p>(A · B)' = A' + B'</p>
+                </div>
+
+                <div class="identity-box">
+                    <h4>Absorption Laws</h4>
+                    <p>A + (A · B) = A</p>
+                    <p>A · (A + B) = A</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Simplification -->
+        <section class="content-section" data-section="6">
+            <h2>6. Boolean Simplification</h2>
+
+            <div class="concept-box">
+                <h3>Algebraic Manipulation</h3>
+
+                <div class="example-box">
+                    <h4>Example 1: Simplify A'B + AB</h4>
+                    <div class="proof-steps">
+                        <div class="proof-step">
+                            <span class="step-number">1</span>
+                            <p>A'B + AB</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">2</span>
+                            <p>= B(A' + A) &nbsp;&nbsp;&nbsp; [Distributive]</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">3</span>
+                            <p>= B · 1 &nbsp;&nbsp;&nbsp; [Complement]</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">4</span>
+                            <p>= B &nbsp;&nbsp;&nbsp; [Identity]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example 2: Simplify (A + B)(A + C)</h4>
+                    <div class="proof-steps">
+                        <div class="proof-step">
+                            <span class="step-number">1</span>
+                            <p>(A + B)(A + C)</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">2</span>
+                            <p>= A + BC &nbsp;&nbsp;&nbsp; [Distributive for OR]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example 3: De Morgan's Application</h4>
+                    <div class="proof-steps">
+                        <div class="proof-step">
+                            <span class="step-number">1</span>
+                            <p>(A'B + C'D)'</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">2</span>
+                            <p>= (A'B)' · (C'D)' &nbsp;&nbsp;&nbsp; [De Morgan's]</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">3</span>
+                            <p>= (A + B') · (C + D) &nbsp;&nbsp;&nbsp; [De Morgan's again]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Boolean Expression Evaluator</h3>
+                <pre><code class="language-python">def evaluate_boolean_expr(expr, values):
+    """Evaluate a boolean expression given variable values"""
+    # Replace variables with their values
+    for var, val in values.items():
+        expr = expr.replace(var, str(val))
+
+    # Replace boolean operators
+    expr = expr.replace('·', ' and ')
+    expr = expr.replace('+', ' or ')
+    expr = expr.replace("'", ' not ')
+
+    return eval(expr)
+
+# Example: A'B + AB
+values = {'A': 1, 'B': 1}
+expr1 = "not A and B or A and B"
+expr2 = "B"  # Simplified form
+
+result1 = evaluate_boolean_expr(expr1, values)
+result2 = evaluate_boolean_expr(expr2, values)
+print(f"Original: {result1}, Simplified: {result2}")
+print(f"Equal: {result1 == result2}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Karnaugh Maps -->
+        <section class="content-section" data-section="7">
+            <h2>7. Karnaugh Maps (K-Maps)</h2>
+
+            <div class="concept-box">
+                <h3>Visual Simplification Tool</h3>
+                <p>K-maps provide a graphical method for simplifying Boolean expressions</p>
+
+                <h4>2-Variable K-Map</h4>
+                <div class="kmap-grid" style="grid-template-columns: 40px repeat(2, 60px); grid-template-rows: 40px repeat(2, 60px);">
+                    <div class="kmap-cell"></div>
+                    <div class="kmap-cell kmap-header">B=0</div>
+                    <div class="kmap-cell kmap-header">B=1</div>
+                    <div class="kmap-cell kmap-header">A=0</div>
+                    <div class="kmap-cell">0</div>
+                    <div class="kmap-cell">1</div>
+                    <div class="kmap-cell kmap-header">A=1</div>
+                    <div class="kmap-cell">1</div>
+                    <div class="kmap-cell">1</div>
+                </div>
+                <p><strong>Simplified:</strong> A + B</p>
+
+                <h4>3-Variable K-Map</h4>
+                <div class="kmap-grid" style="grid-template-columns: 60px repeat(4, 60px); grid-template-rows: 60px repeat(2, 60px);">
+                    <div class="kmap-cell"></div>
+                    <div class="kmap-cell kmap-header">BC=00</div>
+                    <div class="kmap-cell kmap-header">BC=01</div>
+                    <div class="kmap-cell kmap-header">BC=11</div>
+                    <div class="kmap-cell kmap-header">BC=10</div>
+                    <div class="kmap-cell kmap-header">A=0</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-header">A=1</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                </div>
+                <p><strong>Groupings:</strong> Group of 4 cells (C')</p>
+                <p><strong>Simplified:</strong> C'</p>
+
+                <h4>K-Map Grouping Rules</h4>
+                <ul>
+                    <li>Groups must be rectangular and have 1, 2, 4, 8... cells (powers of 2)</li>
+                    <li>Groups should be as large as possible</li>
+                    <li>Groups can wrap around edges</li>
+                    <li>All 1s must be covered by at least one group</li>
+                    <li>Overlapping groups are allowed</li>
+                </ul>
+            </div>
+
+            <div class="example-box">
+                <h4>4-Variable K-Map Example</h4>
+                <p>f(A,B,C,D) with minterms: m(0,1,2,5,6,7,8,9,10)</p>
+                <div class="kmap-grid">
+                    <div class="kmap-cell"></div>
+                    <div class="kmap-cell kmap-header">CD=00</div>
+                    <div class="kmap-cell kmap-header">CD=01</div>
+                    <div class="kmap-cell kmap-header">CD=11</div>
+                    <div class="kmap-cell kmap-header">CD=10</div>
+                    <div class="kmap-cell kmap-header">AB=00</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-header">AB=01</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-header">AB=11</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-header">AB=10</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                    <div class="kmap-cell kmap-zero">0</div>
+                    <div class="kmap-cell kmap-one">1</div>
+                </div>
+                <p><strong>Simplified SOP:</strong> B'D' + B'C' + A'C'D</p>
+            </div>
+        </section>
+
+        <!-- Section 8: Circuit Minimization -->
+        <section class="content-section" data-section="8">
+            <h2>8. Circuit Minimization</h2>
+
+            <div class="concept-box">
+                <h3>Minimal Sum of Products (SOP)</h3>
+                <p>The simplified form with the fewest number of terms and literals</p>
+
+                <div class="example-box">
+                    <h4>Example: Minimize f(A,B,C) = Σm(0,2,5,6,7)</h4>
+                    <p><strong>Original SOP:</strong> A'B'C' + A'BC' + AB'C + ABC' + ABC</p>
+                    <p><strong>Using K-Map groupings:</strong></p>
+                    <ul>
+                        <li>Group 1: (0,2) → A'C'</li>
+                        <li>Group 2: (5,7) → AC</li>
+                        <li>Group 3: (6,7) → AB</li>
+                    </ul>
+                    <p><strong>Minimal SOP:</strong> A'C' + AC + AB</p>
+                </div>
+
+                <h4>Gate Count Comparison</h4>
+                <table class="truth-table">
+                    <tr><th>Form</th><th>AND Gates</th><th>OR Gates</th><th>NOT Gates</th><th>Total</th></tr>
+                    <tr><td>Original</td><td>5</td><td>1</td><td>3</td><td>9</td></tr>
+                    <tr><td>Minimized</td><td>3</td><td>1</td><td>1</td><td>5</td></tr>
+                </table>
+                <p><strong>Savings: 44% fewer gates!</strong></p>
+            </div>
+
+            <div class="concept-box">
+                <h3>Product of Sums (POS) Minimization</h3>
+                <p>Group 0s instead of 1s in the K-map</p>
+
+                <div class="example-box">
+                    <h4>Same function using POS</h4>
+                    <p>f(A,B,C) with maxterms: M(1,3,4)</p>
+                    <p><strong>Minimal POS:</strong> (A+C)(A'+B'+C)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: Applications -->
+        <section class="content-section" data-section="9">
+            <h2>9. Real-World Applications</h2>
+
+            <div class="concept-box">
+                <h3>Digital Logic Design</h3>
+                <ul>
+                    <li><strong>Arithmetic Logic Units (ALU):</strong> Perform addition, subtraction, logical operations</li>
+                    <li><strong>Memory Circuits:</strong> Flip-flops, registers, cache</li>
+                    <li><strong>Control Units:</strong> CPU instruction decoding</li>
+                    <li><strong>Multiplexers:</strong> Data selection circuits</li>
+                </ul>
+            </div>
+
+            <div class="concept-box">
+                <h3>4-to-1 Multiplexer</h3>
+                <p>Selects one of four inputs based on 2 select lines</p>
+
+                <div class="circuit-diagram">
+                    <pre>
+I0 ──┐
+I1 ──┤
+I2 ──┤──── MUX ──── Y
+I3 ──┤
+     │
+S0,S1 (select)
+
+Y = S1'S0'I0 + S1'S0·I1 + S1·S0'I2 + S1·S0·I3
+                    </pre>
+                </div>
+
+                <table class="truth-table">
+                    <tr><th>S1</th><th>S0</th><th>Output</th></tr>
+                    <tr><td>0</td><td>0</td><td>I0</td></tr>
+                    <tr><td>0</td><td>1</td><td>I1</td></tr>
+                    <tr><td>1</td><td>0</td><td>I2</td></tr>
+                    <tr><td>1</td><td>1</td><td>I3</td></tr>
+                </table>
+            </div>
+
+            <div class="concept-box">
+                <h3>CPU Arithmetic Unit Example</h3>
+                <p>4-bit adder circuit using full adders</p>
+
+                <div class="circuit-diagram">
+                    <pre>
+A3 B3    A2 B2    A1 B1    A0 B0
+ │ │      │ │      │ │      │ │
+ FA ←─────FA ←─────FA ←─────FA
+ │  Cout  │  Cout  │  Cout  │
+S3        S2        S1        S0
+
+4-bit sum: S3 S2 S1 S0
+                    </pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 10: Python Implementation -->
+        <section class="content-section" data-section="10">
+            <h2>10. Python Circuit Simulation</h2>
+
+            <div class="code-example">
+                <h3>💻 Bitwise Operations</h3>
+                <pre><code class="language-python"># Python bitwise operators
+a = 0b1010  # 10 in binary
+b = 0b1100  # 12 in binary
+
+print(f"a = {bin(a)} ({a})")
+print(f"b = {bin(b)} ({b})")
+print(f"a & b  = {bin(a & b)} ({a & b})")  # AND
+print(f"a | b  = {bin(a | b)} ({a | b})")  # OR
+print(f"a ^ b  = {bin(a ^ b)} ({a ^ b})")  # XOR
+print(f"~a     = {bin(~a & 0xF)} ({~a & 0xF})")  # NOT
+print(f"a << 1 = {bin(a << 1)} ({a << 1})")  # Left shift
+print(f"a >> 1 = {bin(a >> 1)} ({a >> 1})")  # Right shift</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Logic Gate Simulator</h3>
+                <pre><code class="language-python">class LogicGate:
+    """Simulate basic logic gates"""
+
+    @staticmethod
+    def AND(a, b):
+        return a & b
+
+    @staticmethod
+    def OR(a, b):
+        return a | b
+
+    @staticmethod
+    def NOT(a):
+        return 1 - a  # or ~a & 1
+
+    @staticmethod
+    def NAND(a, b):
+        return LogicGate.NOT(LogicGate.AND(a, b))
+
+    @staticmethod
+    def NOR(a, b):
+        return LogicGate.NOT(LogicGate.OR(a, b))
+
+    @staticmethod
+    def XOR(a, b):
+        return a ^ b
+
+    @staticmethod
+    def XNOR(a, b):
+        return LogicGate.NOT(LogicGate.XOR(a, b))
+
+# Test all gates
+print("Truth Tables:")
+for a in [0, 1]:
+    for b in [0, 1]:
+        print(f"{a} AND {b} = {LogicGate.AND(a, b)}")
+        print(f"{a} OR {b} = {LogicGate.OR(a, b)}")
+        print(f"{a} XOR {b} = {LogicGate.XOR(a, b)}")
+        print(f"{a} NAND {b} = {LogicGate.NAND(a, b)}")
+        print()</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Half Adder & Full Adder</h3>
+                <pre><code class="language-python">def half_adder(a, b):
+    """Returns (sum, carry)"""
+    sum_bit = a ^ b  # XOR
+    carry = a & b    # AND
+    return sum_bit, carry
+
+def full_adder(a, b, cin):
+    """Returns (sum, carry_out)"""
+    sum1, carry1 = half_adder(a, b)
+    sum_final, carry2 = half_adder(sum1, cin)
+    carry_out = carry1 | carry2
+    return sum_final, carry_out
+
+# Test
+print("Half Adder:")
+for a in [0, 1]:
+    for b in [0, 1]:
+        s, c = half_adder(a, b)
+        print(f"{a} + {b} = {s}, carry={c}")
+
+print("\nFull Adder:")
+for a in [0, 1]:
+    for b in [0, 1]:
+        for cin in [0, 1]:
+            s, cout = full_adder(a, b, cin)
+            print(f"{a} + {b} + {cin} = {s}, carry={cout}")</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 4-bit Ripple Carry Adder</h3>
+                <pre><code class="language-python">def ripple_carry_adder(a, b):
+    """Add two 4-bit numbers represented as lists"""
+    result = []
+    carry = 0
+
+    for i in range(len(a)):
+        sum_bit, carry = full_adder(a[i], b[i], carry)
+        result.append(sum_bit)
+
+    return result, carry
+
+# Example: 5 + 6 = 11
+a = [1, 0, 1, 0]  # 5 in binary (LSB first)
+b = [0, 1, 1, 0]  # 6 in binary
+result, overflow = ripple_carry_adder(a, b)
+
+print(f"  {list(reversed(a))} ({sum(a[i]*2**i for i in range(4))})")
+print(f"+ {list(reversed(b))} ({sum(b[i]*2**i for i in range(4))})")
+print(f"= {list(reversed(result))} ({sum(result[i]*2**i for i in range(4))})")
+print(f"Overflow: {overflow}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Quick Quiz</h2>
+
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> What is the result of 1 NAND 1?</p>
+                <button onclick="checkAnswer(1, 'zero', this)">0</button>
+                <button onclick="checkAnswer(1, 'one', this)">1</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> Which law states that (A + B)' = A' · B'?</p>
+                <button onclick="checkAnswer(2, 'distributive', this)">Distributive</button>
+                <button onclick="checkAnswer(2, 'demorgan', this)">De Morgan's</button>
+                <button onclick="checkAnswer(2, 'associative', this)">Associative</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> Simplify: A + A'B = ?</p>
+                <button onclick="checkAnswer(3, 'a', this)">A</button>
+                <button onclick="checkAnswer(3, 'aplusb', this)">A + B</button>
+                <button onclick="checkAnswer(3, 'ab', this)">AB</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> In a K-map, groups must contain how many cells?</p>
+                <button onclick="checkAnswer(4, 'any', this)">Any number</button>
+                <button onclick="checkAnswer(4, 'power2', this)">Powers of 2</button>
+                <button onclick="checkAnswer(4, 'prime', this)">Prime numbers</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 5:</strong> What does XOR return when inputs are equal?</p>
+                <button onclick="checkAnswer(5, 'zero', this)">0</button>
+                <button onclick="checkAnswer(5, 'one', this)">1</button>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='trees.html'">← Previous: Trees</button>
+            <button class="nav-button next" onclick="window.location.href='number-theory.html'">Next: Number Theory →</button>
+        </div>
+    </div>
+
+    <script src="../js/content.js"></script>
+    <script>
+        // Interactive logic gate demo
+        function updateLogicResult() {
+            const a = document.getElementById('propA').checked ? 1 : 0;
+            const b = document.getElementById('propB').checked ? 1 : 0;
+            const op = document.getElementById('operation').value;
+            let result;
+
+            switch(op) {
+                case 'and':
+                    result = a & b;
+                    break;
+                case 'or':
+                    result = a | b;
+                    break;
+                case 'implies':
+                    result = (!a) | b;
+                    break;
+            }
+
+            document.getElementById('logic-result').textContent = result ? 'true' : 'false';
+            document.getElementById('logic-result').style.color = result ? '#4caf50' : '#f44336';
+        }
+
+        document.getElementById('propA').addEventListener('change', updateLogicResult);
+        document.getElementById('propB').addEventListener('change', updateLogicResult);
+        document.getElementById('operation').addEventListener('change', updateLogicResult);
+
+        // Quiz answer checking
+        const correctAnswers = {
+            1: 'zero',
+            2: 'demorgan',
+            3: 'aplusb',
+            4: 'power2',
+            5: 'zero'
+        };
+
+        function checkAnswer(questionNum, answer, button) {
+            const buttons = button.parentElement.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
+            });
+
+            if (answer === correctAnswers[questionNum]) {
+                button.style.backgroundColor = '#4caf50';
+                button.style.color = 'white';
+                button.textContent += ' ✓';
+            } else {
+                button.style.backgroundColor = '#f44336';
+                button.style.color = 'white';
+                button.textContent += ' ✗';
+
+                // Highlight correct answer
+                buttons.forEach(btn => {
+                    if (btn.onclick.toString().includes(correctAnswers[questionNum])) {
+                        btn.style.backgroundColor = '#4caf50';
+                        btn.style.color = 'white';
+                        btn.textContent += ' ✓ (Correct)';
+                    }
+                });
+            }
+        }
+
+        // Truth table display function
+        function showTruthTable(operator) {
+            const display = document.getElementById('truth-table-display');
+            const operatorName = document.getElementById('operator-name');
+            const content = document.getElementById('truth-table-content');
+
+            const tables = {
+                'and': '<table class="truth-table"><tr><th>A</th><th>B</th><th>A∧B</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></table>',
+                'or': '<table class="truth-table"><tr><th>A</th><th>B</th><th>A∨B</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></table>',
+                'not': '<table class="truth-table"><tr><th>A</th><th>¬A</th></tr><tr><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td></tr></table>',
+                'implies': '<table class="truth-table"><tr><th>A</th><th>B</th><th>A→B</th></tr><tr><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></table>'
+            };
+
+            operatorName.textContent = operator.toUpperCase();
+            content.innerHTML = tables[operator];
+            display.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

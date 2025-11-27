@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sets & Set Operations - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">📦 Sets & Set Operations</h1>
+            <p class="subtitle">The Foundation of Data Structures and Collections</p>
+        </header>
+
+        <!-- Section 1: Introduction to Sets -->
+        <section class="content-section" data-section="1">
+            <h2>1. Introduction to Sets</h2>
+
+            <div class="concept-box">
+                <h3>What is a Set?</h3>
+                <p>A set is an unordered collection of <strong>distinct</strong> elements. Sets are one of the most fundamental concepts in mathematics and computer science.</p>
+
+                <div class="example-box">
+                    <h4>✅ Key Properties:</h4>
+                    <ul>
+                        <li><strong>No duplicates:</strong> Each element appears only once</li>
+                        <li><strong>No order:</strong> {1, 2, 3} = {3, 1, 2}</li>
+                        <li><strong>Well-defined:</strong> Clear criteria for membership</li>
+                    </ul>
+
+                    <h4>📝 Notation:</h4>
+                    <ul>
+                        <li>Sets are denoted with capital letters: A, B, C</li>
+                        <li>Elements are enclosed in braces: A = {1, 2, 3, 4, 5}</li>
+                        <li>Set membership: 3 ∈ A (3 is in A), 7 ∉ A (7 is not in A)</li>
+                    </ul>
+
+                    <h4>🎯 Examples:</h4>
+                    <ul>
+                        <li>A = {1, 2, 3, 4, 5} → Set of first five natural numbers</li>
+                        <li>B = {red, green, blue} → Set of primary colors</li>
+                        <li>C = {x | x is even and 0 < x < 10} = {2, 4, 6, 8} → Set-builder notation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Programming Connection</h3>
+                <pre><code class="language-python"># Creating sets in Python
+numbers = {1, 2, 3, 4, 5}
+colors = {'red', 'green', 'blue'}
+
+# Sets automatically remove duplicates
+duplicate_set = {1, 2, 2, 3, 3, 3}
+print(duplicate_set)  # Output: {1, 2, 3}
+
+# Check membership
+print(3 in numbers)  # True
+print(7 in numbers)  # False
+
+# Sets are unordered
+set1 = {1, 2, 3}
+set2 = {3, 1, 2}
+print(set1 == set2)  # True</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: Special Sets -->
+        <section class="content-section" data-section="2">
+            <h2>2. Special Sets</h2>
+
+            <div class="operators-grid">
+                <div class="operator-card">
+                    <h3>Empty Set (∅)</h3>
+                    <p>Set with no elements</p>
+                    <div class="operator-symbol">∅ = { }</div>
+                    <code>set()</code>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Natural Numbers (ℕ)</h3>
+                    <p>Positive integers</p>
+                    <div class="operator-symbol">ℕ = {1, 2, 3, ...}</div>
+                    <code>1, 2, 3, ...</code>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Integers (ℤ)</h3>
+                    <p>All whole numbers</p>
+                    <div class="operator-symbol">ℤ = {..., -1, 0, 1, ...}</div>
+                    <code>..., -1, 0, 1, ...</code>
+                </div>
+
+                <div class="operator-card">
+                    <h3>Real Numbers (ℝ)</h3>
+                    <p>All rational & irrational</p>
+                    <div class="operator-symbol">ℝ</div>
+                    <code>float</code>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Cardinality</h3>
+                <p>The <strong>cardinality</strong> of a set is the number of elements it contains, denoted as |A|.</p>
+
+                <div class="example-box">
+                    <h4>Examples:</h4>
+                    <ul>
+                        <li>A = {1, 2, 3, 4, 5} → |A| = 5</li>
+                        <li>B = {red, green, blue} → |B| = 3</li>
+                        <li>∅ = { } → |∅| = 0</li>
+                        <li>ℕ (Natural numbers) → |ℕ| = ∞ (infinite)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Working with Special Sets</h3>
+                <pre><code class="language-python"># Empty set
+empty = set()
+print(len(empty))  # 0
+
+# Cardinality in Python
+A = {1, 2, 3, 4, 5}
+print(f"|A| = {len(A)}")  # |A| = 5
+
+# Checking if set is empty
+if not empty:
+    print("Set is empty")
+
+# Infinite sets (conceptual representation)
+# Cannot store infinite sets, but can generate elements
+def natural_numbers(n):
+    """Generate first n natural numbers"""
+    return set(range(1, n + 1))
+
+print(natural_numbers(10))  # {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 3: Set Relationships -->
+        <section class="content-section" data-section="3">
+            <h2>3. Set Relationships</h2>
+
+            <div class="concept-box">
+                <h3>Subset (⊆) and Proper Subset (⊂)</h3>
+                <p>A is a <strong>subset</strong> of B (A ⊆ B) if every element of A is also in B.</p>
+                <p>A is a <strong>proper subset</strong> of B (A ⊂ B) if A ⊆ B and A ≠ B.</p>
+
+                <div class="example-box">
+                    <h4>Examples:</h4>
+                    <ul>
+                        <li>A = {1, 2} and B = {1, 2, 3, 4} → A ⊆ B (subset)</li>
+                        <li>A = {1, 2} and B = {1, 2, 3, 4} → A ⊂ B (proper subset)</li>
+                        <li>A = {1, 2, 3} and A = {1, 2, 3} → A ⊆ A (every set is subset of itself)</li>
+                        <li>∅ ⊆ A for any set A (empty set is subset of all sets)</li>
+                    </ul>
+                </div>
+
+                <h3>Set Equality</h3>
+                <p>Two sets are <strong>equal</strong> (A = B) if they contain exactly the same elements.</p>
+                <div class="example-box">
+                    <h4>Examples:</h4>
+                    <ul>
+                        <li>{1, 2, 3} = {3, 1, 2} → Order doesn't matter</li>
+                        <li>{1, 2, 3} = {1, 2, 3, 3} → Duplicates ignored</li>
+                        <li>{1, 2, 3} ≠ {1, 2, 4} → Different elements</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Testing Set Relationships</h3>
+                <pre><code class="language-python"># Subset testing
+A = {1, 2}
+B = {1, 2, 3, 4}
+
+print(A.issubset(B))     # True (A ⊆ B)
+print(A <= B)            # True (alternative syntax)
+print(A < B)             # True (proper subset A ⊂ B)
+
+# Superset testing
+print(B.issuperset(A))   # True (B ⊇ A)
+print(B >= A)            # True
+
+# Set equality
+C = {1, 2, 3}
+D = {3, 1, 2}
+print(C == D)            # True
+
+# Empty set is subset of all sets
+empty = set()
+print(empty.issubset(A)) # True</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4: Set Operations -->
+        <section class="content-section" data-section="4">
+            <h2>4. Set Operations</h2>
+
+            <div class="proof-technique">
+                <h3>Union (∪)</h3>
+                <p>The union of A and B contains all elements that are in A, B, or both.</p>
+
+                <div class="theorem-box">
+                    <h4>Definition: A ∪ B = {x | x ∈ A or x ∈ B}</h4>
+                    <div class="example-box">
+                        <h4>Example:</h4>
+                        <ul>
+                            <li>A = {1, 2, 3}, B = {3, 4, 5}</li>
+                            <li>A ∪ B = {1, 2, 3, 4, 5}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <h4>💻 Union in Python</h4>
+                    <pre><code class="language-python">A = {1, 2, 3}
+B = {3, 4, 5}
+
+# Using union method
+union1 = A.union(B)
+print(union1)  # {1, 2, 3, 4, 5}
+
+# Using | operator
+union2 = A | B
+print(union2)  # {1, 2, 3, 4, 5}
+
+# Union of multiple sets
+C = {5, 6, 7}
+union3 = A | B | C
+print(union3)  # {1, 2, 3, 4, 5, 6, 7}</code></pre>
+                </div>
+            </div>
+
+            <div class="proof-technique">
+                <h3>Intersection (∩)</h3>
+                <p>The intersection of A and B contains all elements that are in both A and B.</p>
+
+                <div class="theorem-box">
+                    <h4>Definition: A ∩ B = {x | x ∈ A and x ∈ B}</h4>
+                    <div class="example-box">
+                        <h4>Example:</h4>
+                        <ul>
+                            <li>A = {1, 2, 3, 4}, B = {3, 4, 5, 6}</li>
+                            <li>A ∩ B = {3, 4}</li>
+                            <li>If A ∩ B = ∅, then A and B are <strong>disjoint</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <h4>💻 Intersection in Python</h4>
+                    <pre><code class="language-python">A = {1, 2, 3, 4}
+B = {3, 4, 5, 6}
+
+# Using intersection method
+intersection1 = A.intersection(B)
+print(intersection1)  # {3, 4}
+
+# Using & operator
+intersection2 = A & B
+print(intersection2)  # {3, 4}
+
+# Disjoint sets
+C = {7, 8, 9}
+print(A & C)  # set() (empty set)
+print(A.isdisjoint(C))  # True</code></pre>
+                </div>
+            </div>
+
+            <div class="proof-technique">
+                <h3>Difference (−)</h3>
+                <p>The difference A − B contains elements in A but not in B.</p>
+
+                <div class="theorem-box">
+                    <h4>Definition: A − B = {x | x ∈ A and x ∉ B}</h4>
+                    <div class="example-box">
+                        <h4>Example:</h4>
+                        <ul>
+                            <li>A = {1, 2, 3, 4}, B = {3, 4, 5, 6}</li>
+                            <li>A − B = {1, 2}</li>
+                            <li>B − A = {5, 6}</li>
+                            <li>Note: A − B ≠ B − A (not commutative)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <h4>💻 Difference in Python</h4>
+                    <pre><code class="language-python">A = {1, 2, 3, 4}
+B = {3, 4, 5, 6}
+
+# Using difference method
+diff1 = A.difference(B)
+print(diff1)  # {1, 2}
+
+# Using - operator
+diff2 = A - B
+print(diff2)  # {1, 2}
+
+# Symmetric difference (elements in A or B, but not both)
+sym_diff = A ^ B  # or A.symmetric_difference(B)
+print(sym_diff)  # {1, 2, 5, 6}</code></pre>
+                </div>
+            </div>
+
+            <div class="proof-technique">
+                <h3>Complement (A<sup>c</sup>)</h3>
+                <p>The complement of A contains all elements in the universal set U that are not in A.</p>
+
+                <div class="theorem-box">
+                    <h4>Definition: A<sup>c</sup> = {x | x ∈ U and x ∉ A}</h4>
+                    <div class="example-box">
+                        <h4>Example:</h4>
+                        <ul>
+                            <li>U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} (universal set)</li>
+                            <li>A = {2, 4, 6, 8, 10} (even numbers)</li>
+                            <li>A<sup>c</sup> = {1, 3, 5, 7, 9} (odd numbers)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <h4>💻 Complement in Python</h4>
+                    <pre><code class="language-python"># Define universal set
+U = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+A = {2, 4, 6, 8, 10}
+
+# Complement of A
+A_complement = U - A
+print(A_complement)  # {1, 3, 5, 7, 9}
+
+# Verify properties
+print(A | A_complement == U)      # True
+print(A & A_complement == set())  # True (disjoint)</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Cartesian Product -->
+        <section class="content-section" data-section="5">
+            <h2>5. Cartesian Product</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>The <strong>Cartesian product</strong> A × B is the set of all ordered pairs (a, b) where a ∈ A and b ∈ B.</p>
+                <p><strong>Formula:</strong> A × B = {(a, b) | a ∈ A and b ∈ B}</p>
+
+                <div class="example-box">
+                    <h4>Example:</h4>
+                    <ul>
+                        <li>A = {1, 2}, B = {x, y}</li>
+                        <li>A × B = {(1, x), (1, y), (2, x), (2, y)}</li>
+                        <li>|A × B| = |A| × |B| = 2 × 2 = 4</li>
+                        <li>Note: A × B ≠ B × A (order matters!)</li>
+                    </ul>
+
+                    <h4>🎯 Programming Applications:</h4>
+                    <ul>
+                        <li>Database joins (combining rows from two tables)</li>
+                        <li>Grid coordinates (x, y positions)</li>
+                        <li>Nested loops (all combinations of two lists)</li>
+                        <li>Game states (player positions × inventory items)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Cartesian Product Implementation</h3>
+                <pre><code class="language-python">from itertools import product
+
+# Example 1: Basic Cartesian product
+A = {1, 2}
+B = {'x', 'y'}
+
+cartesian = set(product(A, B))
+print(cartesian)  # {(1, 'x'), (1, 'y'), (2, 'x'), (2, 'y')}
+
+# Example 2: Grid coordinates
+x_coords = [0, 1, 2]
+y_coords = [0, 1, 2]
+grid = list(product(x_coords, y_coords))
+print(grid)  # [(0,0), (0,1), (0,2), (1,0), (1,1), (1,2), (2,0), (2,1), (2,2)]
+
+# Example 3: All combinations of options
+colors = ['red', 'blue']
+sizes = ['S', 'M', 'L']
+products_catalog = list(product(colors, sizes))
+print(products_catalog)  # [('red', 'S'), ('red', 'M'), ('red', 'L'), ...]
+
+# Manual implementation
+def cartesian_product(A, B):
+    """Create Cartesian product A × B"""
+    result = set()
+    for a in A:
+        for b in B:
+            result.add((a, b))
+    return result</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Power Set -->
+        <section class="content-section" data-section="6">
+            <h2>6. Power Set</h2>
+
+            <div class="concept-box">
+                <h3>Definition</h3>
+                <p>The <strong>power set</strong> of A, denoted 𝒫(A) or 2<sup>A</sup>, is the set of all subsets of A (including ∅ and A itself).</p>
+                <p><strong>Cardinality:</strong> If |A| = n, then |𝒫(A)| = 2<sup>n</sup></p>
+
+                <div class="example-box">
+                    <h4>Examples:</h4>
+                    <ul>
+                        <li>A = {1, 2}
+                            <ul>
+                                <li>𝒫(A) = {∅, {1}, {2}, {1, 2}}</li>
+                                <li>|𝒫(A)| = 2<sup>2</sup> = 4</li>
+                            </ul>
+                        </li>
+                        <li>B = {a, b, c}
+                            <ul>
+                                <li>𝒫(B) = {∅, {a}, {b}, {c}, {a,b}, {a,c}, {b,c}, {a,b,c}}</li>
+                                <li>|𝒫(B)| = 2<sup>3</sup> = 8</li>
+                            </ul>
+                        </li>
+                        <li>𝒫(∅) = {∅} → |𝒫(∅)| = 2<sup>0</sup> = 1</li>
+                    </ul>
+
+                    <h4>💡 Why 2<sup>n</sup>?</h4>
+                    <p>For each element, we make a binary choice: include it or exclude it. With n elements, we have 2 × 2 × ... × 2 (n times) = 2<sup>n</sup> possible subsets.</p>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Generating Power Sets</h3>
+                <pre><code class="language-python">from itertools import combinations
+
+def power_set(s):
+    """Generate power set of set s"""
+    s = list(s)
+    power = []
+
+    # Generate all combinations of all lengths
+    for i in range(len(s) + 1):
+        for combo in combinations(s, i):
+            power.append(set(combo))
+
+    return power
+
+# Example 1
+A = {1, 2}
+P_A = power_set(A)
+print(f"𝒫(A) = {P_A}")
+print(f"|𝒫(A)| = {len(P_A)}")  # 4
+
+# Example 2
+B = {'a', 'b', 'c'}
+P_B = power_set(B)
+print(f"𝒫(B) has {len(P_B)} subsets")  # 8
+
+# Binary representation approach
+def power_set_binary(s):
+    """Generate power set using binary representation"""
+    s = list(s)
+    n = len(s)
+    power = []
+
+    # Iterate through all binary numbers from 0 to 2^n - 1
+    for i in range(2**n):
+        subset = set()
+        for j in range(n):
+            # Check if j-th bit is set
+            if i & (1 << j):
+                subset.add(s[j])
+        power.append(subset)
+
+    return power
+
+# Verify
+A = {1, 2, 3}
+print(f"|𝒫(A)| = {len(power_set_binary(A))}")  # 2^3 = 8</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 7: Set Identities -->
+        <section class="content-section" data-section="7">
+            <h2>7. Set Identities</h2>
+
+            <div class="concept-box">
+                <h3>Important Set Laws</h3>
+
+                <div class="example-box">
+                    <h4>🔄 Commutative Laws:</h4>
+                    <ul>
+                        <li>A ∪ B = B ∪ A</li>
+                        <li>A ∩ B = B ∩ A</li>
+                    </ul>
+
+                    <h4>🔗 Associative Laws:</h4>
+                    <ul>
+                        <li>(A ∪ B) ∪ C = A ∪ (B ∪ C)</li>
+                        <li>(A ∩ B) ∩ C = A ∩ (B ∩ C)</li>
+                    </ul>
+
+                    <h4>📊 Distributive Laws:</h4>
+                    <ul>
+                        <li>A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C)</li>
+                        <li>A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)</li>
+                    </ul>
+
+                    <h4>🔲 Identity Laws:</h4>
+                    <ul>
+                        <li>A ∪ ∅ = A</li>
+                        <li>A ∩ U = A</li>
+                    </ul>
+
+                    <h4>⚫ Complement Laws:</h4>
+                    <ul>
+                        <li>A ∪ A<sup>c</sup> = U</li>
+                        <li>A ∩ A<sup>c</sup> = ∅</li>
+                        <li>(A<sup>c</sup>)<sup>c</sup> = A</li>
+                    </ul>
+
+                    <h4>🎭 De Morgan's Laws:</h4>
+                    <ul>
+                        <li>(A ∪ B)<sup>c</sup> = A<sup>c</sup> ∩ B<sup>c</sup></li>
+                        <li>(A ∩ B)<sup>c</sup> = A<sup>c</sup> ∪ B<sup>c</sup></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Verifying Set Identities</h3>
+                <pre><code class="language-python"># Define sets
+U = set(range(1, 11))  # Universal set {1, 2, ..., 10}
+A = {1, 2, 3, 4, 5}
+B = {4, 5, 6, 7, 8}
+C = {6, 7, 8, 9, 10}
+
+# Commutative laws
+assert A | B == B | A, "Union is commutative"
+assert A & B == B & A, "Intersection is commutative"
+print("✓ Commutative laws verified")
+
+# Associative laws
+assert (A | B) | C == A | (B | C), "Union is associative"
+assert (A & B) & C == A & (B & C), "Intersection is associative"
+print("✓ Associative laws verified")
+
+# Distributive laws
+assert A | (B & C) == (A | B) & (A | C), "Union over intersection"
+assert A & (B | C) == (A & B) | (A & C), "Intersection over union"
+print("✓ Distributive laws verified")
+
+# Identity laws
+assert A | set() == A, "Union with empty set"
+assert A & U == A, "Intersection with universal set"
+print("✓ Identity laws verified")
+
+# Complement laws
+A_complement = U - A
+assert A | A_complement == U, "Union with complement"
+assert A & A_complement == set(), "Intersection with complement"
+assert U - (U - A) == A, "Double complement"
+print("✓ Complement laws verified")
+
+# De Morgan's Laws
+B_complement = U - B
+assert U - (A | B) == (U - A) & (U - B), "De Morgan's Law 1"
+assert U - (A & B) == (U - A) | (U - B), "De Morgan's Law 2"
+print("✓ De Morgan's laws verified")
+
+print("\n✅ All set identities verified!")</code></pre>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Quick Quiz</h2>
+
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> If A = {1, 2, 3} and B = {3, 4, 5}, what is A ∪ B?</p>
+                <button onclick="checkAnswer(1, 'a', this)">{1, 2, 3, 4, 5}</button>
+                <button onclick="checkAnswer(1, 'wrong', this)">{3}</button>
+                <button onclick="checkAnswer(1, 'wrong', this)">{1, 2, 4, 5}</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> If |A| = 3, what is |𝒫(A)| (size of power set)?</p>
+                <button onclick="checkAnswer(2, 'wrong', this)">3</button>
+                <button onclick="checkAnswer(2, 'wrong', this)">6</button>
+                <button onclick="checkAnswer(2, 'a', this)">8</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> If A = {1, 2, 3, 4} and B = {3, 4, 5, 6}, what is A ∩ B?</p>
+                <button onclick="checkAnswer(3, 'a', this)">{3, 4}</button>
+                <button onclick="checkAnswer(3, 'wrong', this)">{1, 2, 5, 6}</button>
+                <button onclick="checkAnswer(3, 'wrong', this)">{1, 2, 3, 4, 5, 6}</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> Which of the following is true according to De Morgan's Law?</p>
+                <button onclick="checkAnswer(4, 'wrong', this)">(A ∪ B)<sup>c</sup> = A<sup>c</sup> ∪ B<sup>c</sup></button>
+                <button onclick="checkAnswer(4, 'a', this)">(A ∪ B)<sup>c</sup> = A<sup>c</sup> ∩ B<sup>c</sup></button>
+                <button onclick="checkAnswer(4, 'wrong', this)">(A ∩ B)<sup>c</sup> = A<sup>c</sup> ∩ B<sup>c</sup></button>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='logic.html'">← Previous: Logic & Proofs</button>
+            <button class="nav-button next" onclick="window.location.href='relations.html'">Next: Relations →</button>
+        </div>
+    </div>
+
+    <script src="../js/sets.js"></script>
+</body>
+</html>

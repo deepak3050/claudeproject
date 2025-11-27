@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic & Proofs - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">🧠 Logic & Proofs</h1>
+            <p class="subtitle">The Foundation of Mathematical Reasoning</p>
+        </header>
+
+        <!-- Section 1: Propositional Logic -->
+        <section class="content-section" data-section="1">
+            <h2>1. Propositional Logic Basics</h2>
+
+            <div class="concept-box">
+                <h3>What is a Proposition?</h3>
+                <p>A proposition is a statement that is either <strong>true</strong> or <strong>false</strong>, but not both.</p>
+
+                <div class="example-box">
+                    <h4>✅ Valid Propositions:</h4>
+                    <ul>
+                        <li>"Python is a programming language" → <span class="truth-value true">TRUE</span></li>
+                        <li>"5 + 3 = 10" → <span class="truth-value false">FALSE</span></li>
+                        <li>"Every even number greater than 2 can be expressed as the sum of two primes" → <span class="truth-value unknown">TRUE/FALSE (Goldbach's conjecture)</span></li>
+                    </ul>
+
+                    <h4>❌ NOT Propositions:</h4>
+                    <ul>
+                        <li>"What time is it?" (question)</li>
+                        <li>"Write some code!" (command)</li>
+                        <li>"x + 5 = 10" (depends on x value)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Programming Connection</h3>
+                <pre><code class="language-python"># In programming, propositions become boolean expressions
+x = 5
+is_positive = x > 0  # True
+is_even = x % 2 == 0  # False
+
+# These are the building blocks of conditional logic
+if is_positive and not is_even:
+    print("x is a positive odd number")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 2: Logical Operators -->
+        <section class="content-section" data-section="2">
+            <h2>2. Logical Operators</h2>
+
+            <div class="operators-grid">
+                <div class="operator-card" onclick="showTruthTable('and')">
+                    <h3>AND (∧)</h3>
+                    <p>Both must be true</p>
+                    <div class="operator-symbol">p ∧ q</div>
+                    <code>p and q</code>
+                </div>
+
+                <div class="operator-card" onclick="showTruthTable('or')">
+                    <h3>OR (∨)</h3>
+                    <p>At least one is true</p>
+                    <div class="operator-symbol">p ∨ q</div>
+                    <code>p or q</code>
+                </div>
+
+                <div class="operator-card" onclick="showTruthTable('not')">
+                    <h3>NOT (¬)</h3>
+                    <p>Negates the value</p>
+                    <div class="operator-symbol">¬p</div>
+                    <code>not p</code>
+                </div>
+
+                <div class="operator-card" onclick="showTruthTable('implies')">
+                    <h3>IMPLIES (→)</h3>
+                    <p>If p, then q</p>
+                    <div class="operator-symbol">p → q</div>
+                    <code>if p then q</code>
+                </div>
+            </div>
+
+            <div id="truth-table-display" class="truth-table-container" style="display: none;">
+                <h3>Truth Table: <span id="operator-name"></span></h3>
+                <div id="truth-table-content"></div>
+            </div>
+
+            <div class="interactive-demo">
+                <h3>🎮 Interactive Logic Gate</h3>
+                <div class="logic-gate">
+                    <label>
+                        <input type="checkbox" id="propA"> Proposition A
+                    </label>
+                    <label>
+                        <input type="checkbox" id="propB"> Proposition B
+                    </label>
+                    <select id="operation">
+                        <option value="and">AND</option>
+                        <option value="or">OR</option>
+                        <option value="implies">IMPLIES</option>
+                    </select>
+                    <div class="result-box">
+                        Result: <span id="logic-result">false</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Proof Techniques -->
+        <section class="content-section" data-section="3">
+            <h2>3. Proof Techniques</h2>
+
+            <div class="proof-technique">
+                <h3>Direct Proof</h3>
+                <p>Start with assumptions, use logical steps to reach the conclusion.</p>
+
+                <div class="theorem-box">
+                    <h4>Theorem: If n is even, then n² is even</h4>
+                    <div class="proof-steps">
+                        <div class="proof-step">
+                            <span class="step-number">1</span>
+                            <p><strong>Given:</strong> n is even</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">2</span>
+                            <p><strong>Definition:</strong> n = 2k for some integer k</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">3</span>
+                            <p><strong>Substitute:</strong> n² = (2k)² = 4k² = 2(2k²)</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">4</span>
+                            <p><strong>Conclusion:</strong> n² = 2m where m = 2k², so n² is even ∎</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <h4>💻 Verification in Code</h4>
+                    <pre><code class="language-python">def verify_theorem(n):
+    """Verify: if n is even, then n² is even"""
+    if n % 2 == 0:  # n is even
+        n_squared = n * n
+        assert n_squared % 2 == 0, "Theorem violated!"
+        return True
+    return None  # Theorem doesn't apply
+
+# Test
+for n in [2, 4, 6, 8, 10]:
+    verify_theorem(n)
+    print(f"n={n}: n²={n**2} is even ✓")</code></pre>
+                </div>
+            </div>
+
+            <div class="proof-technique">
+                <h3>Proof by Contradiction</h3>
+                <p>Assume the opposite is true, derive a contradiction.</p>
+
+                <div class="theorem-box">
+                    <h4>Theorem: √2 is irrational</h4>
+                    <div class="proof-steps">
+                        <div class="proof-step">
+                            <span class="step-number">1</span>
+                            <p><strong>Assume:</strong> √2 is rational = p/q (in lowest terms)</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">2</span>
+                            <p><strong>Square both sides:</strong> 2 = p²/q², so p² = 2q²</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">3</span>
+                            <p><strong>Therefore:</strong> p² is even, so p is even. Let p = 2k</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">4</span>
+                            <p><strong>Substitute:</strong> (2k)² = 2q², so 4k² = 2q², thus q² = 2k²</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">5</span>
+                            <p><strong>Therefore:</strong> q² is even, so q is even</p>
+                        </div>
+                        <div class="proof-step contradiction">
+                            <span class="step-number">⚠️</span>
+                            <p><strong>Contradiction:</strong> Both p and q are even, but we said p/q was in lowest terms!</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">∴</span>
+                            <p><strong>Conclusion:</strong> Our assumption was wrong. √2 must be irrational ∎</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="proof-technique">
+                <h3>Mathematical Induction</h3>
+                <p>Prove for base case, then prove that if true for n, it's true for n+1.</p>
+
+                <div class="theorem-box">
+                    <h4>Theorem: Sum of first n integers = n(n+1)/2</h4>
+                    <div class="proof-steps">
+                        <div class="proof-step">
+                            <span class="step-number">Base</span>
+                            <p><strong>n=1:</strong> 1 = 1(1+1)/2 = 1 ✓</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">IH</span>
+                            <p><strong>Inductive Hypothesis:</strong> Assume true for n=k<br>
+                            1 + 2 + ... + k = k(k+1)/2</p>
+                        </div>
+                        <div class="proof-step">
+                            <span class="step-number">Step</span>
+                            <p><strong>Prove for n=k+1:</strong><br>
+                            1 + 2 + ... + k + (k+1) = k(k+1)/2 + (k+1)<br>
+                            = (k(k+1) + 2(k+1))/2<br>
+                            = (k+1)(k+2)/2 ✓</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-example">
+                    <h4>💻 Recursive Implementation</h4>
+                    <pre><code class="language-python">def sum_first_n(n):
+    """Sum of first n integers using formula"""
+    return n * (n + 1) // 2
+
+def sum_first_n_recursive(n):
+    """Recursive version mirrors induction"""
+    if n == 1:  # Base case
+        return 1
+    return n + sum_first_n_recursive(n - 1)  # Inductive step
+
+# Verify
+for i in range(1, 11):
+    formula = sum_first_n(i)
+    recursive = sum_first_n_recursive(i)
+    assert formula == recursive
+    print(f"n={i}: sum={formula} ✓")</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Quick Quiz</h2>
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> What is the result of True AND False?</p>
+                <button onclick="checkAnswer(1, 'false', this)">False</button>
+                <button onclick="checkAnswer(1, 'true', this)">True</button>
+            </div>
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> If p → q is true and p is true, what can we conclude about q?</p>
+                <button onclick="checkAnswer(2, 'unknown', this)">Unknown</button>
+                <button onclick="checkAnswer(2, 'true', this)">q must be True</button>
+                <button onclick="checkAnswer(2, 'false', this)">q must be False</button>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='../index.html'">← Back to Index</button>
+            <button class="nav-button next" onclick="window.location.href='sets.html'">Next: Sets & Relations →</button>
+        </div>
+    </div>
+
+    <script src="../js/content.js"></script>
+</body>
+</html>

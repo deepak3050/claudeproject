@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  discrete-math-app:
+    build: .
+    container_name: discrete-math-learning
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    volumes:
+      # Mount source for development (optional - comment out for production)
+      - ./src:/usr/share/nginx/html:ro

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discrete Mathematics for Programmers</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="animated-header">
+            <h1 class="fade-in">Discrete Mathematics for Programmers</h1>
+            <p class="subtitle slide-up">Master the Mathematical Foundations of Algorithms</p>
+        </header>
+
+        <div class="intro-section">
+            <div class="card slide-in">
+                <h2>🎯 Why Learn Discrete Math?</h2>
+                <p>Discrete mathematics is the backbone of computer science. It helps you:</p>
+                <ul>
+                    <li>Understand algorithm complexity and optimization</li>
+                    <li>Design efficient data structures</li>
+                    <li>Prove correctness of your code</li>
+                    <li>Solve complex computational problems</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="topics-grid">
+            <h2 class="section-title">📚 Course Contents (13 Comprehensive Topics)</h2>
+
+            <div class="topic-card" data-topic="logic">
+                <div class="topic-icon">🧠</div>
+                <h3>1. Logic & Proofs</h3>
+                <p>Propositional logic, truth tables, proof techniques</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/logic.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="sets">
+                <div class="topic-icon">📦</div>
+                <h3>2. Sets & Set Operations</h3>
+                <p>Set notation, Venn diagrams, power sets, Cartesian products</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/sets.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="relations">
+                <div class="topic-icon">🔗</div>
+                <h3>3. Relations & Functions</h3>
+                <p>Binary relations, equivalence, partial orders, composition</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/relations.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="sequences">
+                <div class="topic-icon">📊</div>
+                <h3>4. Sequences & Summations</h3>
+                <p>Sigma notation, arithmetic/geometric sequences, series</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/sequences.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="induction">
+                <div class="topic-icon">🎯</div>
+                <h3>5. Mathematical Induction</h3>
+                <p>Weak/strong induction, well-ordering principle</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/induction.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="counting">
+                <div class="topic-icon">🔢</div>
+                <h3>6. Counting & Combinatorics</h3>
+                <p>Permutations, combinations, pigeonhole, inclusion-exclusion</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/counting.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="probability">
+                <div class="topic-icon">🎲</div>
+                <h3>7. Probability Theory</h3>
+                <p>Discrete probability, conditional, Bayes' theorem</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/probability.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="recurrence">
+                <div class="topic-icon">🔄</div>
+                <h3>8. Recurrence Relations</h3>
+                <p>Solving techniques, generating functions, Master theorem</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/recurrence.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="graphs">
+                <div class="topic-icon">🕸️</div>
+                <h3>9. Graph Theory</h3>
+                <p>Representations, traversals, paths, coloring, planar graphs</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/graphs.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="trees">
+                <div class="topic-icon">🌳</div>
+                <h3>10. Trees & Applications</h3>
+                <p>Binary trees, spanning trees, Huffman coding, heaps</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/trees.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="boolean">
+                <div class="topic-icon">💡</div>
+                <h3>11. Boolean Algebra & Circuits</h3>
+                <p>Logic gates, circuit design, Karnaugh maps, minimization</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/boolean.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="number-theory">
+                <div class="topic-icon">🔐</div>
+                <h3>12. Number Theory & Cryptography</h3>
+                <p>Primes, modular arithmetic, GCD, RSA encryption basics</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/number-theory.html')">Start Learning</button>
+            </div>
+
+            <div class="topic-card" data-topic="algorithms">
+                <div class="topic-icon">⚡</div>
+                <h3>13. Algorithm Analysis & Complexity</h3>
+                <p>Big-O/Theta/Omega, complexity classes, P vs NP intro</p>
+                <div class="progress-bar"><div class="progress" style="width: 0%"></div></div>
+                <button class="learn-btn" onclick="navigateTo('pages/algorithms.html')">Start Learning</button>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <p>🚀 Start from any topic or follow the recommended order for best results!</p>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

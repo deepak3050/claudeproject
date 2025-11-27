@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematical Induction - Discrete Math</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/content.css">
+</head>
+<body>
+    <div class="nav-bar">
+        <button class="back-btn" onclick="window.location.href='../index.html'">← Back to Index</button>
+        <div class="progress-indicator">
+            <span id="progress-text">Progress: 0%</span>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <header class="content-header">
+            <h1 class="fade-in">🔁 Mathematical Induction</h1>
+            <p class="subtitle">Proving Infinite Truths One Step at a Time</p>
+        </header>
+
+        <!-- Section 1: Principle of Mathematical Induction -->
+        <section class="content-section" data-section="1">
+            <h2>1. The Principle of Mathematical Induction</h2>
+
+            <div class="concept-box">
+                <h3>Why Induction Works: The Domino Effect</h3>
+                <p>Imagine an infinite line of dominoes. How can you prove they'll all fall?</p>
+
+                <div class="example-box">
+                    <h4>🎯 Two Key Ingredients:</h4>
+                    <ol>
+                        <li><strong>Base Case:</strong> The first domino falls</li>
+                        <li><strong>Inductive Step:</strong> If any domino falls, the next one falls too</li>
+                    </ol>
+                    <p style="margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 5px;">
+                        <strong>Conclusion:</strong> ALL dominoes will fall! This is the essence of mathematical induction.
+                    </p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Formal Statement</h3>
+                <p>To prove a statement P(n) is true for all natural numbers n ≥ n₀:</p>
+
+                <div class="proof-steps">
+                    <div class="proof-step">
+                        <span class="step-number">1</span>
+                        <p><strong>Base Case:</strong> Prove P(n₀) is true</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">2</span>
+                        <p><strong>Inductive Hypothesis:</strong> Assume P(k) is true for some k ≥ n₀</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">3</span>
+                        <p><strong>Inductive Step:</strong> Prove P(k+1) is true using the assumption</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">∴</span>
+                        <p><strong>Conclusion:</strong> P(n) is true for all n ≥ n₀</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="interactive-demo">
+                <h3>🎮 Interactive Domino Visualization</h3>
+                <div id="domino-viz" style="padding: 20px; background: #f5f5f5; border-radius: 10px; text-align: center;">
+                    <div id="dominoes" style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
+                        <div class="domino" data-num="1">1</div>
+                        <div class="domino" data-num="2">2</div>
+                        <div class="domino" data-num="3">3</div>
+                        <div class="domino" data-num="4">4</div>
+                        <div class="domino" data-num="5">5</div>
+                        <div class="domino">...</div>
+                    </div>
+                    <button onclick="knockDomino()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                        Knock First Domino
+                    </button>
+                    <p id="domino-status" style="margin-top: 15px; font-weight: bold; color: #667eea;"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Proof Structure -->
+        <section class="content-section" data-section="2">
+            <h2>2. Anatomy of an Inductive Proof</h2>
+
+            <div class="theorem-box">
+                <h4>Template for Weak Induction</h4>
+                <div class="code-example">
+                    <pre><code>Theorem: For all n ≥ n₀, P(n) is true
+
+Proof by induction:
+
+  BASE CASE (n = n₀):
+    [Verify P(n₀) is true directly]
+
+  INDUCTIVE HYPOTHESIS:
+    Assume P(k) is true for some arbitrary k ≥ n₀
+    That is, assume [state what P(k) means]
+
+  INDUCTIVE STEP:
+    We must prove P(k+1)
+    [Use the assumption P(k) to prove P(k+1)]
+
+    Starting with P(k+1):
+    [Mathematical manipulation]
+    [Apply inductive hypothesis]
+    [Continue until proven]
+
+  CONCLUSION:
+    By mathematical induction, P(n) is true for all n ≥ n₀. ∎</code></pre>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Critical Components</h3>
+                <ul>
+                    <li><strong>Base Case:</strong> Usually straightforward; verify by direct calculation</li>
+                    <li><strong>Inductive Hypothesis (IH):</strong> The assumption that links k to k+1</li>
+                    <li><strong>Inductive Step:</strong> The creative part; must explicitly use the IH</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 3: Simple Examples -->
+        <section class="content-section" data-section="3">
+            <h2>3. Classic Example: Sum Formula</h2>
+
+            <div class="theorem-box">
+                <h4>Theorem: Sum of First n Integers</h4>
+                <p style="text-align: center; font-size: 1.2em; margin: 15px 0;">
+                    1 + 2 + 3 + ... + n = n(n+1)/2
+                </p>
+
+                <div class="proof-steps">
+                    <div class="proof-step">
+                        <span class="step-number">Base</span>
+                        <p><strong>n = 1:</strong><br>
+                        LHS = 1<br>
+                        RHS = 1(1+1)/2 = 1<br>
+                        LHS = RHS ✓</p>
+                    </div>
+
+                    <div class="proof-step">
+                        <span class="step-number">IH</span>
+                        <p><strong>Inductive Hypothesis:</strong><br>
+                        Assume for n = k:<br>
+                        1 + 2 + 3 + ... + k = k(k+1)/2</p>
+                    </div>
+
+                    <div class="proof-step">
+                        <span class="step-number">Step</span>
+                        <p><strong>Prove for n = k+1:</strong><br>
+                        We need to show: 1 + 2 + ... + k + (k+1) = (k+1)(k+2)/2</p>
+                    </div>
+
+                    <div class="proof-step">
+                        <span class="step-number">Work</span>
+                        <p>
+                        LHS = [1 + 2 + ... + k] + (k+1)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= k(k+1)/2 + (k+1)  <em>(by IH)</em><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= k(k+1)/2 + 2(k+1)/2<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= [k(k+1) + 2(k+1)]/2<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= (k+1)(k+2)/2<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= RHS ✓
+                        </p>
+                    </div>
+
+                    <div class="proof-step">
+                        <span class="step-number">∎</span>
+                        <p><strong>Conclusion:</strong> By mathematical induction, the formula holds for all n ≥ 1.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Python Verification</h3>
+                <pre><code class="language-python">def sum_formula(n):
+    """Direct sum formula"""
+    return n * (n + 1) // 2
+
+def sum_iterative(n):
+    """Actual summation"""
+    return sum(range(1, n + 1))
+
+# Verify for many values
+for n in range(1, 101):
+    formula_result = sum_formula(n)
+    actual_sum = sum_iterative(n)
+    assert formula_result == actual_sum, f"Failed at n={n}"
+
+print("✓ Formula verified for n = 1 to 100")
+
+# Demonstrate the pattern
+for n in [5, 10, 20]:
+    print(f"n={n}: sum={sum_formula(n)}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 4: Weak Induction -->
+        <section class="content-section" data-section="4">
+            <h2>4. More Weak Induction Examples</h2>
+
+            <div class="theorem-box">
+                <h4>Example 1: Sum of Odd Numbers</h4>
+                <p><strong>Theorem:</strong> 1 + 3 + 5 + ... + (2n-1) = n²</p>
+
+                <div class="proof-steps">
+                    <div class="proof-step">
+                        <span class="step-number">Base</span>
+                        <p>n=1: 1 = 1² ✓</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">IH</span>
+                        <p>Assume: 1 + 3 + ... + (2k-1) = k²</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">Step</span>
+                        <p>Prove: 1 + 3 + ... + (2k-1) + (2(k+1)-1) = (k+1)²<br><br>
+                        LHS = [1 + 3 + ... + (2k-1)] + (2k+1)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= k² + (2k+1)  <em>(by IH)</em><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= k² + 2k + 1<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= (k+1)² ✓</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="theorem-box">
+                <h4>Example 2: Geometric Series</h4>
+                <p><strong>Theorem:</strong> 1 + 2 + 4 + 8 + ... + 2ⁿ = 2ⁿ⁺¹ - 1</p>
+
+                <div class="proof-steps">
+                    <div class="proof-step">
+                        <span class="step-number">Base</span>
+                        <p>n=0: 2⁰ = 1 = 2¹ - 1 ✓</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">IH</span>
+                        <p>Assume: 1 + 2 + ... + 2ᵏ = 2ᵏ⁺¹ - 1</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">Step</span>
+                        <p>LHS = [1 + 2 + ... + 2ᵏ] + 2ᵏ⁺¹<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= (2ᵏ⁺¹ - 1) + 2ᵏ⁺¹  <em>(by IH)</em><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= 2·2ᵏ⁺¹ - 1<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;= 2ᵏ⁺² - 1 ✓</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Testing Both Formulas</h3>
+                <pre><code class="language-python">def sum_odd_numbers(n):
+    """1 + 3 + 5 + ... + (2n-1) = n²"""
+    return n ** 2
+
+def sum_geometric_powers_of_2(n):
+    """1 + 2 + 4 + ... + 2^n = 2^(n+1) - 1"""
+    return 2**(n+1) - 1
+
+# Verify odd numbers
+for n in range(1, 11):
+    formula = sum_odd_numbers(n)
+    actual = sum(2*i - 1 for i in range(1, n+1))
+    assert formula == actual
+    print(f"Odd sum n={n}: {actual} = {n}²")
+
+print()
+
+# Verify geometric
+for n in range(10):
+    formula = sum_geometric_powers_of_2(n)
+    actual = sum(2**i for i in range(n+1))
+    assert formula == actual
+    print(f"Geometric n={n}: {actual} = 2^{n+1} - 1")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 5: Strong Induction -->
+        <section class="content-section" data-section="5">
+            <h2>5. Strong Induction</h2>
+
+            <div class="concept-box">
+                <h3>Weak vs Strong Induction</h3>
+                <div class="example-box">
+                    <h4>Weak Induction:</h4>
+                    <p>To prove P(k+1), assume only P(k)</p>
+
+                    <h4 style="margin-top: 20px;">Strong Induction:</h4>
+                    <p>To prove P(k+1), assume P(1), P(2), ..., P(k) are ALL true</p>
+
+                    <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 5px;">
+                        <strong>When to use Strong Induction:</strong>
+                        <ul style="margin-top: 10px;">
+                            <li>When P(k+1) depends on multiple previous cases</li>
+                            <li>Recursive definitions with multiple base cases (like Fibonacci)</li>
+                            <li>When you're not sure which previous case you'll need</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="theorem-box">
+                <h4>Example: Fundamental Theorem of Arithmetic</h4>
+                <p><strong>Theorem:</strong> Every integer n ≥ 2 can be written as a product of primes</p>
+
+                <div class="proof-steps">
+                    <div class="proof-step">
+                        <span class="step-number">Base</span>
+                        <p>n = 2: 2 is prime ✓</p>
+                    </div>
+
+                    <div class="proof-step">
+                        <span class="step-number">IH</span>
+                        <p><strong>Strong Hypothesis:</strong> Assume all integers from 2 to k can be written as products of primes</p>
+                    </div>
+
+                    <div class="proof-step">
+                        <span class="step-number">Step</span>
+                        <p>Consider k+1:<br>
+                        <strong>Case 1:</strong> If k+1 is prime, we're done ✓<br>
+                        <strong>Case 2:</strong> If k+1 is composite, then k+1 = a·b where 2 ≤ a,b ≤ k<br>
+                        &nbsp;&nbsp;By IH, both a and b are products of primes<br>
+                        &nbsp;&nbsp;Therefore k+1 = a·b is also a product of primes ✓</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Prime Factorization</h3>
+                <pre><code class="language-python">def prime_factorization(n):
+    """Find all prime factors of n (mirrors strong induction)"""
+    if n < 2:
+        return []
+
+    factors = []
+    divisor = 2
+
+    while divisor * divisor <= n:
+        while n % divisor == 0:
+            factors.append(divisor)
+            n //= divisor
+        divisor += 1
+
+    if n > 1:
+        factors.append(n)
+
+    return factors
+
+# Test
+for n in [12, 30, 100, 97, 2023]:
+    factors = prime_factorization(n)
+    product = 1
+    for f in factors:
+        product *= f
+    print(f"{n} = {' × '.join(map(str, factors))} (check: {product})")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 6: Well-Ordering Principle -->
+        <section class="content-section" data-section="6">
+            <h2>6. Well-Ordering Principle</h2>
+
+            <div class="concept-box">
+                <h3>The Well-Ordering Principle (WOP)</h3>
+                <p style="font-size: 1.1em; padding: 15px; background: #e8f5e9; border-radius: 5px;">
+                    <strong>Every non-empty set of non-negative integers has a least element.</strong>
+                </p>
+
+                <div class="example-box">
+                    <h4>Connection to Induction</h4>
+                    <p>Mathematical induction and the Well-Ordering Principle are logically equivalent!</p>
+
+                    <p style="margin-top: 15px;"><strong>Proof by WOP Template:</strong></p>
+                    <ol>
+                        <li>Assume the theorem is false</li>
+                        <li>Let S = {counterexamples}</li>
+                        <li>By WOP, S has a smallest element n₀</li>
+                        <li>Show n₀ can't actually be smallest → contradiction</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="theorem-box">
+                <h4>Example: Division Algorithm via WOP</h4>
+                <p><strong>Theorem:</strong> For any integers a,b with b > 0, there exist unique q,r such that a = bq + r with 0 ≤ r < b</p>
+
+                <div class="proof-steps">
+                    <div class="proof-step">
+                        <span class="step-number">1</span>
+                        <p>Consider S = {a - bk : k ∈ ℤ, a - bk ≥ 0}</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">2</span>
+                        <p>S is non-empty (take k large negative) and contains only non-negative integers</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">3</span>
+                        <p>By WOP, S has a least element r = a - bq for some q</p>
+                    </div>
+                    <div class="proof-step">
+                        <span class="step-number">4</span>
+                        <p>Must show r < b: If r ≥ b, then a - b(q+1) = r - b ≥ 0, contradicting minimality of r</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: Common Mistakes -->
+        <section class="content-section" data-section="7">
+            <h2>7. Common Mistakes in Induction Proofs</h2>
+
+            <div class="concept-box">
+                <h3>⚠️ Mistake 1: Missing or Wrong Base Case</h3>
+                <div class="example-box">
+                    <p><strong>Claim:</strong> All horses are the same color (FALSE!)</p>
+                    <p style="color: #d32f2f; margin-top: 10px;">
+                        <strong>Faulty "Proof":</strong> Base case n=1: One horse is one color ✓<br>
+                        IH: Any k horses are the same color<br>
+                        Step: Given k+1 horses, remove first horse → k horses same color (IH)<br>
+                        Remove last horse → k horses same color (IH)<br>
+                        Therefore all k+1 horses same color...
+                    </p>
+                    <p style="color: #2e7d32; margin-top: 15px; padding: 10px; background: #e8f5e9; border-radius: 5px;">
+                        <strong>Error:</strong> The step from n=1 to n=2 fails! With 2 horses, removing one leaves no overlap to connect them.
+                    </p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>⚠️ Mistake 2: Not Using the Inductive Hypothesis</h3>
+                <div class="example-box">
+                    <p><strong>BAD:</strong> Proving P(k+1) without referencing P(k)</p>
+                    <pre style="background: #ffebee; padding: 10px; border-radius: 5px; color: #d32f2f;">This is just a direct proof, not induction!</pre>
+
+                    <p style="margin-top: 15px;"><strong>GOOD:</strong> Explicitly show where IH is used</p>
+                    <pre style="background: #e8f5e9; padding: 10px; border-radius: 5px; color: #2e7d32;">... = [expression with k] + (k+1)
+    = k(k+1)/2 + (k+1)  ← BY IH
+    = ...</pre>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>⚠️ Mistake 3: Circular Reasoning</h3>
+                <div class="example-box">
+                    <p><strong>Circular:</strong> Assuming what you're trying to prove</p>
+                    <p style="margin-top: 10px;">In the inductive step for P(k+1), you cannot assume P(k+1) is true! Only assume P(k) (or P(1)...P(k) for strong induction).</p>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>⚠️ Mistake 4: Wrong Direction</h3>
+                <div class="example-box">
+                    <p><strong>Wrong:</strong> Starting with what you want to prove<br>
+                    P(k+1) = ... = P(k) which is true</p>
+
+                    <p style="margin-top: 15px;"><strong>Right:</strong> Starting with P(k) (known by IH)<br>
+                    P(k) = ... = P(k+1) which is what we wanted</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Applications -->
+        <section class="content-section" data-section="8">
+            <h2>8. Applications of Induction</h2>
+
+            <div class="concept-box">
+                <h3>Algorithm Correctness</h3>
+                <p>Induction proves that algorithms work for all input sizes</p>
+
+                <div class="code-example">
+                    <pre><code class="language-python"># Prove: Binary search finds target in sorted array (or returns -1)
+
+def binary_search(arr, target, left, right):
+    """
+    Correctness by strong induction on array size (right - left + 1)
+
+    Base: Size 0 (left > right) → returns -1 ✓
+    Base: Size 1 (left == right) → checks arr[left] ✓
+
+    IH: Assume binary_search works for arrays of size < k
+
+    Step: For size k:
+      - Split into two halves, each size < k
+      - If target in left half, recurse on left (works by IH)
+      - If target in right half, recurse on right (works by IH)
+      - Otherwise target not present ✓
+    """
+    if left > right:
+        return -1
+
+    mid = (left + right) // 2
+
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] > target:
+        return binary_search(arr, target, left, mid - 1)
+    else:
+        return binary_search(arr, target, mid + 1, right)</code></pre>
+                </div>
+            </div>
+
+            <div class="concept-box">
+                <h3>Data Structure Properties</h3>
+                <div class="example-box">
+                    <h4>Binary Tree Node Count</h4>
+                    <p><strong>Theorem:</strong> A complete binary tree of height h has 2^(h+1) - 1 nodes</p>
+
+                    <div class="code-example">
+                        <pre><code class="language-python">class TreeNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def count_nodes(root):
+    """
+    Proof by structural induction:
+    Base: Empty tree (height -1) has 0 = 2^0 - 1 nodes ✓
+    Base: Single node (height 0) has 1 = 2^1 - 1 nodes ✓
+
+    IH: Trees of height < h satisfy the formula
+
+    Step: Tree of height h has:
+      - 1 root
+      - Left subtree of height h-1
+      - Right subtree of height h-1
+
+      Total = 1 + (2^h - 1) + (2^h - 1)  [by IH]
+            = 1 + 2·2^h - 2
+            = 2^(h+1) - 1 ✓
+    """
+    if not root:
+        return 0
+    return 1 + count_nodes(root.left) + count_nodes(root.right)</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: Python Examples -->
+        <section class="content-section" data-section="9">
+            <h2>9. Induction in Python: Loop Invariants</h2>
+
+            <div class="concept-box">
+                <h3>Loop Invariants = Induction</h3>
+                <p>A <strong>loop invariant</strong> is a property that's true before and after each loop iteration</p>
+
+                <div class="example-box">
+                    <h4>Structure mirrors induction:</h4>
+                    <ul>
+                        <li><strong>Initialization (Base):</strong> Invariant true before loop starts</li>
+                        <li><strong>Maintenance (Inductive Step):</strong> If true before iteration i, true after</li>
+                        <li><strong>Termination (Conclusion):</strong> When loop ends, invariant gives correctness</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Example: Insertion Sort Correctness</h3>
+                <pre><code class="language-python">def insertion_sort(arr):
+    """
+    Loop Invariant: At start of iteration i, arr[0:i] is sorted
+
+    Initialization: Before i=1, arr[0:1] has one element → sorted ✓
+
+    Maintenance: Assume arr[0:i] sorted
+      - Insert arr[i] into correct position in arr[0:i]
+      - Now arr[0:i+1] is sorted ✓
+
+    Termination: When i=n, arr[0:n] is sorted (entire array) ✓
+    """
+    n = len(arr)
+
+    for i in range(1, n):
+        # INVARIANT: arr[0:i] is sorted
+        key = arr[i]
+        j = i - 1
+
+        # Insert key into sorted portion
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+        # INVARIANT: arr[0:i+1] is sorted
+
+    # INVARIANT: arr[0:n] is sorted
+    return arr
+
+# Test
+test_arr = [5, 2, 9, 1, 5, 6]
+print(f"Original: {test_arr}")
+print(f"Sorted: {insertion_sort(test_arr.copy())}")</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>💻 Fibonacci with Induction</h3>
+                <pre><code class="language-python">def fibonacci(n):
+    """
+    Compute nth Fibonacci number
+    Correctness by strong induction
+
+    Base: n=0 → return 0 ✓
+    Base: n=1 → return 1 ✓
+
+    IH: fibonacci(k) correct for all k < n
+
+    Step: For n ≥ 2:
+      fibonacci(n) = fibonacci(n-1) + fibonacci(n-2)
+      Both calls correct by IH ✓
+    """
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+# Iterative version with loop invariant
+def fibonacci_iter(n):
+    """
+    Loop Invariant: After iteration i:
+      a = F(i), b = F(i+1)
+    """
+    if n <= 1:
+        return n
+
+    a, b = 0, 1  # F(0)=0, F(1)=1
+    for i in range(2, n + 1):
+        # INVARIANT: a=F(i-2), b=F(i-1)
+        a, b = b, a + b
+        # INVARIANT: a=F(i-1), b=F(i)
+
+    return b
+
+# Verify both
+for n in range(10):
+    rec = fibonacci(n)
+    itr = fibonacci_iter(n)
+    assert rec == itr
+    print(f"F({n}) = {rec}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Section 10: Practice Problems -->
+        <section class="content-section" data-section="10">
+            <h2>10. Practice Problems</h2>
+
+            <div class="concept-box">
+                <h3>Try These on Your Own!</h3>
+
+                <div class="example-box">
+                    <h4>Problem 1: Easy</h4>
+                    <p>Prove by induction: 1² + 2² + 3² + ... + n² = n(n+1)(2n+1)/6</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Problem 2: Medium</h4>
+                    <p>Prove: For all n ≥ 1, 3 divides (n³ - n)</p>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">Hint: Factor n³ - n first</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Problem 3: Medium</h4>
+                    <p>Prove: A set with n elements has 2ⁿ subsets</p>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">Hint: Adding element n+1 to a set of n elements</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Problem 4: Hard</h4>
+                    <p>Prove: Any amount ≥ 8 cents can be made with 3-cent and 5-cent stamps</p>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 5px;">Hint: Strong induction with multiple base cases</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Problem 5: Algorithm</h4>
+                    <p>Prove merge sort runs in O(n log n) time using induction</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section">
+            <h2>🎯 Quick Quiz</h2>
+
+            <div class="quiz-question">
+                <p><strong>Question 1:</strong> In weak induction, what do you assume in the inductive hypothesis?</p>
+                <button onclick="checkAnswer(1, 'c', this)">P(1), P(2), ..., P(k) are all true</button>
+                <button onclick="checkAnswer(1, 'b', this)">Only P(k) is true</button>
+                <button onclick="checkAnswer(1, 'a', this)">P(k+1) is true</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 2:</strong> When should you use strong induction instead of weak?</p>
+                <button onclick="checkAnswer(2, 'a', this)">When P(k+1) depends on multiple previous cases</button>
+                <button onclick="checkAnswer(2, 'b', this)">Always, it's strictly stronger</button>
+                <button onclick="checkAnswer(2, 'c', this)">Only for prime number proofs</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 3:</strong> What's the base case for proving 1 + 2 + ... + n = n(n+1)/2?</p>
+                <button onclick="checkAnswer(3, 'b', this)">n = 1: both sides equal 1</button>
+                <button onclick="checkAnswer(3, 'a', this)">n = 0: both sides equal 0</button>
+                <button onclick="checkAnswer(3, 'c', this)">n = 2: both sides equal 3</button>
+            </div>
+
+            <div class="quiz-question">
+                <p><strong>Question 4:</strong> Which is NOT a common mistake in induction?</p>
+                <button onclick="checkAnswer(4, 'c', this)">Explicitly stating the inductive hypothesis</button>
+                <button onclick="checkAnswer(4, 'a', this)">Forgetting the base case</button>
+                <button onclick="checkAnswer(4, 'b', this)">Not using the IH in the inductive step</button>
+            </div>
+        </section>
+
+        <div class="navigation-buttons">
+            <button class="nav-button prev" onclick="window.location.href='sequences.html'">← Previous: Sequences</button>
+            <button class="nav-button next" onclick="window.location.href='counting.html'">Next: Counting Principles →</button>
+        </div>
+    </div>
+
+    <script src="../js/content.js"></script>
+    <script>
+        // Domino animation
+        let dominoIndex = 0;
+        function knockDomino() {
+            const dominoes = document.querySelectorAll('.domino');
+            const status = document.getElementById('domino-status');
+
+            if (dominoIndex === 0) {
+                status.textContent = "Base case: First domino falls!";
+                dominoIndex = 1;
+            }
+
+            if (dominoIndex < dominoes.length && dominoes[dominoIndex].dataset.num) {
+                const num = dominoes[dominoIndex].dataset.num;
+                dominoes[dominoIndex].style.transform = 'rotate(45deg)';
+                dominoes[dominoIndex].style.opacity = '0.5';
+                status.textContent = `Inductive step: Domino ${num} falls → Domino ${parseInt(num)+1} will fall!`;
+                dominoIndex++;
+
+                if (dominoIndex < dominoes.length - 1) {
+                    setTimeout(knockDomino, 600);
+                } else {
+                    setTimeout(() => {
+                        status.textContent = "All dominoes fall! This is mathematical induction! ✓";
+                    }, 600);
+                }
+            }
+        }
+
+        // Style dominoes
+        document.querySelectorAll('.domino').forEach(d => {
+            d.style.cssText = `
+                width: 40px;
+                height: 60px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 5px;
+                font-weight: bold;
+                transition: all 0.6s ease;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            `;
+        });
+    </script>
+</body>
+</html>
