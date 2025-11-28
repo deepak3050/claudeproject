@@ -8,8 +8,6 @@ A Docker-based learning environment for mastering the sliding window algorithm p
 docker-compose build && docker-compose up
 ```
 
-
-
 ## Services
 
 | Port | Service | Description |
