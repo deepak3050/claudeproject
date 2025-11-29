@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Connection Test - Keep Alive</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .status {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .connected { color: green; font-weight: bold; }
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <h1>Connection Keep-Alive Test</h1>
+        <p>Status: <span class="connected">Connected and polling server...</span></p>
+        <p>This page makes continuous requests to keep the connection active.</p>
+        <p>Device IP: <span id="ip">Detecting...</span></p>
+    </div>
+
+    <div id="log">
+        <h3>Activity Log:</h3>
+    </div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+
+        function log(message) {
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.textContent = `[${time}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // Fetch IP from external service
+        fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('ip').textContent = data.ip;
+                log(`External IP: ${data.ip}`);
+            })
+            .catch(() => {
+                document.getElementById('ip').textContent = 'Unable to detect';
+            });
+
+        // Keep polling the server every 2 seconds
+        let count = 0;
+        function poll() {
+            count++;
+            fetch('/?ping=' + count)
+                .then(r => {
+                    log(`Ping #${count} - Server responded`);
+                })
+                .catch(err => {
+                    log(`Ping #${count} - Error: ${err.message}`);
+                });
+        }
+
+        // Initial poll
+        poll();
+
+        // Poll every 2 seconds
+        setInterval(poll, 2000);
+
+        log('Page loaded - starting continuous polling...');
+    </script>
+</body>
+</html>

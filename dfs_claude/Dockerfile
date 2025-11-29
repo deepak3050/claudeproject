@@ -2,6 +2,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Install system tools for network monitoring
+RUN apt-get update && apt-get install -y net-tools procps && rm -rf /var/lib/apt/lists/*
+
 # Install uv for faster package management
 RUN pip install uv
 
