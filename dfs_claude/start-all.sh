@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Starting all DFS Claude applications in single container..."
+echo "Starting all DFS Claude applications..."
 
 # Start Tree Visualizer (Flask) in background
 echo "Starting Tree Visualizer on port 5001..."
@@ -34,4 +34,4 @@ cd /app/apps/az204 && python -m http.server 8003 --bind 0.0.0.0 &
 
 # Start Jupyter notebook in foreground (keeps container running)
 echo "Starting Jupyter Notebook on port 8888..."
-cd /app/notebooks && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token="" --NotebookApp.password=""
+cd /app/notebooks && jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''

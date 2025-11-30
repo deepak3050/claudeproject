@@ -6,12 +6,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y net-tools procps && rm -rf /var/lib/apt/lists/*
 
 # Install uv for faster package management
-RUN pip install uv
+RUN pip install --no-cache-dir uv
 
 # Copy pyproject.toml first for dependency installation
 COPY pyproject.toml /app/
 
 # Install dependencies using uv (much faster than pip)
+# --no-cache prevents caching package downloads
 RUN uv pip install --system --no-cache \
     jupyter \
     notebook \
@@ -35,10 +36,10 @@ RUN uv pip install --system --no-cache \
 # 5001 - Tree Visualizer (Flask)
 EXPOSE 8888 8000 8001 8002 8003 5000 5001
 
-# Copy all files
+# Copy application files (respects .dockerignore)
 COPY . /app
 
-# Make start script executable
-RUN chmod +x /app/start.sh
+# Make start scripts executable
+RUN chmod +x /app/start.sh /app/start-all.sh
 
 CMD ["/bin/bash", "/app/start.sh"]

@@ -1,0 +1,20 @@
+services:
+  # Single container running ALL applications
+  dfs-claude-all:
+    build: .
+    container_name: dfs-claude-all-in-one
+    ports:
+      - "5000:5000"  # Graph Visualizer
+      - "5001:5001"  # Tree Visualizer
+      - "8888:8888"  # Jupyter Notebook
+      - "8000:8000"  # HTML Game
+      - "8001:8001"  # Markdown Cheatsheet Viewer
+      - "8002:8002"  # Portfolio Website
+      - "8003:8003"  # AZ-204 Study Guide
+    volumes:
+      - .:/app:Z
+    command: /bin/bash /app/start.sh
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
