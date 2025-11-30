@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Graph Algorithms Visualizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; margin-top: 0; }
+        h2 { color: #666; font-size: 1.2em; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+            font-size: 14px;
+        }
+        button:hover { background: #45a049; }
+        button.secondary { background: #2196F3; }
+        button.secondary:hover { background: #0b7dda; }
+        button.danger { background: #f44336; }
+        button.danger:hover { background: #da190b; }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.show { display: block; }
+        #graphImage {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .section:last-child { border-bottom: none; }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        .graph-type {
+            margin-bottom: 15px;
+        }
+        .graph-type label {
+            display: inline;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Graph & Tree Algorithms Visualizer</h1>
+
+    <div class="container">
+        <div class="panel">
+            <!-- Update Graph Section -->
+            <div class="section">
+                <h2>📊 Update Graph</h2>
+                <div class="info">
+                    ⚠️ Updating will replace the entire graph
+                </div>
+
+                <div class="graph-type">
+                    <input type="radio" id="graphType" name="graphType" value="graph" checked>
+                    <label for="graphType">Undirected Graph (DFS, BFS)</label><br>
+                    <input type="radio" id="treeType" name="graphType" value="tree">
+                    <label for="treeType">Directed Tree (Pre/Post/In-order)</label>
+                </div>
+
+                <label>Edges (one per line, e.g., A B):</label>
+                <textarea id="edgesInput" rows="6" placeholder="A B&#10;A C&#10;B D&#10;C D&#10;D E">A B
+A C
+B D
+C D
+D E</textarea>
+
+                <button onclick="updateGraph()">🔄 Update Graph</button>
+                <button class="danger" onclick="clearGraph()">🗑️ Clear All</button>
+            </div>
+
+            <!-- Graph Algorithms Section -->
+            <div class="section">
+                <h2>🌐 Graph Algorithms</h2>
+                <label>Start Node:</label>
+                <input type="text" id="startNode" value="A" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+
+                <button onclick="runAlgorithm('dfs')" style="margin-top: 10px;">▶️ Run DFS</button>
+                <button class="secondary" onclick="runAlgorithm('bfs')">▶️ Run BFS</button>
+
+                <div id="graphResult" class="result"></div>
+            </div>
+
+            <!-- Tree Traversals Section -->
+            <div class="section">
+                <h2>🌳 Tree Traversals</h2>
+                <div class="info">
+                    ℹ️ Select "Directed Tree" above and update the graph first
+                </div>
+                <label>Root Node:</label>
+                <input type="text" id="rootNode" value="A" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+
+                <button onclick="runTraversal('preorder')" style="margin-top: 10px;">Pre-order</button>
+                <button class="secondary" onclick="runTraversal('postorder')">Post-order</button>
+                <button class="secondary" onclick="runTraversal('inorder')">In-order</button>
+
+                <div id="treeResult" class="result"></div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>📈 Visualization</h2>
+            <button onclick="refreshView()">🔄 Refresh View</button>
+            <div style="margin-top: 20px;">
+                <img id="graphImage" src="/api/visualize" alt="Graph Visualization">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateGraph() {
+            const edges = document.getElementById('edgesInput').value;
+            const graphType = document.querySelector('input[name="graphType"]:checked').value;
+
+            fetch('/api/graph/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({edges: edges, type: graphType})
+            })
+            .then(r => r.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById('graphResult').classList.remove('show');
+                document.getElementById('treeResult').classList.remove('show');
+                refreshView();
+            });
+        }
+
+        function clearGraph() {
+            if (confirm('Clear all nodes and edges?')) {
+                fetch('/api/graph/clear', {method: 'POST'})
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('edgesInput').value = '';
+                    document.getElementById('graphResult').classList.remove('show');
+                    document.getElementById('treeResult').classList.remove('show');
+                    refreshView();
+                });
+            }
+        }
+
+        function runAlgorithm(algo) {
+            const start = document.getElementById('startNode').value;
+            fetch(`/api/${algo}/${start}`)
+            .then(r => {
+                if (!r.ok) {
+                    return r.json().then(err => { throw new Error(err.error || 'Unknown error'); });
+                }
+                return r.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                const result = document.getElementById('graphResult');
+                result.innerHTML = `
+                    <strong>${data.algorithm} Result:</strong><br>
+                    Path: ${data.path_string}<br>
+                    <small>Nodes: [${data.path.join(', ')}]</small>
+                `;
+                result.classList.add('show');
+                document.getElementById('treeResult').classList.remove('show');
+
+                // Update visualization with highlighted path
+                document.getElementById('graphImage').src = `/api/visualize/${algo}?start=${start}&t=${Date.now()}`;
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+
+        function runTraversal(algo) {
+            const root = document.getElementById('rootNode').value;
+            fetch(`/api/${algo}/${root}`)
+            .then(r => {
+                if (!r.ok) {
+                    return r.json().then(err => { throw new Error(err.error || 'Unknown error'); });
+                }
+                return r.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                const result = document.getElementById('treeResult');
+                result.innerHTML = `
+                    <strong>${data.algorithm} Result:</strong><br>
+                    Path: ${data.path_string}<br>
+                    <small>Nodes: [${data.path.join(', ')}]</small>
+                `;
+                result.classList.add('show');
+                document.getElementById('graphResult').classList.remove('show');
+
+                // Update visualization
+                document.getElementById('graphImage').src = `/api/visualize/${algo}?start=${root}&t=${Date.now()}`;
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+
+        function refreshView() {
+            document.getElementById('graphImage').src = `/api/visualize?t=${Date.now()}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Binary Tree Visualizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f4f8;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 2em;
+        }
+        h2 {
+            color: #34495e;
+            font-size: 1.3em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            font-size: 14px;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button.success { background: #27ae60; }
+        button.success:hover { background: #229954; }
+        button.warning { background: #f39c12; }
+        button.warning:hover { background: #e67e22; }
+        button.danger { background: #e74c3c; }
+        button.danger:hover { background: #c0392b; }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #ecf8f3;
+            border-left: 4px solid #27ae60;
+            border-radius: 6px;
+            display: none;
+        }
+        .result.show { display: block; }
+        .info-box {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            border-left: 4px solid #3498db;
+        }
+        .tree-info {
+            background: #fff9e6;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #f39c12;
+            display: none;
+        }
+        .tree-info.show { display: block; }
+        #graphImage {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .section:last-child { border-bottom: none; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 14px;
+        }
+        .examples {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .examples strong {
+            color: #2c3e50;
+        }
+        .examples code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌳 Binary Tree Visualizer</h1>
+
+    <div class="container">
+        <div class="panel">
+            <!-- Build Tree Section -->
+            <div class="section">
+                <h2>🏗️ Build Tree</h2>
+                <div class="info-box">
+                    <strong>ℹ️ How to build a tree:</strong><br>
+                    Enter node values separated by commas. Use <code>null</code> for empty positions.<br>
+                    Format: Level-order (left to right, top to bottom)
+                </div>
+
+                <label>Tree Values (comma-separated):</label>
+                <textarea id="treeInput" rows="4" placeholder="1,2,3,null,4,5,null">1,2,3,null,4,5,null</textarea>
+
+                <div class="examples">
+                    <strong>Examples:</strong><br>
+                    • Simple: <code>1,2,3</code><br>
+                    • Balanced: <code>1,2,3,4,5,6,7</code><br>
+                    • Skewed: <code>1,2,null,3,null,null,null</code>
+                </div>
+
+                <button class="success" onclick="buildTree()">🔨 Build Tree</button>
+                <button class="danger" onclick="clearTree()">🗑️ Clear Tree</button>
+
+                <div id="treeInfo" class="tree-info"></div>
+            </div>
+
+            <!-- Traversals Section -->
+            <div class="section">
+                <h2>🔄 Tree Traversals</h2>
+                <div class="info-box">
+                    Click any traversal to see the order nodes are visited
+                </div>
+
+                <div class="button-group">
+                    <button onclick="runTraversal('preorder')">Pre-order</button>
+                    <button onclick="runTraversal('inorder')">In-order</button>
+                    <button onclick="runTraversal('postorder')">Post-order</button>
+                    <button class="warning" onclick="runTraversal('levelorder')">Level-order</button>
+                </div>
+
+                <div id="traversalResult" class="result"></div>
+            </div>
+
+            <!-- Cheat Sheet Section -->
+            <div class="section">
+                <h2>📚 Traversal Guide</h2>
+                <div style="font-size: 13px; line-height: 1.6;">
+                    <strong>Pre-order:</strong> Root → Left → Right<br>
+                    <em>Use: Copy tree, prefix notation</em><br><br>
+
+                    <strong>In-order:</strong> Left → Root → Right<br>
+                    <em>Use: Get sorted values (BST)</em><br><br>
+
+                    <strong>Post-order:</strong> Left → Right → Root<br>
+                    <em>Use: Delete tree, postfix notation</em><br><br>
+
+                    <strong>Level-order:</strong> Level by level<br>
+                    <em>Use: BFS, shortest path</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>📊 Visualization</h2>
+            <button onclick="refreshView()">🔄 Refresh View</button>
+            <div style="margin-top: 20px;">
+                <img id="graphImage" src="/api/visualize" alt="Tree Visualization">
+            </div>
+
+            <!-- Code Viewer Section -->
+            <div id="codeSection" style="margin-top: 30px; display: none;">
+                <button onclick="toggleCode()" style="width: 100%; background: #9b59b6;">
+                    📝 <span id="codeToggleText">Show Python Code</span>
+                </button>
+                <div id="codeViewer" style="display: none; margin-top: 15px;">
+                    <pre id="codeContent" style="background: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5;"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCode = '';
+
+        function toggleCode() {
+            const viewer = document.getElementById('codeViewer');
+            const toggleText = document.getElementById('codeToggleText');
+
+            if (viewer.style.display === 'none') {
+                viewer.style.display = 'block';
+                toggleText.textContent = 'Hide Python Code';
+            } else {
+                viewer.style.display = 'none';
+                toggleText.textContent = 'Show Python Code';
+            }
+        }
+
+        function displayCode(code) {
+            if (code) {
+                currentCode = code;
+                document.getElementById('codeContent').textContent = code;
+                document.getElementById('codeSection').style.display = 'block';
+                // Auto-expand code viewer
+                document.getElementById('codeViewer').style.display = 'block';
+                document.getElementById('codeToggleText').textContent = 'Hide Python Code';
+            }
+        }
+
+        function buildTree() {
+            const values = document.getElementById('treeInput').value;
+
+            fetch('/api/tree/build', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({values: values})
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.message) {
+                    // Show tree info
+                    const info = document.getElementById('treeInfo');
+                    info.innerHTML = `
+                        <strong>✅ ${data.message}</strong><br>
+                        Height: ${data.height || 0}<br>
+                        Balanced: ${data.balanced ? 'Yes ✓' : 'No ✗'}
+                    `;
+                    info.classList.add('show');
+
+                    document.getElementById('traversalResult').classList.remove('show');
+
+                    // Display code
+                    if (data.code) {
+                        displayCode(data.code);
+                    }
+
+                    refreshView();
+                }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+
+        function clearTree() {
+            if (confirm('Clear the tree?')) {
+                fetch('/api/tree/clear', {method: 'POST'})
+                .then(r => r.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('treeInput').value = '';
+                    document.getElementById('treeInfo').classList.remove('show');
+                    document.getElementById('traversalResult').classList.remove('show');
+                    refreshView();
+                });
+            }
+        }
+
+        function runTraversal(algo) {
+            fetch(`/api/traversal/${algo}`)
+            .then(r => {
+                if (!r.ok) {
+                    return r.json().then(err => { throw new Error(err.error || 'Unknown error'); });
+                }
+                return r.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                const result = document.getElementById('traversalResult');
+                result.innerHTML = `
+                    <strong>${data.algorithm}</strong><br>
+                    <div style="font-size: 16px; margin-top: 10px; font-weight: 600; color: #27ae60;">
+                        ${data.path_string}
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                        Order: [${data.path.join(', ')}]
+                    </div>
+                `;
+                result.classList.add('show');
+
+                // Display code
+                if (data.code) {
+                    displayCode(data.code);
+                }
+
+                // Update visualization
+                document.getElementById('graphImage').src = `/api/visualize/${algo}?t=${Date.now()}`;
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+
+        function refreshView() {
+            document.getElementById('graphImage').src = `/api/visualize?t=${Date.now()}`;
+        }
+    </script>
+</body>
+</html>

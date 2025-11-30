@@ -1,11 +1,57 @@
 services:
-  sliding-window:
+  # Tree Visualizer - Beginner-friendly binary tree learning app
+  tree-visualizer:
     build: .
+    container_name: tree-visualizer
     ports:
-      - "8888:8888"  # Jupyter Notebook
+      - "5001:5001"
+    volumes:
+      - ./apps/python_ds:/app/apps/python_ds
+    working_dir: /app/apps/python_ds
+    command: python tree_app.py
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - ds-network
+
+  # Graph Visualizer - Advanced graph algorithms app
+  graph-visualizer:
+    build: .
+    container_name: graph-visualizer
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./apps/python_ds:/app/apps/python_ds
+    working_dir: /app/apps/python_ds
+    command: python app.py
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - ds-network
+
+  # Jupyter Notebook - For development and exploration
+  jupyter:
+    build: .
+    container_name: jupyter-notebook
+    ports:
+      - "8888:8888"
       - "8000:8000"  # HTML Game
       - "8001:8001"  # Markdown Cheatsheet Viewer
       - "8002:8002"  # Portfolio Website
       - "8003:8003"  # AZ-204 Study Guide
     volumes:
-      - .:/app      # Mount for live changes (optional)
+      - .:/app
+    command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --NotebookApp.password=''
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    networks:
+      - ds-network
+
+networks:
+  ds-network:
+    driver: bridge
