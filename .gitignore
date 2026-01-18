@@ -64,3 +64,4 @@ Desktop.ini
 .temp/
 .tmp/
 tmp/
+notebook/.env
