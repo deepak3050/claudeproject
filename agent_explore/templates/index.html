@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Agent - Permission Manager</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .prompt-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .conversation-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            height: 600px;
+            overflow-y: auto;
+        }
+
+        .message {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-type {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            text-transform: capitalize;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .message-content {
+            color: #333;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .message.assistant {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left-color: #2196f3;
+        }
+
+        .message.assistant .message-type {
+            color: #1976d2;
+        }
+
+        .message.result {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left-color: #4caf50;
+        }
+
+        .message.result .message-type {
+            color: #2e7d32;
+        }
+
+        .status-message {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .status-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .status-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .status-warning {
+            background: #fff3e0;
+            color: #f57c00;
+            border-left: 4px solid #f57c00;
+        }
+
+        .status-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .permission-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .permission-modal.active {
+            display: flex;
+        }
+
+        .permission-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .permission-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .permission-tool {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .permission-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-grant {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            flex: 1;
+        }
+
+        .btn-deny {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            flex: 1;
+        }
+
+        .usage-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .usage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .usage-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .usage-label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .usage-value {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .connected {
+            background: #4caf50;
+            color: white;
+        }
+
+        .disconnected {
+            background: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status disconnected" id="connectionStatus">Disconnected</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Claude Agent - Permission Manager</h1>
+            <p>Interactive web interface for managing Claude Agent permissions</p>
+            <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; font-size: 14px;">
+                <strong>✅ Pre-approved tools:</strong> WebSearch, WebFetch, Read, Glob, Grep, Bash, Write, Edit
+                <br><strong>🎭 Browser Automation:</strong> All Playwright MCP tools (navigate, click, type, screenshot, etc.)
+                <br><small style="color: #666;">These tools are pre-approved. Try: "Go to Google News and find top headlines"</small>
+            </div>
+        </div>
+
+        <div class="prompt-section">
+            <input
+                type="text"
+                class="prompt-input"
+                id="promptInput"
+                placeholder="Enter your prompt (e.g., 'Go to Google News and find top 5 headlines')"
+                value="Go to Google News and find the top 5 headlines"
+            >
+            <button class="btn" id="startBtn" onclick="startAgent()">Start Agent</button>
+        </div>
+
+        <div class="conversation-panel" id="conversationPanel">
+            <div class="status-message status-info">Ready to start. Enter a prompt and click "Start Agent".</div>
+        </div>
+
+        <div class="usage-panel" id="usagePanel" style="display: none;">
+            <h3 style="color: #667eea; margin-bottom: 10px;">Token Usage</h3>
+            <div class="usage-grid" id="usageGrid"></div>
+        </div>
+    </div>
+
+    <!-- Permission Modal -->
+    <div class="permission-modal" id="permissionModal">
+        <div class="permission-content">
+            <h2>🔐 Permission Request</h2>
+            <p>Claude is requesting permission to use the following tool:</p>
+            <div class="permission-tool" id="permissionTool"></div>
+            <p id="permissionMessage" style="margin-top: 15px; color: #666;"></p>
+            <div class="permission-buttons">
+                <button class="btn btn-grant" onclick="grantPermission()">✓ Grant Permission</button>
+                <button class="btn btn-deny" onclick="denyPermission()">✗ Deny Permission</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        let currentTool = '';
+
+        // Connection status
+        socket.on('connect', () => {
+            document.getElementById('connectionStatus').textContent = 'Connected';
+            document.getElementById('connectionStatus').className = 'connection-status connected';
+        });
+
+        socket.on('disconnect', () => {
+            document.getElementById('connectionStatus').textContent = 'Disconnected';
+            document.getElementById('connectionStatus').className = 'connection-status disconnected';
+        });
+
+        // Status messages
+        socket.on('status', (data) => {
+            addStatusMessage(data.message, data.type || 'info');
+        });
+
+        // Error messages
+        socket.on('error', (data) => {
+            addStatusMessage(data.message, 'error');
+        });
+
+        // Agent messages
+        socket.on('message', (data) => {
+            addMessage(data);
+        });
+
+        // Permission requests
+        socket.on('permission_request', (data) => {
+            currentTool = data.tool;
+            document.getElementById('permissionTool').textContent = data.tool;
+            document.getElementById('permissionMessage').textContent = data.message;
+            document.getElementById('permissionModal').classList.add('active');
+        });
+
+        // Permission granted - show retry message
+        socket.on('permission_granted', (data) => {
+            addStatusMessage(`Permission granted for ${data.tool}. Please click "Start Agent" to retry.`, 'success');
+            // Re-enable the start button
+            document.getElementById('startBtn').disabled = false;
+        });
+
+        // Usage data
+        socket.on('usage', (data) => {
+            displayUsage(data);
+        });
+
+        function startAgent() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            if (!prompt) {
+                addStatusMessage('Please enter a prompt', 'warning');
+                return;
+            }
+
+            // Clear conversation panel
+            document.getElementById('conversationPanel').innerHTML = '';
+            document.getElementById('usagePanel').style.display = 'none';
+
+            // Disable start button
+            document.getElementById('startBtn').disabled = true;
+
+            // Send start request
+            socket.emit('start_agent', { prompt: prompt });
+        }
+
+        function addStatusMessage(message, type) {
+            const panel = document.getElementById('conversationPanel');
+            const div = document.createElement('div');
+            div.className = `status-message status-${type}`;
+            div.textContent = message;
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+
+            // Re-enable start button if conversation is complete
+            if (type === 'success' || type === 'error') {
+                document.getElementById('startBtn').disabled = false;
+            }
+        }
+
+        function addMessage(data) {
+            const panel = document.getElementById('conversationPanel');
+            const div = document.createElement('div');
+
+            // Add CSS class based on message type
+            if (data.type.includes('Assistant')) {
+                div.className = 'message assistant';
+            } else if (data.type.includes('Result')) {
+                div.className = 'message result';
+            } else {
+                div.className = 'message';
+            }
+
+            const typeDiv = document.createElement('div');
+            typeDiv.className = 'message-type';
+            typeDiv.textContent = data.type;
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = data.content;
+
+            div.appendChild(typeDiv);
+            div.appendChild(contentDiv);
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        function grantPermission() {
+            socket.emit('permission_response', { granted: true, tool: currentTool });
+            document.getElementById('permissionModal').classList.remove('active');
+            addStatusMessage(`Permission granted for ${currentTool}`, 'success');
+        }
+
+        function denyPermission() {
+            socket.emit('permission_response', { granted: false, tool: currentTool });
+            document.getElementById('permissionModal').classList.remove('active');
+            addStatusMessage(`Permission denied for ${currentTool}`, 'warning');
+            document.getElementById('startBtn').disabled = false;
+        }
+
+        function displayUsage(data) {
+            const panel = document.getElementById('usagePanel');
+            const grid = document.getElementById('usageGrid');
+
+            grid.innerHTML = `
+                <div class="usage-item">
+                    <div class="usage-label">Input Tokens</div>
+                    <div class="usage-value">${data.input_tokens.toLocaleString()}</div>
+                </div>
+                <div class="usage-item">
+                    <div class="usage-label">Output Tokens</div>
+                    <div class="usage-value">${data.output_tokens.toLocaleString()}</div>
+                </div>
+                <div class="usage-item">
+                    <div class="usage-label">Cache Read</div>
+                    <div class="usage-value">${data.cache_read.toLocaleString()}</div>
+                </div>
+                <div class="usage-item">
+                    <div class="usage-label">Total Cost</div>
+                    <div class="usage-value">$${data.total_cost.toFixed(6)}</div>
+                </div>
+            `;
+
+            panel.style.display = 'block';
+        }
+
+        // Allow Enter key to start agent
+        document.getElementById('promptInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !document.getElementById('startBtn').disabled) {
+                startAgent();
+            }
+        });
+    </script>
+</body>
+</html>

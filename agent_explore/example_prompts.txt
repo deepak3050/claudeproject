@@ -1,0 +1,110 @@
+Example Prompts for Browser Automation with Playwright MCP
+===========================================================
+
+NEWS & INFORMATION
+------------------
+1. "Go to Google News and find the top 5 headlines about AI"
+2. "Navigate to BBC News and get the latest technology news"
+3. "Search Google for 'breaking news today' and summarize what you find"
+4. "Go to Reuters and find the top business news"
+5. "Visit TechCrunch and get the latest startup news"
+
+MOVIES & ENTERTAINMENT
+---------------------
+1. "Find movies playing near me in [Your City]"
+2. "Go to Fandango and check what movies are showing this weekend"
+3. "Search Google for 'movies in theaters now' and list the results"
+4. "Navigate to IMDb and find the top rated movies of 2024"
+5. "Go to Rotten Tomatoes and check the scores for [Movie Name]"
+
+SHOPPING & PRICE CHECKS
+-----------------------
+1. "Go to Amazon and search for wireless headphones under $100"
+2. "Navigate to eBay and find the current price of Nintendo Switch"
+3. "Check the price of MacBook Air on Best Buy"
+4. "Go to Target and search for winter jackets on sale"
+5. "Find the best deals on [Product] across different websites"
+
+WEATHER & LOCATION
+------------------
+1. "Go to weather.com and get the 7-day forecast for [City]"
+2. "Navigate to Weather.gov and check if it will rain tomorrow"
+3. "Search Google Maps for coffee shops near [Address]"
+4. "Find the weather forecast for this weekend"
+
+RESEARCH & LEARNING
+------------------
+1. "Go to Wikipedia and get the summary of 'Quantum Computing'"
+2. "Navigate to Stack Overflow and search for Python async/await examples"
+3. "Go to GitHub and find trending repositories this week"
+4. "Search for 'machine learning tutorials' on YouTube"
+5. "Visit MDN Web Docs and find the documentation for JavaScript Promises"
+
+WEB SCRAPING & DATA EXTRACTION
+------------------------------
+1. "Go to this website [URL] and extract all the product titles"
+2. "Navigate to [URL] and get the contact information"
+3. "Scrape the table data from this page [URL]"
+4. "Get all the links from the navigation menu on [URL]"
+5. "Extract the meta description and title from [URL]"
+
+FORM AUTOMATION (Use with test data only!)
+------------------------------------------
+1. "Fill out the newsletter signup form on [URL] with test@example.com"
+2. "Navigate to this contact form and fill it with test data"
+3. "Search for 'Python programming' on Google"
+4. "Go to YouTube and search for 'React tutorials'"
+
+SCREENSHOTS & MONITORING
+------------------------
+1. "Take a screenshot of google.com homepage"
+2. "Navigate to [URL] and take a screenshot of the pricing section"
+3. "Go to this website and capture the full page screenshot"
+4. "Take screenshots of the top 3 search results for [Query]"
+
+BROWSER INTERACTIONS
+-------------------
+1. "Go to Twitter, search for #AI, and show me the top tweets"
+2. "Navigate through the pages of [URL] and collect all article titles"
+3. "Click on the first search result for [Query] on Google"
+4. "Scroll down on [URL] and load more content"
+
+TESTING & DEBUGGING
+------------------
+1. "Check if [URL] loads without errors"
+2. "Navigate to [URL] and check the console for any errors"
+3. "Test if the search functionality works on [URL]"
+4. "Monitor network requests when loading [URL]"
+
+COMPLEX WORKFLOWS
+----------------
+1. "Go to Google, search for 'best laptops 2024', visit the first 3 results, and compare the recommendations"
+2. "Find movie times for [Movie] near me, check reviews on Rotten Tomatoes, and take a screenshot"
+3. "Search for 'pizza restaurants near [Location]', get the top 5 results with ratings"
+4. "Go to Amazon, search for [Product], filter by 4+ stars, and list the top 3 results with prices"
+
+==========================================================================
+TIPS FOR BEST RESULTS:
+==========================================================================
+
+1. Be specific about what you want extracted or automated
+2. Provide URLs when possible
+3. Use test/dummy data for any form filling
+4. Ask for screenshots if you want visual confirmation
+5. You can chain multiple actions together in one prompt
+6. The agent will ask for permission before using browser tools
+
+EXAMPLE CONVERSATION:
+--------------------
+You: "Go to Google and find top news about space exploration"
+Agent: [Requests permission to use browser tools]
+You: [Grant permission]
+Agent: [Navigates to Google, searches, returns results]
+
+You: "Now take a screenshot of the NASA website"
+Agent: [Navigates to NASA, takes screenshot]
+
+You: "What were the console errors on that page?"
+Agent: [Returns console messages from the NASA page]
+
+Have fun automating! 🎭🤖

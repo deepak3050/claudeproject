@@ -1,5 +1,7 @@
 # DFS Claude - Data Structures & Algorithms Learning Suite
 
+> **🚀 New User? Start Here:** [docs/QUICK_START.md](docs/QUICK_START.md) - Just the commands you need!
+
 A containerized learning environment featuring tree/graph visualizers, Jupyter notebooks, and multiple web applications.
 
 ## Quick Start

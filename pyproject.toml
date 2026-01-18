@@ -1,0 +1,35 @@
+[project]
+name = "claude-workspace"
+version = "0.1.0"
+description = "Consolidated workspace for CLI project, DFS Claude, and Mathematics projects"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    # CLI Project dependencies
+    "anthropic>=0.51.0",
+    "mcp[cli]>=1.8.0",
+    "prompt-toolkit>=3.0.51",
+    "python-dotenv>=1.1.0",
+
+    # DFS Claude dependencies
+    "networkx",
+    "matplotlib",
+    "ipywidgets",
+    "numpy",
+    "jupyter",
+    "plotext",
+    "flask==3.0.0",
+    "flask-socketio==5.3.5",
+    "flask-cors==4.0.0",
+    "python-socketio==5.10.0",
+    "eventlet==0.33.3",
+    "requests",
+    "pandas",
+    "psycopg2-binary>=2.9.11",  # Changed from psycopg2 (no compilation)
+    "pgvector>=0.3.0",
+    "claude_agent_sdk",
+    "playwright"          # Vector operations
+]
+
+[dependency-groups]
+dev = []
